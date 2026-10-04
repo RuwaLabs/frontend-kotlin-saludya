@@ -226,3 +226,216 @@ val arrowBack: ImageVector
     }
 
 private var _arrowBack: ImageVector? = null
+
+
+// ===== Bottom Navigation Icons (importados desde SVG) =====
+
+@Suppress("CheckReturnValue")
+val homeIcon: ImageVector
+    get() {
+        if (_homeIcon != null) return _homeIcon!!
+        _homeIcon =
+            ImageVector.Builder(
+                name = "homeIcon",
+                defaultWidth = 19.dp,
+                defaultHeight = 19.dp,
+                viewportWidth = 19f,
+                viewportHeight = 19f,
+            ).apply {
+                path(
+                    fill = null,
+                    fillAlpha = 1f,
+                    stroke = SolidColor(Color.Black),
+                    strokeAlpha = 1f,
+                    strokeLineWidth = 1.7f,
+                    strokeLineCap = StrokeCap.Round,
+                    strokeLineJoin = StrokeJoin.Round,
+                    strokeLineMiter = 1f,
+                    pathFillType = PathFillType.NonZero,
+                ) {
+                    moveTo(0.850098f, 7.26628f)
+                    lineTo(9.1001f, 0.849609f)
+                    lineTo(17.3501f, 7.26628f)
+                    moveTo(2.68343f, 6.34961f)
+                    verticalLineTo(17.3496f)
+                    horizontalLineTo(15.5168f)
+                    verticalLineTo(6.34961f)
+                    moveTo(6.3501f, 17.3496f)
+                    verticalLineTo(10.9329f)
+                    horizontalLineTo(11.8501f)
+                    verticalLineTo(17.3496f)
+                }
+            }.build()
+        return _homeIcon!!
+    }
+
+private var _homeIcon: ImageVector? = null
+
+
+@Suppress("CheckReturnValue")
+val calendarIcon: ImageVector
+    get() {
+        if (_calendarIcon != null) return _calendarIcon!!
+        _calendarIcon =
+            ImageVector.Builder(
+                name = "calendarIcon",
+                defaultWidth = 17.dp,
+                defaultHeight = 19.dp,
+                viewportWidth = 17f,
+                viewportHeight = 19f,
+            ).apply {
+                path(
+                    fill = null,
+                    fillAlpha = 1f,
+                    stroke = SolidColor(Color.Black),
+                    strokeAlpha = 1f,
+                    strokeLineWidth = 1.7f,
+                    strokeLineCap = StrokeCap.Round,
+                    strokeLineJoin = StrokeJoin.Round,
+                    strokeLineMiter = 1f,
+                    pathFillType = PathFillType.NonZero,
+                ) {
+                    moveTo(4.51676f, 0.849609f)
+                    verticalLineTo(4.51628f)
+                    moveTo(11.8501f, 0.849609f)
+                    verticalLineTo(4.51628f)
+                    moveTo(0.850098f, 7.26628f)
+                    horizontalLineTo(15.5168f)
+                    moveTo(4.51676f, 10.9329f)
+                    horizontalLineTo(6.3501f)
+                    moveTo(10.0168f, 10.9329f)
+                    horizontalLineTo(11.8501f)
+                    moveTo(4.51676f, 14.5996f)
+                    horizontalLineTo(6.3501f)
+                    moveTo(0.850098f, 2.68294f)
+                    horizontalLineTo(15.5168f)
+                    verticalLineTo(17.3496f)
+                    horizontalLineTo(0.850098f)
+                    verticalLineTo(2.68294f)
+                    close()
+                }
+            }.build()
+        return _calendarIcon!!
+    }
+
+private var _calendarIcon: ImageVector? = null
+
+
+@Suppress("CheckReturnValue")
+val appointmentIcon: ImageVector
+    get() {
+        if (_appointmentIcon != null) return _appointmentIcon!!
+        _appointmentIcon =
+            ImageVector.Builder(
+                name = "appointmentIcon",
+                defaultWidth = 22.dp,
+                defaultHeight = 22.dp,
+                viewportWidth = 22f,
+                viewportHeight = 22f,
+            ).apply {
+                path(
+                    fill = null,
+                    fillAlpha = 1f,
+                    stroke = SolidColor(Color.Black),
+                    strokeAlpha = 1f,
+                    strokeLineWidth = 1.7f,
+                    strokeLineCap = StrokeCap.Round,
+                    strokeLineJoin = StrokeJoin.Round,
+                    strokeLineMiter = 1f,
+                    pathFillType = PathFillType.NonZero,
+                ) {
+                    moveTo(17.4167f, 17.4167f)
+                    horizontalLineTo(19.25f)
+                    verticalLineTo(19.25f)
+                    horizontalLineTo(17.4167f)
+                    moveTo(17.4167f, 12.8333f)
+                    verticalLineTo(15.5833f)
+                    moveTo(12.8333f, 18.3333f)
+                    horizontalLineTo(15.5833f)
+                    moveTo(2.75f, 2.75f)
+                    horizontalLineTo(8.25f)
+                    verticalLineTo(8.25f)
+                    horizontalLineTo(2.75f)
+                    verticalLineTo(2.75f)
+                    close()
+                    moveTo(13.75f, 2.75f)
+                    horizontalLineTo(19.25f)
+                    verticalLineTo(8.25f)
+                    horizontalLineTo(13.75f)
+                    verticalLineTo(2.75f)
+                    close()
+                    moveTo(2.75f, 13.75f)
+                    horizontalLineTo(8.25f)
+                    verticalLineTo(19.25f)
+                    horizontalLineTo(2.75f)
+                    verticalLineTo(13.75f)
+                    close()
+                    moveTo(13.75f, 13.75f)
+                    horizontalLineTo(15.5833f)
+                    verticalLineTo(15.5833f)
+                    horizontalLineTo(13.75f)
+                    verticalLineTo(13.75f)
+                    close()
+                }
+            }.build()
+        return _appointmentIcon!!
+    }
+
+private var _appointmentIcon: ImageVector? = null
+
+
+@Suppress("CheckReturnValue")
+val sunIcon: ImageVector
+    get() {
+        if (_sunIcon != null) return _sunIcon!!
+        _sunIcon =
+            ImageVector.Builder(
+                name = "sunIcon",
+                defaultWidth = 22.dp,
+                defaultHeight = 22.dp,
+                viewportWidth = 22f,
+                viewportHeight = 22f,
+            ).apply {
+                path(
+                    fill = null,
+                    fillAlpha = 1f,
+                    stroke = SolidColor(Color.Black),
+                    strokeAlpha = 1f,
+                    strokeLineWidth = 1.7f,
+                    strokeLineCap = StrokeCap.Round,
+                    strokeLineJoin = StrokeJoin.Round,
+                    strokeLineMiter = 1f,
+                    pathFillType = PathFillType.NonZero,
+                ) {
+                    moveTo(10.9999f, 1.83398f)
+                    verticalLineTo(4.58398f)
+                    moveTo(10.9999f, 17.4173f)
+                    verticalLineTo(20.1673f)
+                    moveTo(1.83325f, 11.0007f)
+                    horizontalLineTo(4.58325f)
+                    moveTo(17.4166f, 11.0007f)
+                    horizontalLineTo(20.1666f)
+                    moveTo(4.58325f, 4.58398f)
+                    lineTo(6.41659f, 6.41732f)
+                    moveTo(15.5833f, 15.584f)
+                    lineTo(17.4166f, 17.4173f)
+                    moveTo(4.58325f, 17.4173f)
+                    lineTo(6.41659f, 15.584f)
+                    moveTo(15.5833f, 6.41732f)
+                    lineTo(17.4166f, 4.58398f)
+                    moveTo(10.9999f, 7.33398f)
+                    curveTo(10.0275f, 7.33398f, 9.09483f, 7.72029f, 8.40719f, 8.40793f)
+                    curveTo(7.71956f, 9.09556f, 7.33325f, 10.0282f, 7.33325f, 11.0007f)
+                    curveTo(7.33325f, 11.9731f, 7.71956f, 12.9057f, 8.40719f, 13.5934f)
+                    curveTo(9.09483f, 14.281f, 10.0275f, 14.6673f, 10.9999f, 14.6673f)
+                    curveTo(11.9724f, 14.6673f, 12.905f, 14.281f, 13.5926f, 13.5934f)
+                    curveTo(14.2803f, 12.9057f, 14.6666f, 11.9731f, 14.6666f, 11.0007f)
+                    curveTo(14.6666f, 10.0282f, 14.2803f, 9.09556f, 13.5926f, 8.40793f)
+                    curveTo(12.905f, 7.72029f, 11.9724f, 7.33398f, 10.9999f, 7.33398f)
+                    close()
+                }
+            }.build()
+        return _sunIcon!!
+    }
+
+private var _sunIcon: ImageVector? = null
