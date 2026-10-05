@@ -19,6 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +38,7 @@ import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleValue
 import pe.edu.upc.saludya.features.configuration.presentation.components.ConfigurationRuleCard
 import pe.edu.upc.saludya.features.configuration.presentation.components.SaludYaTopBar
 import pe.edu.upc.saludya.features.configuration.presentation.components.SectionTitle
+import pe.edu.upc.saludya.features.configuration.presentation.quickEditRule.QuickEditRuleDialog
 
 @Composable
 fun ConfigurationScreen(
@@ -45,6 +49,7 @@ fun ConfigurationScreen(
     onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var editingRuleId by remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         topBar = {
@@ -80,11 +85,26 @@ fun ConfigurationScreen(
                 is ConfigurationUiState.Success -> {
                     ConfigurationContent(
                         rules = state.rules,
-                        onEditRuleClick = onEditRuleClick,
+                        onEditRuleClick = { ruleId ->
+                            editingRuleId = ruleId
+                            onEditRuleClick(ruleId)
+                        },
                         onSeeMoreRulesClick = onSeeMoreRulesClick,
                     )
                 }
             }
+        }
+
+        val currentEditing = editingRuleId
+        if (currentEditing != null) {
+            QuickEditRuleDialog(
+                ruleId = currentEditing,
+                onDismiss = { editingRuleId = null },
+                onSaved = {
+                    editingRuleId = null
+                    viewModel.loadRules()
+                },
+            )
         }
     }
 }
