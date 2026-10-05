@@ -19,4 +19,5 @@ interface ConfigurationRepository {
         specialty: String,
         format: ExportFormat,
     ): ReportExport
+    suspend fun getAttentionInterval(): ConfigurationRule
 }
