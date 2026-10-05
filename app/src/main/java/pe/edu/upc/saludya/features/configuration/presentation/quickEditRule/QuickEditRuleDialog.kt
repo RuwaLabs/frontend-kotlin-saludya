@@ -57,7 +57,9 @@ fun QuickEditRuleDialog(
     val currentState = uiState
     if (currentState is QuickEditRuleUiState.ValidationError) {
         ValidationDialog(
+            title = "Revisa el valor",
             message = currentState.message,
+            buttonText = "Corregir valor",
             onCorrectClick = viewModel::dismissValidationError,
         )
         return
@@ -81,7 +83,6 @@ fun QuickEditRuleDialog(
         ) {
             when (val state = uiState) {
                 is QuickEditRuleUiState.Loading -> {
-                    // Cargando - pequeño placeholder
                     Spacer(modifier = Modifier.height(80.dp))
                 }
                 is QuickEditRuleUiState.Error -> {
@@ -95,7 +96,7 @@ fun QuickEditRuleDialog(
                     Spacer(modifier = Modifier.height(80.dp))
                 }
                 is QuickEditRuleUiState.ValidationError -> {
-                    // Nunca se renderiza aquí: se maneja arriba con el early return.
+                    // Manejado por early return
                     Spacer(modifier = Modifier.height(80.dp))
                 }
                 is QuickEditRuleUiState.Editing -> {

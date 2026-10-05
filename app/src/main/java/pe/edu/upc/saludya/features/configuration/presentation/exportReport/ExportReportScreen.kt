@@ -51,7 +51,7 @@ fun ExportReportScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // H11: diálogo "Reporte listo" cuando el reporte está preparado
+    // H11: diálogo "Reporte listo"
     val current = uiState
     if (current is ExportReportUiState.Ready) {
         ReportReadyDialog(
@@ -61,10 +61,12 @@ fun ExportReportScreen(
         return
     }
 
-    // H12: diálogo "Revisa el valor" cuando el rango es inválido
+    // H12: diálogo "Revisa las fechas"
     if (current is ExportReportUiState.InvalidRange) {
         ValidationDialog(
+            title = "Revisa las fechas",
             message = current.message,
+            buttonText = "Corregir fechas",
             onCorrectClick = viewModel::dismissInvalidRange,
         )
         return

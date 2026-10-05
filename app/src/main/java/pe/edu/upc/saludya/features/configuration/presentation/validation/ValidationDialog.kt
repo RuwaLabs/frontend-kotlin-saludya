@@ -23,10 +23,19 @@ import pe.edu.upc.saludya.features.configuration.presentation.components.Primary
 private val TitleColor = Color(0xFF181C1C)
 private val MessageColor = Color(0xFF56706D)
 
+/**
+ * Modal genérico para mostrar un mensaje de validación/error al usuario.
+ *
+ * Reutilizable en:
+ *  - H05 "Revisa el valor" (validación de coherencia de regla)
+ *  - H12 "Revisa las fechas" (rango de fechas inválido)
+ */
 @Composable
 fun ValidationDialog(
     message: String,
     onCorrectClick: () -> Unit,
+    title: String = "Revisa el valor",
+    buttonText: String = "Corregir valor",
 ) {
     Dialog(
         onDismissRequest = { /* No dismissable: el usuario debe corregir */ },
@@ -50,7 +59,7 @@ fun ValidationDialog(
                     .padding(horizontal = 20.dp, vertical = 24.dp),
             ) {
                 Text(
-                    text = "Revisa el valor",
+                    text = title,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = TitleColor,
@@ -69,7 +78,7 @@ fun ValidationDialog(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 PrimaryButton(
-                    text = "Corregir valor",
+                    text = buttonText,
                     onClick = onCorrectClick,
                 )
             }
@@ -77,13 +86,28 @@ fun ValidationDialog(
     }
 }
 
-@Preview(showBackground = true, name = "ValidationDialog")
+@Preview(showBackground = true, name = "ValidationDialog - H05")
 @Composable
-private fun ValidationDialogPreview() {
+private fun ValidationDialogH05Preview() {
     SaludYaTheme(dynamicColor = false) {
         Surface(color = Color(0x80000000)) {
             ValidationDialog(
                 message = "La capacidad debe ser mayor que cero. La tolerancia de llegada no puede superar la duración del intervalo. Revisa los campos antes de guardar.",
+                onCorrectClick = {},
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "ValidationDialog - H12")
+@Composable
+private fun ValidationDialogH12Preview() {
+    SaludYaTheme(dynamicColor = false) {
+        Surface(color = Color(0x80000000)) {
+            ValidationDialog(
+                title = "Revisa las fechas",
+                message = "La fecha inicial no puede ser posterior a la fecha final.",
+                buttonText = "Corregir fechas",
                 onCorrectClick = {},
             )
         }
