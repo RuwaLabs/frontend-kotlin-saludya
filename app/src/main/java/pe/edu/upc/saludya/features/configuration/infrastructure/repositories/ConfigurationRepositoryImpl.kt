@@ -13,7 +13,10 @@ import javax.inject.Inject
 
 class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepository {
 
+    // Store único y mutable para todas las reglas del establecimiento.
+    // Incluye reglas básicas, adicionales e intervalo de atención.
     private val rules = mutableListOf(
+        // --- Reglas básicas (H01) ---
         ConfigurationRule(
             id = "capacity_per_block",
             type = RuleType.CAPACITY,
@@ -38,9 +41,8 @@ class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepositor
             title = "Respuesta a resignación",
             value = RuleValue(value = "5", unit = "minutos"),
         ),
-    )
 
-    private val additionalRules = mutableListOf(
+        // --- Reglas adicionales (H02) ---
         ConfigurationRule(
             id = "reservation_limit",
             type = RuleType.RESERVATION_LIMIT,
@@ -65,31 +67,45 @@ class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepositor
             title = "Posición de cola visible",
             value = RuleValue(value = "Sí", unit = ""),
         ),
+
+        // --- Intervalos de atención (H13) ---
+        ConfigurationRule(
+            id = "attention_interval",
+            type = RuleType.ATTENTION_INTERVAL,
+            title = "Duración de cada intervalo",
+            value = RuleValue(value = "30", unit = "minutos"),
+        ),
     )
 
-    override suspend fun getRules(): List<ConfigurationRule> = rules.toList()
+    override suspend fun getRules(): List<ConfigurationRule> =
+        rules.filter { rule ->
+            rule.type in listOf(
+                RuleType.CAPACITY,
+                RuleType.ARRIVAL_TOLERANCE,
+                RuleType.CALL_DEADLINE,
+                RuleType.RESIGNATION_RESPONSE,
+            )
+        }
 
-    override suspend fun getAdditionalRules(): List<ConfigurationRule> = additionalRules.toList()
+    override suspend fun getAdditionalRules(): List<ConfigurationRule> =
+        rules.filter { rule ->
+            rule.type in listOf(
+                RuleType.RESERVATION_LIMIT,
+                RuleType.CANCELLATION_ANTICIPATION,
+                RuleType.RESIGNATION_PRIORITY,
+                RuleType.QUEUE_VISIBILITY,
+            )
+        }
 
     override suspend fun getRuleById(id: String): ConfigurationRule? =
-        (rules + additionalRules).firstOrNull { it.id == id }
+        rules.firstOrNull { it.id == id }
 
     override suspend fun updateRule(id: String, newValue: String): Boolean {
-        val all = rules + additionalRules
-        val current = all.firstOrNull { it.id == id } ?: return false
-        val updated = current.copy(value = current.value.copy(value = newValue))
-
-        val idxMain = rules.indexOfFirst { it.id == id }
-        if (idxMain >= 0) {
-            rules[idxMain] = updated
-            return true
-        }
-        val idxAdd = additionalRules.indexOfFirst { it.id == id }
-        if (idxAdd >= 0) {
-            additionalRules[idxAdd] = updated
-            return true
-        }
-        return false
+        val index = rules.indexOfFirst { it.id == id }
+        if (index < 0) return false
+        val current = rules[index]
+        rules[index] = current.copy(value = current.value.copy(value = newValue))
+        return true
     }
 
     override suspend fun getDailyIndicators(): DailyIndicators = DailyIndicators(
@@ -132,4 +148,7 @@ class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepositor
             fileName = fileName,
         )
     }
+
+    override suspend fun getAttentionInterval(): ConfigurationRule =
+        rules.first { it.type == RuleType.ATTENTION_INTERVAL }
 }
