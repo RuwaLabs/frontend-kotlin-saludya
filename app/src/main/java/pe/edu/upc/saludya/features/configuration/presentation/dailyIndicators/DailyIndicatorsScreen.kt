@@ -50,7 +50,10 @@ fun DailyIndicatorsScreen(
     Scaffold(
         topBar = {
             SaludYaTopBar(
-                title = "Indicadores del día",
+                title = if (uiState is DailyIndicatorsUiState.Success &&
+                    (uiState as DailyIndicatorsUiState.Success).indicators.hasNoActivity()
+                ) "Indicadores"
+                else "Indicadores del día",
                 onBackClick = onBackClick,
             )
         },
@@ -90,12 +93,17 @@ fun DailyIndicatorsScreen(
     }
 }
 
+private fun DailyIndicators.hasNoActivity(): Boolean =
+    programmed == 0 && pending == 0 && cancelled == 0 && noShow == 0
+
 @Composable
 private fun DailyIndicatorsContent(
     indicators: DailyIndicators,
     onDemandClick: () -> Unit,
     onExportClick: () -> Unit,
 ) {
+    val hasNoActivity = indicators.hasNoActivity()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -105,7 +113,10 @@ private fun DailyIndicatorsContent(
 
         // Subtítulo gris
         Text(
-            text = "${indicators.dateLabel} · ${indicators.centerName}",
+            text = if (hasNoActivity)
+                "Sin actividad · ${indicators.dateLabel}"
+            else
+                "${indicators.dateLabel} · ${indicators.centerName}",
             modifier = Modifier.padding(horizontal = 20.dp),
             fontSize = 15.sp,
             fontWeight = FontWeight.Normal,
@@ -114,7 +125,7 @@ private fun DailyIndicatorsContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Grid 2x2 - Fila 1: Programadas + Pendientes
+        // Grid 2x2 - Fila 1
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -131,7 +142,7 @@ private fun DailyIndicatorsContent(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Grid 2x2 - Fila 2: Canceladas + Inasistencias
+        // Grid 2x2 - Fila 2
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -148,18 +159,30 @@ private fun DailyIndicatorsContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Card resumen de atención
-        Box(modifier = Modifier.padding(horizontal = 20.dp)) {
-            AttentionSummaryCard(
-                title = "Resumen de atención",
-                detailsLine = "${indicators.attendedAppointments} citas atendidas · ${indicators.recoveredSlots} cupos recuperados",
-                updatedLine = indicators.lastUpdatedLabel,
+        // Card resumen SOLO si hay actividad
+        if (!hasNoActivity) {
+            Box(modifier = Modifier.padding(horizontal = 20.dp)) {
+                AttentionSummaryCard(
+                    title = "Resumen de atención",
+                    detailsLine = "${indicators.attendedAppointments} citas atendidas · ${indicators.recoveredSlots} cupos recuperados",
+                    updatedLine = indicators.lastUpdatedLabel,
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+        } else {
+            // Nota gris cuando NO hay actividad
+            Text(
+                text = "No se registraron citas ni incidencias en esta fecha.",
+                modifier = Modifier.padding(horizontal = 20.dp),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Normal,
+                color = SubtitleColor,
+                lineHeight = 22.sp,
             )
+            Spacer(modifier = Modifier.height(20.dp))
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Botones SIN padding externo (el componente ya tiene 20dp interno)
+        // Botones (siempre)
         PrimaryButton(
             text = "Ver demanda por especialidad",
             onClick = onDemandClick,
@@ -176,9 +199,9 @@ private fun DailyIndicatorsContent(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "DailyIndicatorsScreen")
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "H06 - Con actividad")
 @Composable
-private fun DailyIndicatorsScreenPreview() {
+private fun DailyIndicatorsWithActivityPreview() {
     SaludYaTheme(dynamicColor = false) {
         DailyIndicatorsContent(
             indicators = DailyIndicators(
@@ -191,6 +214,28 @@ private fun DailyIndicatorsScreenPreview() {
                 attendedAppointments = 36,
                 recoveredSlots = 6,
                 lastUpdatedLabel = "Actualizado a las 16:30",
+            ),
+            onDemandClick = {},
+            onExportClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "H09 - Sin actividad")
+@Composable
+private fun DailyIndicatorsNoActivityPreview() {
+    SaludYaTheme(dynamicColor = false) {
+        DailyIndicatorsContent(
+            indicators = DailyIndicators(
+                dateLabel = "1 oct 2026",
+                centerName = "Centro de Salud",
+                programmed = 0,
+                pending = 0,
+                cancelled = 0,
+                noShow = 0,
+                attendedAppointments = 0,
+                recoveredSlots = 0,
+                lastUpdatedLabel = "",
             ),
             onDemandClick = {},
             onExportClick = {},
