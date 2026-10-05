@@ -9,6 +9,11 @@ sealed interface EditRuleUiState {
         val inputValue: String = rule.value.value,
         val isSaving: Boolean = false,
     ) : EditRuleUiState
+    data class ValidationError(
+        val rule: ConfigurationRule,
+        val inputValue: String,
+        val message: String,
+    ) : EditRuleUiState
     data class Saved(val ruleId: String) : EditRuleUiState
     data class Error(val message: String) : EditRuleUiState
 }

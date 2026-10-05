@@ -8,13 +8,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pe.edu.upc.saludya.features.configuration.application.usecase.UpdateRuleUseCase
+import pe.edu.upc.saludya.features.configuration.application.usecase.ValidateRuleCoherenceUseCase
 import pe.edu.upc.saludya.features.configuration.domain.repository.ConfigurationRepository
+import pe.edu.upc.saludya.features.configuration.presentation.validation.ValidationResult
 import javax.inject.Inject
 
 @HiltViewModel
 class EditRuleViewModel @Inject constructor(
     private val repository: ConfigurationRepository,
     private val updateRuleUseCase: UpdateRuleUseCase,
+    private val validateRuleCoherenceUseCase: ValidateRuleCoherenceUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<EditRuleUiState>(EditRuleUiState.Loading)
@@ -48,14 +51,22 @@ class EditRuleViewModel @Inject constructor(
         val current = _uiState.value
         if (current !is EditRuleUiState.Success) return
 
-        val value = current.inputValue.trim()
-        if (value.isEmpty() || value.toIntOrNull()?.let { it > 0 } != true) {
-            _uiState.value = EditRuleUiState.Error("La capacidad debe ser mayor que cero.")
-            return
-        }
-
         viewModelScope.launch {
             _uiState.value = current.copy(isSaving = true)
+
+            // 1) Validar coherencia (H05)
+            val validation = validateRuleCoherenceUseCase(current.rule.id, current.inputValue)
+            if (validation is ValidationResult.Invalid) {
+                _uiState.value = EditRuleUiState.ValidationError(
+                    rule = current.rule,
+                    inputValue = current.inputValue,
+                    message = validation.message,
+                )
+                return@launch
+            }
+
+            // 2) Actualizar
+            val value = current.inputValue.trim()
             runCatching { updateRuleUseCase(current.rule.id, value) }
                 .onSuccess { ok ->
                     _uiState.value = if (ok) EditRuleUiState.Saved(current.rule.id)
@@ -64,6 +75,16 @@ class EditRuleViewModel @Inject constructor(
                 .onFailure {
                     _uiState.value = EditRuleUiState.Error(it.message ?: "Error")
                 }
+        }
+    }
+
+    fun dismissValidationError() {
+        val current = _uiState.value
+        if (current is EditRuleUiState.ValidationError) {
+            _uiState.value = EditRuleUiState.Success(
+                rule = current.rule,
+                inputValue = current.inputValue,
+            )
         }
     }
 }

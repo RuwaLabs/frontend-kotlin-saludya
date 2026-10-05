@@ -9,12 +9,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pe.edu.upc.saludya.features.configuration.application.usecase.GetAttentionIntervalUseCase
 import pe.edu.upc.saludya.features.configuration.application.usecase.UpdateRuleUseCase
+import pe.edu.upc.saludya.features.configuration.domain.repository.ConfigurationRepository
+import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleType
 import javax.inject.Inject
 
 @HiltViewModel
 class AttentionIntervalsViewModel @Inject constructor(
     private val getAttentionIntervalUseCase: GetAttentionIntervalUseCase,
     private val updateRuleUseCase: UpdateRuleUseCase,
+    private val repository: ConfigurationRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AttentionIntervalsUiState>(AttentionIntervalsUiState.Loading)
@@ -52,23 +55,28 @@ class AttentionIntervalsViewModel @Inject constructor(
 
         val value = current.inputValue.trim()
 
-        // Validación: número mayor que cero
         val numeric = value.toIntOrNull()
         if (numeric == null || numeric <= 0) {
             _uiState.value = AttentionIntervalsUiState.Error("La duración debe ser mayor que cero.")
             return
         }
 
-        // Coherencia con la tolerancia de llegada (10 min en H01)
-        if (numeric < 10) {
-            _uiState.value = AttentionIntervalsUiState.Error(
-                "La duración del intervalo debe ser mayor o igual a la tolerancia de llegada (10 minutos).",
-            )
-            return
-        }
-
         viewModelScope.launch {
             _uiState.value = current.copy(isSaving = true)
+
+            val allRules = repository.getRules()
+            val tolerance = allRules
+                .firstOrNull { it.type == RuleType.ARRIVAL_TOLERANCE }
+                ?.value?.value?.toIntOrNull()
+                ?: 0
+
+            if (numeric < tolerance) {
+                _uiState.value = AttentionIntervalsUiState.Error(
+                    "La duración del intervalo debe ser mayor o igual a la tolerancia de llegada ($tolerance minutos).",
+                )
+                return@launch
+            }
+
             runCatching { updateRuleUseCase("attention_interval", value) }
                 .onSuccess { ok ->
                     _uiState.value = if (ok) AttentionIntervalsUiState.Saved(value)

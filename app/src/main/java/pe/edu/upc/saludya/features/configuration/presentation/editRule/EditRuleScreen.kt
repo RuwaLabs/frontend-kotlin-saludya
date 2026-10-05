@@ -33,6 +33,7 @@ import pe.edu.upc.saludya.features.configuration.presentation.components.Primary
 import pe.edu.upc.saludya.features.configuration.presentation.components.RuleUpdatedDialog
 import pe.edu.upc.saludya.features.configuration.presentation.components.RuleValueField
 import pe.edu.upc.saludya.features.configuration.presentation.components.SaludYaTopBar
+import pe.edu.upc.saludya.features.configuration.presentation.validation.ValidationDialog
 
 private val TitleColor = Color(0xFF181C1C)
 private val LabelColor = Color(0xFF56706D)
@@ -65,8 +66,16 @@ fun EditRuleScreen(
             )
         }
 
+        is EditRuleUiState.ValidationError -> {
+            ValidationDialog(
+                title = "Revisa el valor",
+                message = state.message,
+                buttonText = "Corregir valor",
+                onCorrectClick = viewModel::dismissValidationError,
+            )
+        }
+
         is EditRuleUiState.Saved -> {
-            // H10: modal de éxito tras guardar.
             RuleUpdatedDialog(
                 message = "Se guardó la nueva capacidad. Las reservas confirmadas se conservan.",
                 onBackToConfigurationClick = onSaved,

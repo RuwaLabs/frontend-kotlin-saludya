@@ -43,8 +43,7 @@ import pe.edu.upc.saludya.features.configuration.presentation.quickEditRule.Quic
 @Composable
 fun ConfigurationScreen(
     viewModel: ConfigurationViewModel = hiltViewModel(),
-    onBackClick: () -> Unit = {},
-    onEditRuleClick: (String) -> Unit = {},
+    onBackClick: (() -> Unit)? = null,
     onSeeMoreRulesClick: () -> Unit = {},
     onBottomNavSelected: (Int) -> Unit = {},
 ) {
@@ -85,10 +84,7 @@ fun ConfigurationScreen(
                 is ConfigurationUiState.Success -> {
                     ConfigurationContent(
                         rules = state.rules,
-                        onEditRuleClick = { ruleId ->
-                            editingRuleId = ruleId
-                            onEditRuleClick(ruleId)
-                        },
+                        onEditRuleClick = { ruleId -> editingRuleId = ruleId },
                         onSeeMoreRulesClick = onSeeMoreRulesClick,
                     )
                 }
