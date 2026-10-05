@@ -1,6 +1,7 @@
 package pe.edu.upc.saludya.features.configuration.infrastructure.repositories
 
 import pe.edu.upc.saludya.features.configuration.domain.entity.ConfigurationRule
+import pe.edu.upc.saludya.features.configuration.domain.entity.DailyIndicators
 import pe.edu.upc.saludya.features.configuration.domain.repository.ConfigurationRepository
 import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleType
 import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleValue
@@ -8,7 +9,6 @@ import javax.inject.Inject
 
 class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepository {
 
-    // In-memory store (mock). Se pierde al cerrar la app.
     private val rules = mutableListOf(
         ConfigurationRule(
             id = "capacity_per_block",
@@ -87,4 +87,16 @@ class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepositor
         }
         return false
     }
+
+    override suspend fun getDailyIndicators(): DailyIndicators = DailyIndicators(
+        dateLabel = "Mar 6 oct 2026",
+        centerName = "Centro de Salud",
+        programmed = 48,
+        pending = 6,
+        cancelled = 2,
+        noShow = 4,
+        attendedAppointments = 36,
+        recoveredSlots = 6,
+        lastUpdatedLabel = "Actualizado a las 16:30",
+    )
 }
