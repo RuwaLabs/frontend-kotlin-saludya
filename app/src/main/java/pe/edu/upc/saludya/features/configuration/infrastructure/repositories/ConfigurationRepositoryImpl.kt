@@ -34,4 +34,31 @@ class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepositor
             value = RuleValue(value = "5", unit = "minutos"),
         ),
     )
+
+    override suspend fun getAdditionalRules(): List<ConfigurationRule> = listOf(
+        ConfigurationRule(
+            id = "reservation_limit",
+            type = RuleType.RESERVATION_LIMIT,
+            title = "Hora límite para reservar",
+            value = RuleValue(value = "18:00", unit = ""),
+        ),
+        ConfigurationRule(
+            id = "cancellation_anticipation",
+            type = RuleType.CANCELLATION_ANTICIPATION,
+            title = "Anticipación para cancelar",
+            value = RuleValue(value = "24", unit = "horas"),
+        ),
+        ConfigurationRule(
+            id = "resignation_priority",
+            type = RuleType.RESIGNATION_PRIORITY,
+            title = "Prioridad de resignación",
+            value = RuleValue(value = "Por especialidad", unit = ""),
+        ),
+        ConfigurationRule(
+            id = "queue_visibility",
+            type = RuleType.QUEUE_VISIBILITY,
+            title = "Posición de cola visible",
+            value = RuleValue(value = "Sí", unit = ""),
+        ),
+    )
 }

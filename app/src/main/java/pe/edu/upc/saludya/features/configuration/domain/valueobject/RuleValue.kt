@@ -5,5 +5,5 @@ data class RuleValue(
     val unit: String,
 ) {
     val formatted: String
-        get() = "$value $unit"
+        get() = if (unit.isBlank()) value else "$value $unit"
 }
