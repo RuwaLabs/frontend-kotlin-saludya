@@ -1,9 +1,12 @@
 package pe.edu.upc.saludya.features.configuration.presentation.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +14,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -22,13 +26,22 @@ import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 
 private val FieldBorderColor = Color(0xFFE0E5E4)
 private val FieldTextColor = Color(0xFF181C1C)
+private val SuffixColor = Color(0xFF56706D)
 
+/**
+ * Campo de texto reutilizable para editar el valor de una regla.
+ *
+ * @param value Valor actual (solo el número, sin unidad)
+ * @param onValueChange Callback cuando el usuario edita
+ * @param suffix Texto opcional que se muestra a la derecha (ej. "minutos"). NO forma parte del valor.
+ */
 @Composable
 fun RuleValueField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: String = "",
+    suffix: String? = null,
     keyboardType: KeyboardType = KeyboardType.Number,
 ) {
     OutlinedTextField(
@@ -45,6 +58,17 @@ fun RuleValueField(
                 color = Color(0xFF9AA5A4),
             )
         },
+        trailingIcon = if (suffix != null) {
+            {
+                Text(
+                    text = suffix,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = SuffixColor,
+                    modifier = Modifier.padding(end = 16.dp),
+                )
+            }
+        } else null,
         textStyle = MaterialTheme.typography.bodyLarge.copy(
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
@@ -63,13 +87,25 @@ fun RuleValueField(
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "RuleValueField")
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "RuleValueField - sin sufijo")
 @Composable
-private fun RuleValueFieldPreview() {
+private fun RuleValueFieldNoSuffixPreview() {
     SaludYaTheme(dynamicColor = false) {
         RuleValueField(
             value = "8",
             onValueChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "RuleValueField - con sufijo")
+@Composable
+private fun RuleValueFieldWithSuffixPreview() {
+    SaludYaTheme(dynamicColor = false) {
+        RuleValueField(
+            value = "30",
+            onValueChange = {},
+            suffix = "minutos",
         )
     }
 }
