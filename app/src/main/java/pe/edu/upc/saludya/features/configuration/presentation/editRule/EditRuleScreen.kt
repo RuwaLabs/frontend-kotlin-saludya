@@ -27,12 +27,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
-import pe.edu.upc.saludya.features.configuration.domain.entity.ConfigurationRule
-import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleType
-import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleValue
 import pe.edu.upc.saludya.features.configuration.presentation.components.InfoNote
 import pe.edu.upc.saludya.features.configuration.presentation.components.OutlineActionButton
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
+import pe.edu.upc.saludya.features.configuration.presentation.components.RuleUpdatedDialog
 import pe.edu.upc.saludya.features.configuration.presentation.components.RuleValueField
 import pe.edu.upc.saludya.features.configuration.presentation.components.SaludYaTopBar
 
@@ -54,12 +52,136 @@ fun EditRuleScreen(
         viewModel.loadRule(ruleId)
     }
 
-    LaunchedEffect(uiState) {
-        if (uiState is EditRuleUiState.Saved) {
-            onSaved()
+    when (val state = uiState) {
+        is EditRuleUiState.Loading -> {
+            LoadingScreen(onBackClick = onBackClick, onBottomNavSelected = onBottomNavSelected)
+        }
+
+        is EditRuleUiState.Error -> {
+            ErrorScreen(
+                message = state.message,
+                onBackClick = onBackClick,
+                onBottomNavSelected = onBottomNavSelected,
+            )
+        }
+
+        is EditRuleUiState.Saved -> {
+            // H10: modal de éxito tras guardar.
+            RuleUpdatedDialog(
+                message = "Se guardó la nueva capacidad. Las reservas confirmadas se conservan.",
+                onBackToConfigurationClick = onSaved,
+            )
+        }
+
+        is EditRuleUiState.Success -> {
+            EditRuleScaffold(
+                ruleTitle = state.rule.title,
+                inputValue = state.inputValue,
+                isSaving = state.isSaving,
+                onValueChange = viewModel::onValueChange,
+                onSave = viewModel::saveRule,
+                onCancel = onCancelClick,
+                onBackClick = onBackClick,
+                onBottomNavSelected = onBottomNavSelected,
+            )
         }
     }
+}
 
+@Composable
+private fun EditRuleScaffold(
+    ruleTitle: String,
+    inputValue: String,
+    isSaving: Boolean,
+    onValueChange: (String) -> Unit,
+    onSave: () -> Unit,
+    onCancel: () -> Unit,
+    onBackClick: () -> Unit,
+    onBottomNavSelected: (Int) -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            SaludYaTopBar(
+                title = "Editar capacidad",
+                onBackClick = onBackClick,
+            )
+        },
+        bottomBar = {
+            BottomNavigationBar(
+                selectedIndex = 3,
+                onItemSelected = onBottomNavSelected,
+            )
+        },
+        containerColor = Color.White,
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState()),
+        ) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = ruleTitle,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                color = TitleColor,
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = "Número de pacientes",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Normal,
+                color = LabelColor,
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            RuleValueField(
+                value = inputValue,
+                onValueChange = onValueChange,
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            InfoNote(
+                text = "Debe ser un número mayor que cero. Los cambios se aplican según la configuración operativa y no eliminan reservas confirmadas.",
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            PrimaryButton(
+                text = if (isSaving) "Guardando..." else "Guardar cambios",
+                onClick = onSave,
+                enabled = !isSaving,
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlineActionButton(
+                text = "Cancelar",
+                onClick = onCancel,
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+private fun LoadingScreen(
+    onBackClick: () -> Unit,
+    onBottomNavSelected: (Int) -> Unit,
+) {
     Scaffold(
         topBar = {
             SaludYaTopBar(
@@ -79,103 +201,45 @@ fun EditRuleScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
+            contentAlignment = Alignment.Center,
         ) {
-            when (val state = uiState) {
-                is EditRuleUiState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                is EditRuleUiState.Error -> {
-                    Text(
-                        text = state.message,
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-                is EditRuleUiState.Saved -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                is EditRuleUiState.Success -> {
-                    EditRuleContent(
-                        ruleTitle = state.rule.title,
-                        inputValue = state.inputValue,
-                        onValueChange = viewModel::onValueChange,
-                        onSave = viewModel::saveRule,
-                        onCancel = onCancelClick,
-                        isSaving = state.isSaving,
-                    )
-                }
-            }
+            CircularProgressIndicator()
         }
     }
 }
 
 @Composable
-private fun EditRuleContent(
-    ruleTitle: String,
-    inputValue: String,
-    onValueChange: (String) -> Unit,
-    onSave: () -> Unit,
-    onCancel: () -> Unit,
-    isSaving: Boolean,
+private fun ErrorScreen(
+    message: String,
+    onBackClick: () -> Unit,
+    onBottomNavSelected: (Int) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-    ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = ruleTitle,
+    Scaffold(
+        topBar = {
+            SaludYaTopBar(
+                title = "Editar capacidad",
+                onBackClick = onBackClick,
+            )
+        },
+        bottomBar = {
+            BottomNavigationBar(
+                selectedIndex = 3,
+                onItemSelected = onBottomNavSelected,
+            )
+        },
+        containerColor = Color.White,
+    ) { innerPadding ->
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            fontSize = 22.sp,
-            fontWeight = FontWeight.Bold,
-            color = TitleColor,
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(
-            text = "Número de pacientes",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
-            color = LabelColor,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        RuleValueField(
-            value = inputValue,
-            onValueChange = onValueChange,
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        InfoNote(
-            text = "Debe ser un número mayor que cero. Los cambios se aplican según la configuración operativa y no eliminan reservas confirmadas.",
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        PrimaryButton(
-            text = if (isSaving) "Guardando..." else "Guardar cambios",
-            onClick = onSave,
-            enabled = !isSaving,
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlineActionButton(
-            text = "Cancelar",
-            onClick = onCancel,
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
     }
 }
 
@@ -183,13 +247,15 @@ private fun EditRuleContent(
 @Composable
 private fun EditRuleScreenPreview() {
     SaludYaTheme(dynamicColor = false) {
-        EditRuleContent(
+        EditRuleScaffold(
             ruleTitle = "Capacidad máxima por bloque",
             inputValue = "8",
+            isSaving = false,
             onValueChange = {},
             onSave = {},
             onCancel = {},
-            isSaving = false,
+            onBackClick = {},
+            onBottomNavSelected = {},
         )
     }
 }

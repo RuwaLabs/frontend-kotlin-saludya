@@ -26,6 +26,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.presentation.components.OutlineActionButton
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
+import pe.edu.upc.saludya.features.configuration.presentation.components.RuleUpdatedDialog
 import pe.edu.upc.saludya.features.configuration.presentation.components.RuleValueField
 import pe.edu.upc.saludya.features.configuration.presentation.validation.ValidationDialog
 
@@ -47,24 +48,98 @@ fun QuickEditRuleDialog(
         viewModel.loadRule(ruleId)
     }
 
-    LaunchedEffect(uiState) {
-        if (uiState is QuickEditRuleUiState.Saved) {
-            onSaved()
+    when (val state = uiState) {
+        is QuickEditRuleUiState.Loading -> {
+            // No hay diálogo visible durante la carga
+        }
+
+        is QuickEditRuleUiState.Error -> {
+            ErrorDialog(message = state.message, onDismiss = onDismiss)
+        }
+
+        is QuickEditRuleUiState.Saved -> {
+            RuleUpdatedDialog(
+                message = "Se guardó la nueva capacidad. Las reservas confirmadas se conservan.",
+                onBackToConfigurationClick = onSaved,
+            )
+        }
+
+        is QuickEditRuleUiState.ValidationError -> {
+            ValidationDialog(
+                title = "Revisa el valor",
+                message = state.message,
+                buttonText = "Corregir valor",
+                onCorrectClick = viewModel::dismissValidationError,
+            )
+        }
+
+        is QuickEditRuleUiState.Editing -> {
+            QuickEditDialog(
+                ruleTitle = state.rule.title,
+                currentValue = state.rule.value.formatted,
+                inputValue = state.inputValue,
+                validationError = state.validationError,
+                isSaving = state.isSaving,
+                onValueChange = viewModel::onValueChange,
+                onSave = viewModel::saveRule,
+                onCancel = onDismiss,
+            )
         }
     }
+}
 
-    // H05: modal de validación superpuesto al H04
-    val currentState = uiState
-    if (currentState is QuickEditRuleUiState.ValidationError) {
-        ValidationDialog(
-            title = "Revisa el valor",
-            message = currentState.message,
-            buttonText = "Corregir valor",
-            onCorrectClick = viewModel::dismissValidationError,
-        )
-        return
+/**
+ * Diálogo base con la Surface blanca que envuelve el contenido.
+ */
+@Composable
+private fun QuickEditDialog(
+    ruleTitle: String,
+    currentValue: String,
+    inputValue: String,
+    validationError: String?,
+    isSaving: Boolean,
+    onValueChange: (String) -> Unit,
+    onSave: () -> Unit,
+    onCancel: () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onCancel,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false,
+        ),
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
+            shape = RoundedCornerShape(20.dp),
+            color = Color.White,
+            tonalElevation = 0.dp,
+        ) {
+            QuickEditContent(
+                ruleTitle = ruleTitle,
+                currentValue = currentValue,
+                inputValue = inputValue,
+                validationError = validationError,
+                isSaving = isSaving,
+                onValueChange = onValueChange,
+                onSave = onSave,
+                onCancel = onCancel,
+            )
+        }
     }
+}
 
+/**
+ * Diálogo genérico de error (regla no encontrada, etc.).
+ */
+@Composable
+private fun ErrorDialog(
+    message: String,
+    onDismiss: () -> Unit,
+) {
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -81,36 +156,13 @@ fun QuickEditRuleDialog(
             color = Color.White,
             tonalElevation = 0.dp,
         ) {
-            when (val state = uiState) {
-                is QuickEditRuleUiState.Loading -> {
-                    Spacer(modifier = Modifier.height(80.dp))
-                }
-                is QuickEditRuleUiState.Error -> {
-                    Text(
-                        text = state.message,
-                        modifier = Modifier.padding(24.dp),
-                        color = ErrorColor,
-                    )
-                }
-                is QuickEditRuleUiState.Saved -> {
-                    Spacer(modifier = Modifier.height(80.dp))
-                }
-                is QuickEditRuleUiState.ValidationError -> {
-                    // Manejado por early return
-                    Spacer(modifier = Modifier.height(80.dp))
-                }
-                is QuickEditRuleUiState.Editing -> {
-                    QuickEditContent(
-                        ruleTitle = state.rule.title,
-                        currentValue = state.rule.value.formatted,
-                        inputValue = state.inputValue,
-                        validationError = state.validationError,
-                        isSaving = state.isSaving,
-                        onValueChange = viewModel::onValueChange,
-                        onSave = viewModel::saveRule,
-                        onCancel = onDismiss,
-                    )
-                }
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text(
+                    text = message,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = ErrorColor,
+                )
             }
         }
     }
