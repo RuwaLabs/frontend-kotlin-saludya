@@ -2,9 +2,11 @@ package pe.edu.upc.saludya.features.configuration.infrastructure.repositories
 
 import pe.edu.upc.saludya.features.configuration.domain.entity.ConfigurationRule
 import pe.edu.upc.saludya.features.configuration.domain.entity.DailyIndicators
+import pe.edu.upc.saludya.features.configuration.domain.entity.ReportExport
 import pe.edu.upc.saludya.features.configuration.domain.entity.SpecialtyDemand
 import pe.edu.upc.saludya.features.configuration.domain.entity.SpecialtyDemandItem
 import pe.edu.upc.saludya.features.configuration.domain.repository.ConfigurationRepository
+import pe.edu.upc.saludya.features.configuration.domain.valueobject.ExportFormat
 import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleType
 import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleValue
 import javax.inject.Inject
@@ -112,4 +114,22 @@ class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepositor
             SpecialtyDemandItem(specialtyName = "Dermatología", reservations = 4),
         ),
     )
+
+    override suspend fun exportReport(
+        fromDate: String,
+        toDate: String,
+        specialty: String,
+        format: ExportFormat,
+    ): ReportExport {
+        val ext = if (format == ExportFormat.PDF) "pdf" else "csv"
+        val fileName = "reporte_${fromDate.replace("/", "")}_${toDate.replace("/", "")}.$ext"
+        return ReportExport(
+            fromDate = fromDate,
+            toDate = toDate,
+            specialty = specialty,
+            format = format,
+            filePath = "/storage/emulated/0/Downloads/$fileName",
+            fileName = fileName,
+        )
+    }
 }
