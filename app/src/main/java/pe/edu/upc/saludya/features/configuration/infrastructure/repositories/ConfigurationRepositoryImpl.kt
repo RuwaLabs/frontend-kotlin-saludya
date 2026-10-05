@@ -8,7 +8,8 @@ import javax.inject.Inject
 
 class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepository {
 
-    override suspend fun getRules(): List<ConfigurationRule> = listOf(
+    // In-memory store (mock). Se pierde al cerrar la app.
+    private val rules = mutableListOf(
         ConfigurationRule(
             id = "capacity_per_block",
             type = RuleType.CAPACITY,
@@ -35,7 +36,7 @@ class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepositor
         ),
     )
 
-    override suspend fun getAdditionalRules(): List<ConfigurationRule> = listOf(
+    private val additionalRules = mutableListOf(
         ConfigurationRule(
             id = "reservation_limit",
             type = RuleType.RESERVATION_LIMIT,
@@ -61,4 +62,29 @@ class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepositor
             value = RuleValue(value = "Sí", unit = ""),
         ),
     )
+
+    override suspend fun getRules(): List<ConfigurationRule> = rules.toList()
+
+    override suspend fun getAdditionalRules(): List<ConfigurationRule> = additionalRules.toList()
+
+    override suspend fun getRuleById(id: String): ConfigurationRule? =
+        (rules + additionalRules).firstOrNull { it.id == id }
+
+    override suspend fun updateRule(id: String, newValue: String): Boolean {
+        val all = rules + additionalRules
+        val current = all.firstOrNull { it.id == id } ?: return false
+        val updated = current.copy(value = current.value.copy(value = newValue))
+
+        val idxMain = rules.indexOfFirst { it.id == id }
+        if (idxMain >= 0) {
+            rules[idxMain] = updated
+            return true
+        }
+        val idxAdd = additionalRules.indexOfFirst { it.id == id }
+        if (idxAdd >= 0) {
+            additionalRules[idxAdd] = updated
+            return true
+        }
+        return false
+    }
 }
