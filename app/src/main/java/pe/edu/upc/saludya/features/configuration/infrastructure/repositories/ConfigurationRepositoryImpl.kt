@@ -2,6 +2,8 @@ package pe.edu.upc.saludya.features.configuration.infrastructure.repositories
 
 import pe.edu.upc.saludya.features.configuration.domain.entity.ConfigurationRule
 import pe.edu.upc.saludya.features.configuration.domain.entity.DailyIndicators
+import pe.edu.upc.saludya.features.configuration.domain.entity.SpecialtyDemand
+import pe.edu.upc.saludya.features.configuration.domain.entity.SpecialtyDemandItem
 import pe.edu.upc.saludya.features.configuration.domain.repository.ConfigurationRepository
 import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleType
 import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleValue
@@ -98,5 +100,16 @@ class ConfigurationRepositoryImpl @Inject constructor() : ConfigurationRepositor
         attendedAppointments = 36,
         recoveredSlots = 6,
         lastUpdatedLabel = "Actualizado a las 16:30",
+    )
+
+    override suspend fun getSpecialtyDemand(): SpecialtyDemand = SpecialtyDemand(
+        dateLabel = "6 oct 2026",
+        totalReservations = 48,
+        items = listOf(
+            SpecialtyDemandItem(specialtyName = "Medicina general", reservations = 24),
+            SpecialtyDemandItem(specialtyName = "Pediatría", reservations = 12),
+            SpecialtyDemandItem(specialtyName = "Odontología", reservations = 8),
+            SpecialtyDemandItem(specialtyName = "Dermatología", reservations = 4),
+        ),
     )
 }
