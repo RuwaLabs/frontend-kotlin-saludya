@@ -10,6 +10,11 @@ sealed interface QuickEditRuleUiState {
         val isSaving: Boolean = false,
         val validationError: String? = null,
     ) : QuickEditRuleUiState
+    data class ValidationError(
+        val rule: ConfigurationRule,
+        val inputValue: String,
+        val message: String,
+    ) : QuickEditRuleUiState
     data class Saved(val ruleId: String) : QuickEditRuleUiState
     data class Error(val message: String) : QuickEditRuleUiState
 }

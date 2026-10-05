@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,12 +24,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
-import pe.edu.upc.saludya.features.configuration.domain.entity.ConfigurationRule
-import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleType
-import pe.edu.upc.saludya.features.configuration.domain.valueobject.RuleValue
 import pe.edu.upc.saludya.features.configuration.presentation.components.OutlineActionButton
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
 import pe.edu.upc.saludya.features.configuration.presentation.components.RuleValueField
+import pe.edu.upc.saludya.features.configuration.presentation.validation.ValidationDialog
 
 private val TitleColor = Color(0xFF181C1C)
 private val SubtitleColor = Color(0xFF56706D)
@@ -54,6 +51,16 @@ fun QuickEditRuleDialog(
         if (uiState is QuickEditRuleUiState.Saved) {
             onSaved()
         }
+    }
+
+    // H05: modal de validación superpuesto al H04
+    val currentState = uiState
+    if (currentState is QuickEditRuleUiState.ValidationError) {
+        ValidationDialog(
+            message = currentState.message,
+            onCorrectClick = viewModel::dismissValidationError,
+        )
+        return
     }
 
     Dialog(
@@ -85,6 +92,10 @@ fun QuickEditRuleDialog(
                     )
                 }
                 is QuickEditRuleUiState.Saved -> {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
+                is QuickEditRuleUiState.ValidationError -> {
+                    // Nunca se renderiza aquí: se maneja arriba con el early return.
                     Spacer(modifier = Modifier.height(80.dp))
                 }
                 is QuickEditRuleUiState.Editing -> {

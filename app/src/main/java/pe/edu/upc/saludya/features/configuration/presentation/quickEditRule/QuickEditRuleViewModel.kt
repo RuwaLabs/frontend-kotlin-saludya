@@ -8,13 +8,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pe.edu.upc.saludya.features.configuration.application.usecase.UpdateRuleUseCase
+import pe.edu.upc.saludya.features.configuration.application.usecase.ValidateRuleCoherenceUseCase
 import pe.edu.upc.saludya.features.configuration.domain.repository.ConfigurationRepository
+import pe.edu.upc.saludya.features.configuration.presentation.validation.ValidationResult
 import javax.inject.Inject
 
 @HiltViewModel
 class QuickEditRuleViewModel @Inject constructor(
     private val repository: ConfigurationRepository,
     private val updateRuleUseCase: UpdateRuleUseCase,
+    private val validateRuleCoherenceUseCase: ValidateRuleCoherenceUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<QuickEditRuleUiState>(QuickEditRuleUiState.Loading)
@@ -54,16 +57,22 @@ class QuickEditRuleViewModel @Inject constructor(
         val current = _uiState.value
         if (current !is QuickEditRuleUiState.Editing) return
 
-        val value = current.inputValue.trim()
-        if (value.isEmpty() || value.toIntOrNull()?.let { it > 0 } != true) {
-            _uiState.value = current.copy(
-                validationError = "La capacidad debe ser mayor que cero.",
-            )
-            return
-        }
-
         viewModelScope.launch {
             _uiState.value = current.copy(isSaving = true, validationError = null)
+
+            // 1) Validar coherencia (incluye: no vacío, numérico, > 0, coherencia con otras reglas)
+            val validation = validateRuleCoherenceUseCase(current.rule.id, current.inputValue)
+            if (validation is ValidationResult.Invalid) {
+                _uiState.value = QuickEditRuleUiState.ValidationError(
+                    rule = current.rule,
+                    inputValue = current.inputValue,
+                    message = validation.message,
+                )
+                return@launch
+            }
+
+            // 2) Actualizar
+            val value = current.inputValue.trim()
             runCatching { updateRuleUseCase(current.rule.id, value) }
                 .onSuccess { ok ->
                     _uiState.value = if (ok) QuickEditRuleUiState.Saved(current.rule.id)
@@ -78,6 +87,20 @@ class QuickEditRuleViewModel @Inject constructor(
                         validationError = it.message ?: "Error",
                     )
                 }
+        }
+    }
+
+    /**
+     * Cierra H05 y vuelve a H04 con el valor actual intacto,
+     * para que el usuario pueda corregir el campo.
+     */
+    fun dismissValidationError() {
+        val current = _uiState.value
+        if (current is QuickEditRuleUiState.ValidationError) {
+            _uiState.value = QuickEditRuleUiState.Editing(
+                rule = current.rule,
+                inputValue = current.inputValue,
+            )
         }
     }
 }
