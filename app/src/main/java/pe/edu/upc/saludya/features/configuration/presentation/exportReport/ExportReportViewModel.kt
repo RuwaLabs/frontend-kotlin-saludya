@@ -62,23 +62,28 @@ class ExportReportViewModel @Inject constructor(
                     format = format,
                 )
             }
-                .onSuccess { _uiState.value = ExportReportUiState.Success(it) }
+                .onSuccess { _uiState.value = ExportReportUiState.Ready(it) }
                 .onFailure {
                     _uiState.value = ExportReportUiState.Error(it.message ?: "Error")
                 }
         }
     }
 
+    /**
+     * H11: el usuario toca "Descargar archivo" en el diálogo "Reporte listo".
+     * Aquí es donde se haría la descarga real (o apertura del archivo).
+     * Por ahora cierra el diálogo y vuelve a Editing.
+     */
+    fun onDownloadClick() {
+        // TODO: conectar a un DownloadManager o abrir el archivo
+        _uiState.value = ExportReportUiState.Editing()
+    }
+
     fun dismissInvalidRange() {
         _uiState.value = ExportReportUiState.Editing()
     }
 
-    fun dismissSuccess() {
-        _uiState.value = ExportReportUiState.Editing()
-    }
-
     private fun isDateRangeValid(from: String, to: String): Boolean {
-        // Formato: dd/MM/yyyy
         val fromParts = from.split("/").mapNotNull { it.toIntOrNull() }
         val toParts = to.split("/").mapNotNull { it.toIntOrNull() }
         if (fromParts.size != 3 || toParts.size != 3) return false

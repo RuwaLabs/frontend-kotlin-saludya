@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -13,12 +12,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,21 +47,21 @@ private val SpecialtyOptions = listOf(
 fun ExportReportScreen(
     viewModel: ExportReportViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onReportReady: (String) -> Unit = {},
     onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState) {
-        val state = uiState
-        if (state is ExportReportUiState.Success) {
-            onReportReady(state.report.fileName)
-            viewModel.dismissSuccess()
-        }
+    // H11: diálogo "Reporte listo" cuando el reporte está preparado
+    val current = uiState
+    if (current is ExportReportUiState.Ready) {
+        ReportReadyDialog(
+            message = "El archivo del periodo seleccionado está preparado para descargar.",
+            onDownloadClick = viewModel::onDownloadClick,
+        )
+        return
     }
 
-    // H12: modal de rango inválido
-    val current = uiState
+    // H12: diálogo "Revisa el valor" cuando el rango es inválido
     if (current is ExportReportUiState.InvalidRange) {
         ValidationDialog(
             message = current.message,
@@ -112,11 +111,11 @@ fun ExportReportScreen(
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
-                is ExportReportUiState.Success -> {
-                    // Cierre manejado por LaunchedEffect
+                is ExportReportUiState.Ready -> {
+                    // Manejado por early return
                 }
                 is ExportReportUiState.InvalidRange -> {
-                    // Cierre manejado por el early return
+                    // Manejado por early return
                 }
             }
         }
@@ -142,7 +141,6 @@ private fun ExportReportContent(
     ) {
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Desde
         Text(
             text = "Desde",
             modifier = Modifier.padding(horizontal = 20.dp),
@@ -154,12 +152,11 @@ private fun ExportReportContent(
         RuleValueField(
             value = fromDate,
             onValueChange = onFromDateChange,
-            keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
+            keyboardType = KeyboardType.Number,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Hasta
         Text(
             text = "Hasta",
             modifier = Modifier.padding(horizontal = 20.dp),
@@ -171,12 +168,11 @@ private fun ExportReportContent(
         RuleValueField(
             value = toDate,
             onValueChange = onToDateChange,
-            keyboardType = androidx.compose.ui.text.input.KeyboardType.Number,
+            keyboardType = KeyboardType.Number,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Especialidad
         Text(
             text = "Especialidad",
             modifier = Modifier.padding(horizontal = 20.dp),
@@ -193,7 +189,6 @@ private fun ExportReportContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Botones
         PrimaryButton(
             text = if (isExporting) "Descargando..." else "Descargar PDF",
             onClick = onPdfClick,
@@ -209,7 +204,6 @@ private fun ExportReportContent(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Nota
         InfoNote(
             text = "Incluye reservas, atenciones, ausencias, demanda y resignaciones del período.",
         )
