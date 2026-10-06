@@ -146,6 +146,8 @@ private fun ConfigurationScreenPreview() {
                 role = "Titular",
                 documentType = "DNI",
                 documentNumberMasked = "••••4821",
+                phoneNumber = "987 654 482",
+                email = "lucia.torres@correo.com",
             ),
             onMyDataClick = {},
             onLinkedRelativesClick = {},
