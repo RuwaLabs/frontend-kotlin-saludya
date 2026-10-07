@@ -29,6 +29,7 @@ import pe.edu.upc.saludya.features.configuration.presentation.components.Primary
 import pe.edu.upc.saludya.features.configuration.presentation.components.RuleValueField
 import pe.edu.upc.saludya.features.configuration.presentation.components.SaludYaTopBar
 import pe.edu.upc.saludya.features.configuration.presentation.components.ScreenDescription
+import pe.edu.upc.saludya.features.configuration.presentation.validation.ValidationDialog
 
 @Composable
 fun VerifyIdentityScreen(
@@ -43,6 +44,29 @@ fun VerifyIdentityScreen(
         if (uiState is VerifyIdentityUiState.Success) {
             onSuccess()
         }
+    }
+
+    val current = uiState
+
+    // Modal: "No pudimos validar el vínculo"
+    if (current is VerifyIdentityUiState.ValidationFailed) {
+        ValidationDialog(
+            title = "No pudimos validar el vínculo",
+            message = current.message,
+            buttonText = "Entendido",
+            onCorrectClick = viewModel::dismissValidationFailed,
+        )
+        return
+    }
+
+    // Error inesperado
+    if (current is VerifyIdentityUiState.Error) {
+        Text(
+            text = current.message,
+            modifier = Modifier.padding(24.dp),
+            color = MaterialTheme.colorScheme.error,
+        )
+        return
     }
 
     Scaffold(
@@ -60,30 +84,17 @@ fun VerifyIdentityScreen(
         },
         containerColor = Color.White,
     ) { innerPadding ->
-        when (val state = uiState) {
-            is VerifyIdentityUiState.Error -> {
-                Text(
-                    text = state.message,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .padding(24.dp),
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-            is VerifyIdentityUiState.Success -> {
-                // Manejado por el LaunchedEffect
-            }
-            is VerifyIdentityUiState.Editing -> {
-                VerifyIdentityContent(
-                    modifier = Modifier.padding(innerPadding),
-                    minorName = state.minorName,
-                    birthDate = state.birthDate,
-                    isSubmitting = state.isSubmitting,
-                    onMinorNameChange = viewModel::onMinorNameChange,
-                    onBirthDateChange = viewModel::onBirthDateChange,
-                    onSubmit = viewModel::submit,
-                )
-            }
+        val state = uiState
+        if (state is VerifyIdentityUiState.Editing) {
+            VerifyIdentityContent(
+                modifier = Modifier.padding(innerPadding),
+                minorName = state.minorName,
+                birthDate = state.birthDate,
+                isSubmitting = state.isSubmitting,
+                onMinorNameChange = viewModel::onMinorNameChange,
+                onBirthDateChange = viewModel::onBirthDateChange,
+                onSubmit = viewModel::submit,
+            )
         }
     }
 }
