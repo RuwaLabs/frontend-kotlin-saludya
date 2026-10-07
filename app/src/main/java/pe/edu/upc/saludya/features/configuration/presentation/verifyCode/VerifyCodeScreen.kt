@@ -30,6 +30,7 @@ import pe.edu.upc.saludya.features.configuration.presentation.components.ScreenD
 
 @Composable
 fun VerifyCodeScreen(
+    descriptionText: String,
     viewModel: VerifyCodeViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onVerified: () -> Unit = {},
@@ -74,6 +75,7 @@ fun VerifyCodeScreen(
             is VerifyCodeUiState.Editing -> {
                 VerifyCodeContent(
                     modifier = Modifier.padding(innerPadding),
+                    descriptionText = descriptionText,
                     code = state.code,
                     secondsRemaining = state.secondsRemaining,
                     error = state.error,
@@ -90,6 +92,7 @@ fun VerifyCodeScreen(
 @Composable
 private fun VerifyCodeContent(
     modifier: Modifier = Modifier,
+    descriptionText: String,
     code: String,
     secondsRemaining: Int,
     error: String?,
@@ -105,9 +108,7 @@ private fun VerifyCodeContent(
     ) {
         Spacer(modifier = Modifier.height(8.dp))
 
-        ScreenDescription(
-            text = "Ingresa el código de 6 dígitos enviado a tu correo registrado para confirmar el cambio de celular.",
-        )
+        ScreenDescription(text = descriptionText)
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -160,6 +161,7 @@ private fun VerifyCodeContent(
 private fun VerifyCodeScreenPreview() {
     SaludYaTheme(dynamicColor = false) {
         VerifyCodeContent(
+            descriptionText = "Ingresa el código de 6 dígitos enviado a l••••a@correo.com.",
             code = "241860",
             secondsRemaining = 45,
             error = null,
