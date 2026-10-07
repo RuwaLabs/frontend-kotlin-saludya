@@ -56,8 +56,27 @@ class VerifyCodeViewModel @Inject constructor() : ViewModel() {
 
         viewModelScope.launch {
             _uiState.value = current.copy(isVerifying = true, error = null)
-            delay(800.milliseconds) // Simulación
-            _uiState.value = VerifyCodeUiState.Verified
+            delay(800.milliseconds)
+
+            // Código correcto simulado: "241860"
+            if (current.code == "241860") {
+                _uiState.value = VerifyCodeUiState.Verified
+            } else {
+                _uiState.value = VerifyCodeUiState.WrongCode(
+                    "Revisa los 6 dígitos e inténtalo otra vez."
+                )
+            }
+        }
+    }
+
+    /**
+     * El usuario tocó "Entendido" en el modal "Código incorrecto".
+     * Volvemos al estado Editing con el código actual.
+     */
+    fun dismissWrongCode() {
+        val current = _uiState.value
+        if (current is VerifyCodeUiState.WrongCode) {
+            _uiState.value = VerifyCodeUiState.Editing()
         }
     }
 
