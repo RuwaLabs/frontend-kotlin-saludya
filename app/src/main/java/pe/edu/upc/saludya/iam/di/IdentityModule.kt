@@ -20,10 +20,15 @@ import java.time.Clock
 import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import pe.edu.upc.saludya.iam.data.remote.AccessApi
+import pe.edu.upc.saludya.iam.data.repository.RemoteAccessRepository
+import pe.edu.upc.saludya.iam.domain.repository.AccessRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class IdentityBindings {
+    @Binds @Singleton
+    abstract fun accessRepository(implementation: RemoteAccessRepository): AccessRepository
     @Binds @Singleton
     abstract fun repository(implementation: RemoteIdentityRepository): IdentityRepository
 
@@ -34,6 +39,8 @@ abstract class IdentityBindings {
 @Module
 @InstallIn(SingletonComponent::class)
 object IdentityModule {
+    @Provides @Singleton
+    fun accessApi(retrofit: Retrofit): AccessApi = retrofit.create(AccessApi::class.java)
     @Provides @Singleton
     fun gson(): Gson = Gson()
 
