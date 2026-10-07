@@ -1,66 +1,21 @@
-# US-01 — Verificación de identidad por DNI
+# US-01: Verificación de identidad por DNI
 
-La aplicación permite al paciente verificar su identidad antes de crear su cuenta. El formulario solicita DNI, nombres, apellidos y fecha de nacimiento. La verificación se realiza contra el backend de SaludYa; la aplicación no consulta al proveedor oficial directamente ni contiene sus credenciales.
+El paciente ingresa su DNI, nombres, apellidos y fecha de nacimiento antes de continuar con el registro. La app envía los datos al backend de SaludYa y habilita **Continuar registro** cuando recibe la confirmación de identidad.
 
-## Comportamiento
+El DNI debe tener ocho dígitos numéricos. Si el formato es incorrecto, se muestra el error sin enviar la solicitud. Cuando los datos no coinciden, el paciente puede corregirlos. Si el servicio no responde, la continuación queda bloqueada y se permite reintentar.
 
-| Escenario | Resultado en la aplicación |
-| --- | --- |
-| Datos coincidentes | Una respuesta `verified: true` habilita **Continuar registro**. |
-| DNI inexistente o datos no coincidentes | `422` con `IAM_IDENTITY_MISMATCH` muestra el rechazo y permite corregir los campos. |
-| DNI con formato inválido | Se indica que debe contener ocho dígitos numéricos y no se envía ninguna solicitud. |
-| Servicio no disponible | Errores de conexión, timeout o respuesta `5xx` mantienen bloqueada la continuación y permiten reintentar. |
+La fecha se ingresa como `DD/MM/AAAA` y se envía como `AAAA-MM-DD`. Los nombres y apellidos son obligatorios. Si se modifica algún campo después de verificar la identidad, se debe verificar nuevamente.
 
-La fecha visible utiliza `DD/MM/AAAA`, se valida estrictamente y debe ser anterior al día actual en Lima. El request utiliza una fecha ISO `AAAA-MM-DD`. Los nombres y apellidos son obligatorios y admiten hasta 100 caracteres, según el contrato del backend. El DNI conserva ceros iniciales y no se corrige ni trunca silenciosamente.
+## Conexión con el backend
 
-Mientras se consulta el servicio, el formulario y la verificación quedan bloqueados. Modificar un dato después de verificarlo elimina el estado de identidad verificada. Las respuestas vacías o incompletas no habilitan el registro. Los datos solo permanecen en memoria y no se registran en logs ni se guardan en preferencias.
+La consulta utiliza `POST /api/v1/identity-verifications` con los campos `dni`, `name`, `lastname` y `birthDate`. La respuesta esperada es `{"verified": true}`. El rechazo de identidad corresponde a `422` con el código `IAM_IDENTITY_MISMATCH`.
 
-## Integración
+La URL se define en la propiedad Gradle `saludya.apiBaseUrl`, con `/` al final. En Debug, el valor por defecto es `http://10.0.2.2:8080/` para conectar el emulador con el backend local. Para Release se debe configurar la URL HTTPS del servidor; `https://localhost/` es el valor provisional.
 
-`POST /api/v1/identity-verifications`, público, sin token de sesión:
+La pantalla entrega los datos verificados a través de `onContinueRegistration`. La creación de la cuenta se integra en la siguiente historia. La consulta al registro oficial se realiza desde el backend.
 
-```json
-{
-  "dni": "01234567",
-  "name": "Lucía",
-  "lastname": "Torres",
-  "birthDate": "2000-05-01"
-}
-```
+## Pruebas
 
-El ejemplo solo ilustra el formato; no representa una identidad oficial validada.
+Pasaron 20 pruebas de validación, estado de la pantalla y respuestas HTTP. También se generaron el APK Debug y el APK de pruebas, y Lint terminó sin errores.
 
-La respuesta exitosa es `{"verified": true}`. Los errores de dominio incluyen `code` y `message`; la aplicación usa el código y presenta mensajes en español.
-
-La URL del backend se configura con la propiedad Gradle `saludya.apiBaseUrl`, incluyendo `/` al final y sin agregar `/api/v1`:
-
-```properties
-# ~/.gradle/gradle.properties, o parámetro -Psaludya.apiBaseUrl=...
-saludya.apiBaseUrl=https://backend-del-equipo.example/
-```
-
-Sin una configuración local, Debug apunta a `http://10.0.2.2:8080/`, que representa la máquina anfitriona desde el emulador Android. Release utiliza `https://localhost/` como valor sin servidor productivo: el equipo debe indicar su URL HTTPS antes de distribuir la app. HTTP solo se permite en el manifiesto Debug. No se incorpora SMS a esta historia.
-
-`IdentityVerificationRoute` entrega `VerifiedIdentity` mediante `onContinueRegistration` únicamente después de una respuesta positiva. La actividad muestra el resumen de identidad como destino de esta historia; los formularios de creación de cuenta pertenecen a la siguiente historia de registro. Este estado de UI no sustituye la validación del backend al crear la cuenta.
-
-La disponibilidad del registro oficial depende del adaptador de identidad configurado en el backend. Las pruebas HTTP usan un servidor local controlado, sin afirmar una consulta real a RENIEC.
-
-## Validación del código
-
-- `IdentityValidatorTest`: formato del DNI, ceros iniciales, fechas inválidas o futuras y nombres obligatorios.
-- `IdentityViewModelTest`: los cuatro escenarios de aceptación, revocación de la verificación y solicitudes duplicadas.
-- `RemoteIdentityRepositoryTest`: request real de Retrofit, respuesta positiva, rechazo, indisponibilidad y respuestas incompletas.
-- `IdentityScreenTest`: disponibilidad del botón de continuación y recuperación ante indisponibilidad, mediante Compose.
-
-```shell
-./gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
-./gradlew :app:connectedDebugAndroidTest
-```
-
-La segunda tarea requiere un emulador o dispositivo Android conectado.
-
-### Resultado de la ejecución — 7 de octubre de 2026
-
-Se ejecutaron 20 pruebas unitarias y de contrato HTTP: 5 de validación de datos, 6 del estado de verificación y 9 de integración de Retrofit con un servidor local. Todas finalizaron sin fallos. Se generaron el APK Debug y el APK de pruebas de pantalla.
-
-Las tres pruebas de Compose quedaron compiladas. No se ejecutaron en un dispositivo porque el emulador de esta máquina no completó su inicio. La consulta al registro oficial debe comprobarse con el backend del equipo y su proveedor configurado; los resultados anteriores corresponden al contrato HTTP controlado.
+Las tres pruebas de pantalla quedaron compiladas, pero pendientes de ejecución en un dispositivo porque el emulador no inició. Las pruebas HTTP utilizaron un servidor local de pruebas; queda pendiente comprobar la conexión con el proveedor de identidad del backend.
