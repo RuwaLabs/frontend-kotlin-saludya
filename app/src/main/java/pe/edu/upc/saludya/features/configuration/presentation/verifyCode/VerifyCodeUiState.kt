@@ -8,5 +8,7 @@ sealed interface VerifyCodeUiState {
         val error: String? = null,
     ) : VerifyCodeUiState
     data object Verified : VerifyCodeUiState
+    data class WrongCode(val message: String) : VerifyCodeUiState
+    data class CodeExpired(val message: String) : VerifyCodeUiState
     data class Error(val message: String) : VerifyCodeUiState
 }
