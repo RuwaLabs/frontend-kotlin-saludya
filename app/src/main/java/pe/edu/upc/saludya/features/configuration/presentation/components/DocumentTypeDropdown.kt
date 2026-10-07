@@ -23,16 +23,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
-
-private val LabelColor = Color(0xFF56706D)
-private val FieldBorderColor = Color(0xFFE0E5E4)
-private val FieldTextColor = Color(0xFF181C1C)
 
 @Composable
 fun DocumentTypeDropdown(
@@ -50,7 +45,7 @@ fun DocumentTypeDropdown(
             modifier = Modifier.padding(horizontal = 20.dp),
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = LabelColor,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Box(modifier = Modifier.fillMaxWidth()) {
@@ -61,8 +56,8 @@ fun DocumentTypeDropdown(
                     .height(56.dp)
                     .clickable { expanded = true },
                 shape = RoundedCornerShape(12.dp),
-                color = Color.White,
-                border = BorderStroke(1.dp, FieldBorderColor),
+                color = MaterialTheme.colorScheme.surface,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             ) {
                 Row(
                     modifier = Modifier
@@ -73,13 +68,13 @@ fun DocumentTypeDropdown(
                     Text(
                         text = selected,
                         fontSize = 16.sp,
-                        color = FieldTextColor,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "▾",
                         fontSize = 14.sp,
-                        color = FieldTextColor,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
@@ -95,7 +90,7 @@ fun DocumentTypeDropdown(
                             Text(
                                 text = option,
                                 fontSize = 16.sp,
-                                color = FieldTextColor,
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                         },
                         onClick = {

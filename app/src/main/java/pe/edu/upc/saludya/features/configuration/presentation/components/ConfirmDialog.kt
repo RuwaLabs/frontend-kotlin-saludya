@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,9 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
-
-private val TitleColor = Color(0xFF181C1C)
-private val MessageColor = Color(0xFF56706D)
 
 /**
  * Modal de confirmación reutilizable.
@@ -50,7 +48,7 @@ fun ConfirmDialog(
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
             shape = RoundedCornerShape(20.dp),
-            color = Color.White,
+            color = MaterialTheme.colorScheme.surface,
             tonalElevation = 0.dp,
         ) {
             Column(
@@ -62,7 +60,7 @@ fun ConfirmDialog(
                     text = title,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TitleColor,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -71,7 +69,7 @@ fun ConfirmDialog(
                     text = message,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Normal,
-                    color = MessageColor,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 22.sp,
                 )
 

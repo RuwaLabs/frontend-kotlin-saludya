@@ -6,14 +6,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
-
-private val NoteTextColor = Color(0xFF6E7978)
 
 @Composable
 fun InfoNote(
@@ -27,7 +24,7 @@ fun InfoNote(
             .padding(horizontal = 20.dp, vertical = 12.dp),
         fontSize = 14.sp,
         fontWeight = FontWeight.Normal,
-        color = NoteTextColor,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
         lineHeight = 20.sp,
     )
 }
