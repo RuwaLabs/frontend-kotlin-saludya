@@ -13,6 +13,7 @@ import pe.edu.upc.saludya.features.configuration.presentation.configuration.Conf
 import pe.edu.upc.saludya.features.configuration.presentation.linkMinor.LinkMinorScreen
 import pe.edu.upc.saludya.features.configuration.presentation.linkedMinor.LinkedMinorScreen
 import pe.edu.upc.saludya.features.configuration.presentation.linkedRelatives.LinkedRelativesScreen
+import pe.edu.upc.saludya.features.configuration.presentation.minorHome.MinorHomeScreen
 import pe.edu.upc.saludya.features.configuration.presentation.myData.MyDataScreen
 import pe.edu.upc.saludya.features.configuration.presentation.verifyCode.VerifyCodeScreen
 import pe.edu.upc.saludya.features.configuration.presentation.verifyIdentity.VerifyIdentityScreen
@@ -186,7 +187,7 @@ fun ConfigurationNavHost(
                 onBackClick = { navController.popBackStack() },
                 onViewAppointmentsClick = { /* TODO */ },
                 onSyncClick = { /* TODO */ },
-                onUnlinkClick = { /* TODO: Modal "¿Dejar esta vinculación?" */ },
+                onUnlinkClick = { /* TODO */ },
                 onBottomNavSelected = { index ->
                     when (index) {
                         0 -> { /* TODO */ }
@@ -226,10 +227,53 @@ fun ConfigurationNavHost(
         composable(route = ConfigurationRoutes.VERIFY_IDENTITY) {
             VerifyIdentityScreen(
                 onBackClick = { navController.popBackStack() },
-                onSuccess = { /* TODO: Fase 2 - Ir a "Hola, Mateo" */ },
+                onSuccess = {
+                    // TODO: Al confirmar, navegar a H12 (MinorHome) con el minorId
+                    // Por ahora volvemos a la pantalla de parientes vinculados
+                    navController.navigate(ConfigurationRoutes.LINKED_RELATIVES) {
+                        popUpTo(ConfigurationRoutes.LINKED_RELATIVES) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
                 onBottomNavSelected = { index ->
                     when (index) {
                         0 -> { /* TODO */ }
+                        1 -> { /* TODO */ }
+                        2 -> { /* TODO */ }
+                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
+                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+            )
+        }
+
+        // H12 - Home del menor
+        composable(
+            route = ConfigurationRoutes.MINOR_HOME_WITH_ARG,
+            arguments = listOf(
+                navArgument(ConfigurationRoutes.ARG_MINOR_ID) { type = NavType.StringType },
+            ),
+        ) { backStackEntry ->
+            val minorId = backStackEntry.arguments
+                ?.getString(ConfigurationRoutes.ARG_MINOR_ID)
+                .orEmpty()
+
+            MinorHomeScreen(
+                minorId = minorId,
+                onBackClick = { navController.popBackStack() },
+                onViewAppointmentsClick = { /* TODO */ },
+                onViewHistoryClick = { /* TODO */ },
+                onBackToProfileClick = {
+                    navController.navigate(ConfigurationRoutes.CONFIGURATION) {
+                        popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
+                onBottomNavSelected = { index ->
+                    when (index) {
+                        0 -> { /* Inicio: ya estamos aquí */ }
                         1 -> { /* TODO */ }
                         2 -> { /* TODO */ }
                         3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {

@@ -20,10 +20,13 @@ object ConfigurationRoutes {
     const val LINKED_MINOR_WITH_ARG = "$LINKED_MINOR/{$ARG_MINOR_ID}"
 
     const val LINK_MINOR = "configuration/link-minor"
-
-    // VERIFY_IDENTITY sin argumentos (los datos se ingresan en la pantalla)
     const val VERIFY_IDENTITY = "configuration/verify-identity"
+
+    // MINOR_HOME con argumento minorId
+    const val MINOR_HOME = "configuration/minor-home"
+    const val MINOR_HOME_WITH_ARG = "$MINOR_HOME/{$ARG_MINOR_ID}"
 
     fun verifyCode(destination: String) = "$VERIFY_CODE/$destination"
     fun linkedMinor(minorId: String) = "$LINKED_MINOR/$minorId"
+    fun minorHome(minorId: String) = "$MINOR_HOME/$minorId"
 }
