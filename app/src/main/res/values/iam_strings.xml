@@ -1,0 +1,29 @@
+<resources>
+    <string name="iam_brand">SaludYa</string>
+    <string name="iam_identity_title">Verifica tu identidad</string>
+    <string name="iam_identity_description">Completa tus datos tal como figuran en tu DNI antes de continuar con el registro.</string>
+    <string name="iam_dni">Número de DNI</string>
+    <string name="iam_dni_hint">8 dígitos</string>
+    <string name="iam_names">Nombres</string>
+    <string name="iam_names_hint">Tus nombres</string>
+    <string name="iam_last_names">Apellidos</string>
+    <string name="iam_last_names_hint">Tus apellidos</string>
+    <string name="iam_birth_date">Fecha de nacimiento</string>
+    <string name="iam_date_hint">DD/MM/AAAA</string>
+    <string name="iam_verify_identity">Verificar identidad</string>
+    <string name="iam_continue_registration">Continuar registro</string>
+    <string name="iam_verifying">Verificando tu identidad…</string>
+    <string name="iam_verified">Identidad verificada</string>
+    <string name="iam_ready_to_register">Tus datos fueron verificados. Puedes continuar con la creación de tu cuenta.</string>
+    <string name="iam_mismatch">Los datos no coinciden con el titular del DNI. Revísalos e intenta nuevamente.</string>
+    <string name="iam_unavailable">No pudimos verificar tu identidad. El servicio no está disponible. Reintenta más tarde.</string>
+    <string name="iam_invalid_request">Revisa tu DNI, nombres, apellidos y fecha de nacimiento.</string>
+    <string name="iam_unexpected_error">No pudimos confirmar la verificación. Intenta nuevamente.</string>
+    <string name="iam_retry">Reintentar verificación</string>
+    <string name="iam_dni_error">El DNI debe tener exactamente 8 dígitos numéricos.</string>
+    <string name="iam_required">Completa este campo.</string>
+    <string name="iam_name_too_long">Ingresa como máximo 100 caracteres.</string>
+    <string name="iam_date_error">Ingresa una fecha válida con formato DD/MM/AAAA.</string>
+    <string name="iam_date_not_past">La fecha de nacimiento debe ser anterior a hoy.</string>
+    <string name="iam_back">Volver</string>
+</resources>

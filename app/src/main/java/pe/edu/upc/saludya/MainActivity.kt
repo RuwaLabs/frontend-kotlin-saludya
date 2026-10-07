@@ -4,13 +4,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.activity.compose.BackHandler
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import dagger.hilt.android.AndroidEntryPoint
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
+import pe.edu.upc.saludya.iam.domain.model.VerifiedIdentity
+import pe.edu.upc.saludya.iam.presentation.identity.IdentityVerificationRoute
+import pe.edu.upc.saludya.iam.presentation.identity.VerifiedIdentitySummary
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -21,11 +26,15 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SaludYaTheme(dynamicColor = false) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = "SaludYa")
+                var verified by remember { mutableStateOf<VerifiedIdentity?>(null) }
+                val identity = verified
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    if (identity == null) {
+                        IdentityVerificationRoute(onContinueRegistration = { verified = it })
+                    } else {
+                        BackHandler { verified = null }
+                        VerifiedIdentitySummary(identity, onBack = { verified = null })
+                    }
                 }
             }
         }

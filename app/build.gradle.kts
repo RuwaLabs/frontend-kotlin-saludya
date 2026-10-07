@@ -23,22 +23,31 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_BASE_URL", "\"${providers.gradleProperty("saludya.apiBaseUrl").getOrElse("http://10.0.2.2:8080/")}\"")
+        }
         release {
+            buildConfigField("String", "API_BASE_URL", "\"${providers.gradleProperty("saludya.apiBaseUrl").getOrElse("https://localhost/")}\"")
             optimization {
                 enable = false
             }
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
 
 dependencies {
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.okhttp.mockwebserver)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
