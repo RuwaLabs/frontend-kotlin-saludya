@@ -11,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -40,15 +39,20 @@ fun VerifyIdentityScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState) {
-        if (uiState is VerifyIdentityUiState.Success) {
-            onSuccess()
-        }
-    }
-
     val current = uiState
 
-    // Modal: "No pudimos validar el vínculo"
+    // Modal: "Vinculación completada" (éxito)
+    if (current is VerifyIdentityUiState.Success) {
+        ValidationDialog(
+            title = "Vinculación completada",
+            message = "Ahora puedes reservar y consultar citas para Mateo Torres.",
+            buttonText = "Entendido",
+            onCorrectClick = onSuccess,
+        )
+        return
+    }
+
+    // Modal: "No pudimos validar el vínculo" (error)
     if (current is VerifyIdentityUiState.ValidationFailed) {
         ValidationDialog(
             title = "No pudimos validar el vínculo",
@@ -84,17 +88,21 @@ fun VerifyIdentityScreen(
         },
         containerColor = Color.White,
     ) { innerPadding ->
-        val state = uiState
-        if (state is VerifyIdentityUiState.Editing) {
-            VerifyIdentityContent(
-                modifier = Modifier.padding(innerPadding),
-                minorName = state.minorName,
-                birthDate = state.birthDate,
-                isSubmitting = state.isSubmitting,
-                onMinorNameChange = viewModel::onMinorNameChange,
-                onBirthDateChange = viewModel::onBirthDateChange,
-                onSubmit = viewModel::submit,
-            )
+        when (val state = uiState) {
+            is VerifyIdentityUiState.Editing -> {
+                VerifyIdentityContent(
+                    modifier = Modifier.padding(innerPadding),
+                    minorName = state.minorName,
+                    birthDate = state.birthDate,
+                    isSubmitting = state.isSubmitting,
+                    onMinorNameChange = viewModel::onMinorNameChange,
+                    onBirthDateChange = viewModel::onBirthDateChange,
+                    onSubmit = viewModel::submit,
+                )
+            }
+            else -> {
+                // Estados ya manejados con early return
+            }
         }
     }
 }
