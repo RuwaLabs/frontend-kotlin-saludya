@@ -18,7 +18,10 @@ class LinkedMinorViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<LinkedMinorUiState>(LinkedMinorUiState.Loading)
     val uiState: StateFlow<LinkedMinorUiState> = _uiState.asStateFlow()
 
+    private var currentMinorId: String = ""
+
     fun loadMinor(minorId: String) {
+        currentMinorId = minorId
         viewModelScope.launch {
             _uiState.value = LinkedMinorUiState.Loading
             runCatching { getLinkedMinorByIdUseCase(minorId) }
@@ -32,6 +35,40 @@ class LinkedMinorViewModel @Inject constructor(
                 .onFailure {
                     _uiState.value = LinkedMinorUiState.Error(it.message ?: "Error")
                 }
+        }
+    }
+
+    /**
+     * El usuario tocó "Dejar vinculación".
+     * Muestra el modal de confirmación.
+     */
+    fun requestUnlink() {
+        val current = _uiState.value
+        if (current is LinkedMinorUiState.Success) {
+            _uiState.value = LinkedMinorUiState.ConfirmingUnlink(current.minor)
+        }
+    }
+
+    /**
+     * El usuario confirmó "Dejar vinculación" en el modal.
+     * Cambia el estado a Unlinked → NavHost navega hacia atrás.
+     */
+    fun confirmUnlink() {
+        val current = _uiState.value
+        if (current is LinkedMinorUiState.ConfirmingUnlink) {
+            // Simulación de "dejar vinculación" en el backend
+            _uiState.value = LinkedMinorUiState.Unlinked(current.minor.id)
+        }
+    }
+
+    /**
+     * El usuario tocó "Conservar vínculo".
+     * Cierra el modal y vuelve al estado Success.
+     */
+    fun cancelUnlink() {
+        val current = _uiState.value
+        if (current is LinkedMinorUiState.ConfirmingUnlink) {
+            _uiState.value = LinkedMinorUiState.Success(current.minor)
         }
     }
 }
