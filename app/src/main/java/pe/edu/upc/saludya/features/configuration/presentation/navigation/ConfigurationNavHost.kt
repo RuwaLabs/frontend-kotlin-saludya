@@ -131,7 +131,12 @@ fun ConfigurationNavHost(
             VerifyCodeScreen(
                 descriptionText = descriptionText,
                 onBackClick = { navController.popBackStack() },
-                onVerified = { /* TODO: Ir a "Cambio realizado" */ },
+                onVerified = {
+                    navController.navigate(ConfigurationRoutes.MY_DATA) {
+                        popUpTo(ConfigurationRoutes.MY_DATA) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                },
                 onBottomNavSelected = { index ->
                     when (index) {
                         0 -> { /* TODO */ }
@@ -187,7 +192,7 @@ fun ConfigurationNavHost(
                 onBackClick = { navController.popBackStack() },
                 onViewAppointmentsClick = { /* TODO */ },
                 onSyncClick = { /* TODO */ },
-                onUnlinkClick = { /* TODO */ },
+                onUnlinkClick = { /* TODO: Modal "¿Dejar esta vinculación?" */ },
                 onBottomNavSelected = { index ->
                     when (index) {
                         0 -> { /* TODO */ }
@@ -228,12 +233,9 @@ fun ConfigurationNavHost(
             VerifyIdentityScreen(
                 onBackClick = { navController.popBackStack() },
                 onSuccess = {
-                    // TODO: Al confirmar, navegar a H12 (MinorHome) con el minorId
-                    // Por ahora volvemos a la pantalla de parientes vinculados
-                    navController.navigate(ConfigurationRoutes.LINKED_RELATIVES) {
-                        popUpTo(ConfigurationRoutes.LINKED_RELATIVES) { inclusive = false }
-                        launchSingleTop = true
-                    }
+                    // TODO: Cuando exista el modal "Vinculación completada", navegar ahí primero
+                    // Por ahora vamos directo al home del menor recién vinculado
+                    navController.navigate(ConfigurationRoutes.minorHome("1"))
                 },
                 onBottomNavSelected = { index ->
                     when (index) {
