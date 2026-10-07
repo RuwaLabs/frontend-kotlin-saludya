@@ -7,6 +7,8 @@
 }
 
 android {
+    val resetLinkHost = providers.gradleProperty("saludya.resetLinkHost").getOrElse("example.invalid")
+    require(resetLinkHost.matches(Regex("[A-Za-z0-9]+(?:[.-][A-Za-z0-9]+)*"))) { "Invalid reset link host" }
     namespace = "pe.edu.upc.saludya"
     compileSdk {
         version = release(37)
@@ -20,6 +22,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders["resetLinkHost"] = resetLinkHost
+        buildConfigField("String", "RESET_LINK_HOST", "\"$resetLinkHost\"")
     }
 
     buildTypes {
