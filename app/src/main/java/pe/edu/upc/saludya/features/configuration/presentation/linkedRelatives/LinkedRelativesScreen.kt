@@ -46,12 +46,6 @@ import pe.edu.upc.saludya.features.configuration.presentation.components.Primary
 import pe.edu.upc.saludya.features.configuration.presentation.components.SaludYaTopBar
 import pe.edu.upc.saludya.features.configuration.presentation.components.ScreenDescription
 
-private val EmptyTitleColor = Color(0xFF181C1C)
-private val EmptyTextColor = Color(0xFF56706D)
-private val CardTextPrimary = Color(0xFF181C1C)
-private val CardTextSecondary = Color(0xFF6E7978)
-private val CardOutline = Color(0xFFE5E9E7)
-
 @Composable
 fun LinkedRelativesScreen(
     viewModel: LinkedRelativesViewModel = hiltViewModel(),
@@ -147,7 +141,7 @@ private fun LinkedRelativesEmptyContent(
             text = "Aún no tienes menores vinculados",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = EmptyTitleColor,
+            color = MaterialTheme.colorScheme.onSurface,
             lineHeight = 30.sp,
         )
 
@@ -156,7 +150,7 @@ private fun LinkedRelativesEmptyContent(
         Text(
             text = "Vincula a un menor para gestionar sus reservas y consultar sus turnos.",
             fontSize = 15.sp,
-            color = EmptyTextColor,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 22.sp,
         )
 
@@ -239,8 +233,8 @@ private fun JustSyncedMinorCard(
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(1.dp, CardOutline),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
@@ -252,13 +246,13 @@ private fun JustSyncedMinorCard(
                 text = fullName,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = CardTextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = "Vínculo activo · datos sincronizados",
                 fontSize = 15.sp,
-                color = CardTextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(modifier = Modifier.height(12.dp))
             Row(
