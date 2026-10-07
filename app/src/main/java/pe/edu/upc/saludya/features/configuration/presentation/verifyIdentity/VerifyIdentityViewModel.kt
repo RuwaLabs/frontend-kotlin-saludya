@@ -36,19 +36,48 @@ class VerifyIdentityViewModel @Inject constructor() : ViewModel() {
         val name = current.minorName.trim()
         val date = current.birthDate.trim()
 
+        // Validación básica de campos no vacíos
         if (name.isEmpty()) {
-            _uiState.value = VerifyIdentityUiState.Error("Ingresa los nombres del menor.")
+            _uiState.value = VerifyIdentityUiState.ValidationFailed(
+                "Revisa los datos del menor. Si necesitas ayuda, consulta con admisión."
+            )
             return
         }
         if (date.isEmpty()) {
-            _uiState.value = VerifyIdentityUiState.Error("Ingresa la fecha de nacimiento.")
+            _uiState.value = VerifyIdentityUiState.ValidationFailed(
+                "Revisa los datos del menor. Si necesitas ayuda, consulta con admisión."
+            )
             return
         }
 
         viewModelScope.launch {
             _uiState.value = current.copy(isSubmitting = true)
-            // Simulación
-            _uiState.value = VerifyIdentityUiState.Success
+            // Simulación de validación contra registros de admisión
+            // Datos esperados: "Mateo" + "12/04/2018"
+            val validName = name.lowercase().startsWith("mateo")
+            val validDate = date == "12/04/2018"
+
+            if (validName && validDate) {
+                _uiState.value = VerifyIdentityUiState.Success
+            } else {
+                _uiState.value = VerifyIdentityUiState.ValidationFailed(
+                    "Revisa los datos del menor. Si necesitas ayuda, consulta con admisión."
+                )
+            }
+        }
+    }
+
+    /**
+     * El usuario tocó "Entendido" en el modal "No pudimos validar el vínculo".
+     * Volvemos al formulario con los datos que ingresó.
+     */
+    fun dismissValidationFailed() {
+        val current = _uiState.value
+        if (current is VerifyIdentityUiState.ValidationFailed) {
+            _uiState.value = VerifyIdentityUiState.Editing(
+                minorName = "",
+                birthDate = "",
+            )
         }
     }
 }

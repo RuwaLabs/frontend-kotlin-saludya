@@ -7,5 +7,6 @@ sealed interface VerifyIdentityUiState {
         val isSubmitting: Boolean = false,
     ) : VerifyIdentityUiState
     data object Success : VerifyIdentityUiState
+    data class ValidationFailed(val message: String) : VerifyIdentityUiState
     data class Error(val message: String) : VerifyIdentityUiState
 }
