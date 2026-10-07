@@ -26,6 +26,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.domain.entity.LinkedMinor
+import pe.edu.upc.saludya.features.configuration.presentation.components.ConfirmDialog
 import pe.edu.upc.saludya.features.configuration.presentation.components.MinorDetailCard
 import pe.edu.upc.saludya.features.configuration.presentation.components.OutlineActionButton
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
@@ -38,13 +39,43 @@ fun LinkedMinorScreen(
     onBackClick: () -> Unit = {},
     onViewAppointmentsClick: () -> Unit = {},
     onSyncClick: () -> Unit = {},
-    onUnlinkClick: () -> Unit = {},
+    onUnlinkConfirmed: () -> Unit = {},
     onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(minorId) {
         viewModel.loadMinor(minorId)
+    }
+
+    LaunchedEffect(uiState) {
+        if (uiState is LinkedMinorUiState.Unlinked) {
+            onUnlinkConfirmed()
+        }
+    }
+
+    // Modal: "¿Dejar esta vinculación?" (early return)
+    val current = uiState
+    if (current is LinkedMinorUiState.ConfirmingUnlink) {
+        ConfirmDialog(
+            title = "¿Dejar esta vinculación?",
+            message = "Dejarás de gestionar las citas de ${current.minor.fullName.split(" ").first()} desde esta cuenta. Sus reservas se conservan.",
+            confirmText = "Dejar vinculación",
+            cancelText = "Conservar vínculo",
+            onConfirm = viewModel::confirmUnlink,
+            onCancel = viewModel::cancelUnlink,
+        )
+        return
+    }
+
+    // Error inesperado (early return)
+    if (current is LinkedMinorUiState.Error) {
+        Text(
+            text = current.message,
+            modifier = Modifier.padding(24.dp),
+            color = MaterialTheme.colorScheme.error,
+        )
+        return
     }
 
     Scaffold(
@@ -71,20 +102,16 @@ fun LinkedMinorScreen(
                 is LinkedMinorUiState.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
-                is LinkedMinorUiState.Error -> {
-                    Text(
-                        text = state.message,
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
                 is LinkedMinorUiState.Success -> {
                     LinkedMinorContent(
                         minor = state.minor,
                         onViewAppointmentsClick = onViewAppointmentsClick,
                         onSyncClick = onSyncClick,
-                        onUnlinkClick = onUnlinkClick,
+                        onUnlinkClick = viewModel::requestUnlink,
                     )
+                }
+                else -> {
+                    // Estados ya manejados con early return o por LaunchedEffect
                 }
             }
         }

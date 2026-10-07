@@ -192,7 +192,13 @@ fun ConfigurationNavHost(
                 onBackClick = { navController.popBackStack() },
                 onViewAppointmentsClick = { /* TODO */ },
                 onSyncClick = { /* TODO */ },
-                onUnlinkClick = { /* TODO: Modal "¿Dejar esta vinculación?" */ },
+                onUnlinkConfirmed = {
+                    // Vuelve a Parientes vinculados (ya sin este menor)
+                    navController.navigate(ConfigurationRoutes.LINKED_RELATIVES) {
+                        popUpTo(ConfigurationRoutes.LINKED_RELATIVES) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                },
                 onBottomNavSelected = { index ->
                     when (index) {
                         0 -> { /* TODO */ }
