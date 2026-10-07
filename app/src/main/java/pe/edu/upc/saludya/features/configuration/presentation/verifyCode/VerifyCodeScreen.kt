@@ -45,14 +45,26 @@ fun VerifyCodeScreen(
         }
     }
 
-    // H-X: Modal "Código incorrecto"
     val current = uiState
+
+    // Modal: "Código incorrecto"
     if (current is VerifyCodeUiState.WrongCode) {
         ValidationDialog(
             title = "Código incorrecto",
             message = current.message,
             buttonText = "Entendido",
             onCorrectClick = viewModel::dismissWrongCode,
+        )
+        return
+    }
+
+    // Modal: "El código venció"
+    if (current is VerifyCodeUiState.CodeExpired) {
+        ValidationDialog(
+            title = "El código venció",
+            message = current.message,
+            buttonText = "Entendido",
+            onCorrectClick = viewModel::dismissCodeExpired,
         )
         return
     }
@@ -82,19 +94,13 @@ fun VerifyCodeScreen(
                     color = MaterialTheme.colorScheme.error,
                 )
             }
-            is VerifyCodeUiState.CodeExpired -> {
-                Text(
-                    text = state.message,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .padding(24.dp),
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
             is VerifyCodeUiState.Verified -> {
                 // Manejado por el LaunchedEffect
             }
             is VerifyCodeUiState.WrongCode -> {
+                // Manejado por el early return
+            }
+            is VerifyCodeUiState.CodeExpired -> {
                 // Manejado por el early return
             }
             is VerifyCodeUiState.Editing -> {
