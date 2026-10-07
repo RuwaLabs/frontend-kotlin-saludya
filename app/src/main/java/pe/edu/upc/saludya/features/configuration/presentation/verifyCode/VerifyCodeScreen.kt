@@ -11,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -39,13 +38,18 @@ fun VerifyCodeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(uiState) {
-        if (uiState is VerifyCodeUiState.Verified) {
-            onVerified()
-        }
-    }
-
     val current = uiState
+
+    // Modal: "Cambio realizado" (éxito)
+    if (current is VerifyCodeUiState.Verified) {
+        ValidationDialog(
+            title = "Cambio realizado",
+            message = "Verificamos el código y actualizamos tu contacto.",
+            buttonText = "Entendido",
+            onCorrectClick = onVerified,
+        )
+        return
+    }
 
     // Modal: "Código incorrecto"
     if (current is VerifyCodeUiState.WrongCode) {
@@ -95,7 +99,7 @@ fun VerifyCodeScreen(
                 )
             }
             is VerifyCodeUiState.Verified -> {
-                // Manejado por el LaunchedEffect
+                // Manejado por el early return
             }
             is VerifyCodeUiState.WrongCode -> {
                 // Manejado por el early return
