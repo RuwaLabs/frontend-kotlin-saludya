@@ -9,8 +9,11 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import pe.edu.upc.saludya.BuildConfig
 import pe.edu.upc.saludya.iam.data.remote.IdentityApi
+import pe.edu.upc.saludya.iam.data.remote.RegistrationApi
+import pe.edu.upc.saludya.iam.data.repository.RemoteRegistrationRepository
 import pe.edu.upc.saludya.iam.data.repository.RemoteIdentityRepository
 import pe.edu.upc.saludya.iam.domain.repository.IdentityRepository
+import pe.edu.upc.saludya.iam.domain.repository.RegistrationRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.Clock
@@ -23,6 +26,9 @@ import javax.inject.Singleton
 abstract class IdentityBindings {
     @Binds @Singleton
     abstract fun repository(implementation: RemoteIdentityRepository): IdentityRepository
+
+    @Binds @Singleton
+    abstract fun registrationRepository(implementation: RemoteRegistrationRepository): RegistrationRepository
 }
 
 @Module
@@ -35,17 +41,23 @@ object IdentityModule {
     fun clock(): Clock = Clock.system(ZoneId.of("America/Lima"))
 
     @Provides @Singleton
-    fun identityApi(gson: Gson): IdentityApi {
+    fun retrofit(gson: Gson): Retrofit {
         val client = OkHttpClient.Builder()
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS)
             .callTimeout(25, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(false)
             .build()
         return Retrofit.Builder()
             .baseUrl(BuildConfig.API_BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-            .create(IdentityApi::class.java)
     }
+
+    @Provides @Singleton
+    fun identityApi(retrofit: Retrofit): IdentityApi = retrofit.create(IdentityApi::class.java)
+
+    @Provides @Singleton
+    fun registrationApi(retrofit: Retrofit): RegistrationApi = retrofit.create(RegistrationApi::class.java)
 }
