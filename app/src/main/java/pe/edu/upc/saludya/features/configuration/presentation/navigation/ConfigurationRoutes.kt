@@ -21,6 +21,9 @@ object ConfigurationRoutes {
 
     const val LINK_MINOR = "configuration/link-minor"
 
+    // VERIFY_IDENTITY sin argumentos (los datos se ingresan en la pantalla)
+    const val VERIFY_IDENTITY = "configuration/verify-identity"
+
     fun verifyCode(destination: String) = "$VERIFY_CODE/$destination"
     fun linkedMinor(minorId: String) = "$LINKED_MINOR/$minorId"
 }

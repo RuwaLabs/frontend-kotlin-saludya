@@ -15,6 +15,7 @@ import pe.edu.upc.saludya.features.configuration.presentation.linkedMinor.Linked
 import pe.edu.upc.saludya.features.configuration.presentation.linkedRelatives.LinkedRelativesScreen
 import pe.edu.upc.saludya.features.configuration.presentation.myData.MyDataScreen
 import pe.edu.upc.saludya.features.configuration.presentation.verifyCode.VerifyCodeScreen
+import pe.edu.upc.saludya.features.configuration.presentation.verifyIdentity.VerifyIdentityScreen
 
 @Composable
 fun ConfigurationNavHost(
@@ -205,8 +206,27 @@ fun ConfigurationNavHost(
             LinkMinorScreen(
                 onBackClick = { navController.popBackStack() },
                 onVerified = { _, _ ->
-                    // TODO: Fase 2 - Ir a "Verificar identidad"
+                    navController.navigate(ConfigurationRoutes.VERIFY_IDENTITY)
                 },
+                onBottomNavSelected = { index ->
+                    when (index) {
+                        0 -> { /* TODO */ }
+                        1 -> { /* TODO */ }
+                        2 -> { /* TODO */ }
+                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
+                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+            )
+        }
+
+        // H11 - Verificar identidad
+        composable(route = ConfigurationRoutes.VERIFY_IDENTITY) {
+            VerifyIdentityScreen(
+                onBackClick = { navController.popBackStack() },
+                onSuccess = { /* TODO: Fase 2 - Ir a "Hola, Mateo" */ },
                 onBottomNavSelected = { index ->
                     when (index) {
                         0 -> { /* TODO */ }
