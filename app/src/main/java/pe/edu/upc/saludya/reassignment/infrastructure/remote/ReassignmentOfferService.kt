@@ -8,13 +8,15 @@ import retrofit2.http.Query
 
 interface ReassignmentOfferService {
 
+    /** GET /reassignment-offers/pending -> JSON array of offers. */
     @GET("reassignment-offers/pending")
-    suspend fun getPending(@Query("appointmentId") appointmentId: Long? = null): Response<ReassignmentOfferResponseDto>
+    suspend fun getPending(
+        @Query("appointmentId") appointmentId: Long? = null
+    ): Response<List<ReassignmentOfferDto>>
 
     @POST("reassignment-offers/{id}/accept")
-    suspend fun accept(@Path("id") id: Long): ReassignmentOfferDto
-
+    suspend fun accept(@Path("id") id: Long): Response<ReassignmentOfferDto>
 
     @POST("reassignment-offers/{id}/reject")
-    suspend fun reject(@Path("id") id: Long): ReassignmentOfferDto
+    suspend fun reject(@Path("id") id: Long): Response<ReassignmentOfferDto>
 }
