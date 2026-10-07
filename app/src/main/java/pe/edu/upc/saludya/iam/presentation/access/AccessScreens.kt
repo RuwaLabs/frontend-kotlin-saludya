@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -18,20 +19,37 @@ import pe.edu.upc.saludya.iam.domain.model.VerifiedIdentity
 import pe.edu.upc.saludya.iam.presentation.identity.IdentityVerificationRoute
 import pe.edu.upc.saludya.iam.presentation.registration.RegistrationRoute
 
-private enum class IamDestination { WELCOME, LOGIN, IDENTITY, REGISTRATION, RECOVERY }
+data class RecoveryLinkEvent(val id: Long, val url: String) {
+    override fun toString(): String = "RecoveryLinkEvent[REDACTED]"
+}
+
+private enum class IamDestination { WELCOME, LOGIN, IDENTITY, REGISTRATION, RECOVERY, RESET_PASSWORD, HELP }
 
 @Composable
 fun IamRoot(
+    recoveryLink: RecoveryLinkEvent? = null,
     loginViewModel: LoginViewModel = hiltViewModel(),
-    recoveryViewModel: RecoveryViewModel = hiltViewModel()
+    recoveryViewModel: RecoveryViewModel = hiltViewModel(),
+    resetViewModel: PasswordResetViewModel = hiltViewModel(),
+    helpViewModel: RecoveryHelpViewModel = hiltViewModel()
 ) {
     val loginState by loginViewModel.state.collectAsState()
-    var destination by remember { mutableStateOf(if (loginState.session != null) IamDestination.LOGIN else IamDestination.WELCOME) }
+    var destination by rememberSaveable { mutableStateOf(if (loginState.session != null) IamDestination.LOGIN else IamDestination.WELCOME) }
     var identity by remember { mutableStateOf<VerifiedIdentity?>(null) }
-    if (loginState.session != null) {
+    LaunchedEffect(recoveryLink?.id) {
+        recoveryLink?.let { resetViewModel.acceptLink(it.url); destination = IamDestination.RESET_PASSWORD }
+    }
+    val recoveryDestination = destination in setOf(IamDestination.RESET_PASSWORD, IamDestination.RECOVERY, IamDestination.HELP)
+    if (!recoveryDestination && loginState.notice == LoginNotice.SESSION_EXPIRED) {
+        BackHandler { }
+        SessionExpiredScreen { loginViewModel.acknowledgeExpiration(); destination = IamDestination.LOGIN }
+        return
+    }
+    if (loginState.session != null && !recoveryDestination) {
         LaunchedEffect(loginState.session) { loginViewModel.observeExpiration() }
         BackHandler { }
-        PatientSessionScreen(loginState.busy, loginViewModel::logout)
+        PatientSessionScreen(loginState, loginViewModel::requestLogout, loginViewModel::cancelLogout,
+            loginViewModel::logout, loginViewModel::refreshProfile)
         return
     }
     when (destination) {
@@ -59,15 +77,36 @@ fun IamRoot(
             BackHandler { destination = IamDestination.WELCOME }
             IdentityVerificationRoute(onContinueRegistration = { verified -> identity = verified; destination = IamDestination.REGISTRATION })
         }
-        IamDestination.REGISTRATION -> identity?.let { verified ->
-            RegistrationRoute(verified, onBack = { identity = null; destination = IamDestination.IDENTITY },
+        IamDestination.REGISTRATION -> {
+            val verified = identity
+            if (verified == null) {
+                BackHandler { destination = IamDestination.WELCOME }
+                IdentityVerificationRoute(onContinueRegistration = { identity = it })
+            } else RegistrationRoute(verified, onBack = { identity = null; destination = IamDestination.IDENTITY },
                 onLogin = { identity = null; loginViewModel.reset(); destination = IamDestination.LOGIN })
         }
         IamDestination.RECOVERY -> {
             val state by recoveryViewModel.state.collectAsState()
             val back = { recoveryViewModel.reset(); destination = IamDestination.LOGIN }
             BackHandler { if (!state.busy) back() }
-            RecoveryScreen(state, recoveryViewModel::edit, recoveryViewModel::request, back)
+            RecoveryScreen(state, recoveryViewModel::edit, recoveryViewModel::request, back,
+                onReset = { resetViewModel.reset(); destination = IamDestination.RESET_PASSWORD },
+                onHelp = { helpViewModel.reset(); destination = IamDestination.HELP })
+        }
+        IamDestination.RESET_PASSWORD -> {
+            val state by resetViewModel.state.collectAsState()
+            val back = { resetViewModel.reset(); loginViewModel.reset(); destination = IamDestination.LOGIN }
+            BackHandler { if (!state.busy) back() }
+            PasswordResetScreen(state, resetViewModel::editPassword, resetViewModel::editConfirmation,
+                resetViewModel::save, resetViewModel::editLink, resetViewModel::openPastedLink,
+                onNewLink = { resetViewModel.reset(); recoveryViewModel.reset(); destination = IamDestination.RECOVERY },
+                onLogin = back)
+        }
+        IamDestination.HELP -> {
+            val state by helpViewModel.state.collectAsState()
+            val back = { helpViewModel.reset(); destination = IamDestination.LOGIN }
+            BackHandler { if (!state.busy) back() }
+            RecoveryHelpScreen(state, helpViewModel::editDni, helpViewModel::editEmail, helpViewModel::submit, back)
         }
     }
 }
@@ -116,15 +155,30 @@ private fun loginMessage(state: LoginUiState): String? {
 }
 
 @Composable
-fun PatientSessionScreen(busy: Boolean, onLogout: () -> Unit) {
+fun PatientSessionScreen(state: LoginUiState, onLogout: () -> Unit,
+    onCancelLogout: () -> Unit, onConfirmLogout: () -> Unit, onRefreshProfile: () -> Unit) {
     IamPage(stringResource(R.string.iam_session_title)) {
         Text(stringResource(R.string.iam_session_open))
-        IamButton(stringResource(R.string.iam_logout), !busy, onClick = onLogout)
+        state.profile?.let { profile ->
+            Text("${profile.name} ${profile.lastname}")
+            Text(profile.email)
+        }
+        state.failure?.let { IamMessage(stringResource(it.messageResource()), error = true) }
+        if (state.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+        IamButton(stringResource(R.string.iam_profile_refresh), !state.busy, outlined = true, onClick = onRefreshProfile)
+        IamButton(stringResource(R.string.iam_logout), !state.busy, onClick = onLogout)
     }
+    if (state.logoutConfirmation) AlertDialog(
+        onDismissRequest = onCancelLogout,
+        title = { Text(stringResource(R.string.iam_logout_confirm_title)) },
+        text = { Text(stringResource(R.string.iam_logout_confirm_description)) },
+        confirmButton = { TextButton(onConfirmLogout) { Text(stringResource(R.string.iam_logout)) } },
+        dismissButton = { TextButton(onCancelLogout) { Text(stringResource(R.string.iam_cancel)) } })
 }
 
 @Composable
-fun RecoveryScreen(state: RecoveryUiState, onEmail: (String) -> Unit, onRequest: () -> Unit, onBack: () -> Unit) {
+fun RecoveryScreen(state: RecoveryUiState, onEmail: (String) -> Unit, onRequest: () -> Unit,
+                   onBack: () -> Unit, onReset: () -> Unit = {}, onHelp: () -> Unit = {}) {
     IamPage(stringResource(R.string.iam_recovery_title)) {
         Text(stringResource(R.string.iam_recovery_description))
         OutlinedTextField(state.email, onEmail, enabled = !state.busy, singleLine = true,
@@ -140,6 +194,8 @@ fun RecoveryScreen(state: RecoveryUiState, onEmail: (String) -> Unit, onRequest:
         state.failure?.let { IamMessage(stringResource(it.messageResource()), error = true) }
         IamButton(stringResource(if (state.requested) R.string.iam_recovery_again else R.string.iam_recovery_send),
             !state.busy, onClick = onRequest)
+        IamButton(stringResource(R.string.iam_reset_have_link), !state.busy, outlined = true, onClick = onReset)
+        IamButton(stringResource(R.string.iam_help_no_access), !state.busy, outlined = true, onClick = onHelp)
         IamButton(stringResource(R.string.iam_recovery_back), !state.busy, outlined = true, onClick = onBack)
     }
 }
