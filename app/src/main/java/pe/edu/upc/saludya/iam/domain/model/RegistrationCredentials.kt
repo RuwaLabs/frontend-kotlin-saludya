@@ -31,8 +31,7 @@ object CredentialsValidator {
             errors[CredentialsField.EMAIL] = CredentialsError.EMAIL_FORMAT
         }
         // Same password policy as the backend's BCrypt adapter. Never trim a password.
-        if (form.password.length < 8 || form.password.toByteArray(Charsets.UTF_8).size > 72 ||
-            !form.password.any { it in 'a'..'z' || it in 'A'..'Z' } || !form.password.any { it in '0'..'9' }) {
+        if (!AccessValidation.password(form.password)) {
             errors[CredentialsField.PASSWORD] = CredentialsError.PASSWORD_POLICY
         }
         if (form.password != form.confirmPassword) {

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -19,7 +20,8 @@ data class LoginUiState(
     val email: String = "", val password: String = "", val code: String = "",
     val busy: Boolean = false, val challenge: LoginChallenge? = null,
     val session: PatientSession? = null, val failure: AccessFailure? = null,
-    val notice: LoginNotice? = null
+    val notice: LoginNotice? = null, val logoutConfirmation: Boolean = false,
+    val profile: PatientAccountProfile? = null
 ) {
     override fun toString(): String = "LoginUiState[REDACTED]"
 }
@@ -31,6 +33,14 @@ class LoginViewModel @Inject constructor(
     private val mutableState = MutableStateFlow(LoginUiState(session = sessions.current()))
     val state = mutableState.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            sessions.expired.collect { expired ->
+                if (expired) mutableState.value = LoginUiState(notice = LoginNotice.SESSION_EXPIRED)
+            }
+        }
+    }
+
     fun editEmail(value: String) { edit { copy(email = value) } }
     fun editPassword(value: String) { edit { copy(password = value) } }
     fun editCode(value: String) { edit { copy(code = value) } }
@@ -41,7 +51,11 @@ class LoginViewModel @Inject constructor(
     }
 
     fun reset() {
-        if (!mutableState.value.busy) mutableState.value = LoginUiState(session = sessions.current())
+        if (!mutableState.value.busy) {
+            val expired = sessions.expired.value
+            mutableState.value = LoginUiState(session = sessions.current(),
+                notice = if (expired) LoginNotice.SESSION_EXPIRED else null)
+        }
     }
 
     fun cancelChallenge() {
@@ -121,10 +135,65 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun acknowledgeExpiration() {
+        if (mutableState.value.notice == LoginNotice.SESSION_EXPIRED) {
+            sessions.clear()
+            mutableState.value = LoginUiState()
+        }
+    }
+
+    private fun requireSession(): PatientSession? {
+        val session = sessions.current()
+        if (session == null) {
+            sessions.expire()
+            mutableState.value = LoginUiState(notice = LoginNotice.SESSION_EXPIRED)
+        }
+        return session
+    }
+
+    fun requestLogout() {
+        val current = mutableState.value
+        if (current.busy || current.session == null) return
+        requireSession() ?: return
+        mutableState.value = current.copy(logoutConfirmation = true)
+    }
+
+    fun cancelLogout() {
+        val current = mutableState.value
+        if (!current.busy) mutableState.value = current.copy(logoutConfirmation = false)
+    }
+
+    fun refreshProfile() {
+        val current = mutableState.value
+        if (current.busy || current.session == null || current.logoutConfirmation) return
+        val session = requireSession() ?: return
+        mutableState.value = current.copy(busy = true, failure = null)
+        viewModelScope.launch {
+            val result = repository.profile(session.accessToken)
+            if (sessions.current()?.accessToken != session.accessToken) {
+                mutableState.value = LoginUiState(notice = LoginNotice.SESSION_EXPIRED)
+                return@launch
+            }
+            mutableState.value = when (result) {
+                is AccessResult.Success -> {
+                    if (result.value.userId == session.userId && result.value.patientId == session.patientId) {
+                        mutableState.value.copy(busy = false, profile = result.value)
+                    } else mutableState.value.copy(busy = false, failure = AccessFailure.UNEXPECTED)
+                }
+                is AccessResult.Failure -> {
+                    if (result.reason == AccessFailure.SESSION_EXPIRED || result.reason == AccessFailure.INVALID_CREDENTIALS) {
+                        sessions.expireIfToken(session.accessToken)
+                        LoginUiState(notice = LoginNotice.SESSION_EXPIRED)
+                    } else mutableState.value.copy(busy = false, failure = result.reason)
+                }
+            }
+        }
+    }
+
     fun logout() {
         val current = mutableState.value
-        val session = current.session ?: return
-        if (current.busy) return
+        if (current.busy || !current.logoutConfirmation || current.session == null) return
+        val session = requireSession() ?: return
         sessions.clear()
         mutableState.value = LoginUiState(busy = true)
         viewModelScope.launch {

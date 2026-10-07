@@ -125,7 +125,7 @@ class AccessViewModelsTest {
         credentials(); login.login(); advanceUntilIdle()
         login.editCode("123456"); login.verify(); advanceUntilIdle()
         repository.logoutResult = AccessResult.Failure(AccessFailure.UNAVAILABLE)
-        login.logout(); assertNull(sessions.current()); advanceUntilIdle()
+        login.requestLogout(); login.logout(); assertNull(sessions.current()); advanceUntilIdle()
         assertEquals(LoginNotice.LOGOUT_UNCONFIRMED, login.state.value.notice)
         assertEquals("signed-token", repository.revokedToken)
     }
@@ -171,6 +171,8 @@ class AccessViewModelsTest {
         override fun withZone(zone: ZoneId): Clock = Clock.fixed(now, zone)
     }
     private class FakeAccessRepository : AccessRepository {
+        override suspend fun profile(token: String): AccessResult<PatientAccountProfile> =
+            AccessResult.Success(PatientAccountProfile(2, 1, "Lucía", "Torres", "lucia@example.com"))
         var logins = 0; var verifications = 0; var resends = 0; var recoveries = 0
         var email = ""; var password = ""; var challengeId = ""; var revokedToken = ""
         var pending: CompletableDeferred<Unit>? = null

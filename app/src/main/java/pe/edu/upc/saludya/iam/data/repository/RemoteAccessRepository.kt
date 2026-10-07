@@ -15,6 +15,18 @@ import javax.inject.Inject
 class RemoteAccessRepository @Inject constructor(
     private val api: AccessApi, private val gson: Gson, private val clock: Clock
 ) : AccessRepository {
+    override suspend fun profile(token: String): AccessResult<PatientAccountProfile> = safely {
+        val response = api.profile("Bearer $token")
+        if (response.code() == 401) return@safely AccessResult.Failure(AccessFailure.SESSION_EXPIRED)
+        if (response.code() != 200) return@safely failure(response)
+        val body = response.body()
+        if (body?.active == false) return@safely AccessResult.Failure(AccessFailure.SESSION_EXPIRED)
+        if (body?.role != null && body.role != "PATIENT") return@safely AccessResult.Failure(AccessFailure.NOT_PATIENT)
+        if (body?.role != "PATIENT" || body.active != true || body.id == null || body.id <= 0 ||
+            body.patientId == null || body.patientId <= 0 || body.name.isNullOrBlank() || body.lastname.isNullOrBlank() ||
+            body.email.isNullOrBlank()) AccessResult.Failure(AccessFailure.UNEXPECTED)
+        else AccessResult.Success(PatientAccountProfile(body.id, body.patientId, body.name, body.lastname, body.email))
+    }
     override suspend fun login(email: String, password: String): AccessResult<LoginChallenge> = safely {
         val response = api.login(LoginRequest(email, password))
         if (response.code() != 200) return@safely failure(response)

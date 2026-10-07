@@ -11,21 +11,26 @@ import javax.inject.Singleton
 class PatientSessionStore @Inject constructor(private val clock: Clock) {
     private val mutableSession = MutableStateFlow<PatientSession?>(null)
     val session = mutableSession.asStateFlow()
+    private val mutableExpired = MutableStateFlow(false)
+    val expired = mutableExpired.asStateFlow()
 
     fun open(session: PatientSession): Boolean {
         if (!session.expiresAt.isAfter(clock.instant())) return false
         mutableSession.value = session
+        mutableExpired.value = false
         return true
     }
 
     fun current(): PatientSession? {
         val value = mutableSession.value ?: return null
         if (!value.expiresAt.isAfter(clock.instant())) {
-            clear()
+            expire()
             return null
         }
         return value
     }
 
-    fun clear() { mutableSession.value = null }
+    fun expire() { mutableSession.value = null; mutableExpired.value = true }
+    fun expireIfToken(token: String) { if (mutableSession.value?.accessToken == token) expire() }
+    fun clear() { mutableSession.value = null; mutableExpired.value = false }
 }

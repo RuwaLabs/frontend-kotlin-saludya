@@ -23,10 +23,15 @@ import javax.inject.Singleton
 import pe.edu.upc.saludya.iam.data.remote.AccessApi
 import pe.edu.upc.saludya.iam.data.repository.RemoteAccessRepository
 import pe.edu.upc.saludya.iam.domain.repository.AccessRepository
+import pe.edu.upc.saludya.iam.domain.repository.RecoveryActionsRepository
+import pe.edu.upc.saludya.iam.data.remote.RecoveryActionsApi
+import pe.edu.upc.saludya.iam.data.repository.RemoteRecoveryActionsRepository
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class IdentityBindings {
+    @Binds @Singleton
+    abstract fun recoveryActionsRepository(implementation: RemoteRecoveryActionsRepository): RecoveryActionsRepository
     @Binds @Singleton
     abstract fun accessRepository(implementation: RemoteAccessRepository): AccessRepository
     @Binds @Singleton
@@ -39,6 +44,8 @@ abstract class IdentityBindings {
 @Module
 @InstallIn(SingletonComponent::class)
 object IdentityModule {
+    @Provides @Singleton
+    fun recoveryActionsApi(retrofit: Retrofit): RecoveryActionsApi = retrofit.create(RecoveryActionsApi::class.java)
     @Provides @Singleton
     fun accessApi(retrofit: Retrofit): AccessApi = retrofit.create(AccessApi::class.java)
     @Provides @Singleton

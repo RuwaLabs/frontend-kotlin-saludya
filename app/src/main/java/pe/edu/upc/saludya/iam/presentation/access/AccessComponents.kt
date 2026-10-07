@@ -44,10 +44,12 @@ fun IamMessage(message: String, error: Boolean = false) {
 }
 
 @Composable
-fun LoginPassword(value: String, enabled: Boolean, onChange: (String) -> Unit) {
+fun LoginPassword(value: String, enabled: Boolean, onChange: (String) -> Unit,
+                  label: Int = R.string.iam_password, error: String? = null) {
     var visible by remember { mutableStateOf(false) }
     OutlinedTextField(value, onChange, enabled = enabled, singleLine = true,
-        label = { Text(stringResource(R.string.iam_password)) },
+        label = { Text(stringResource(label)) }, isError = error != null,
+        supportingText = if (error != null) ({ Text(error) }) else null,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = { TextButton({ visible = !visible }, enabled = enabled) {
@@ -78,6 +80,9 @@ fun CodeVerificationScreen(
 }
 
 fun AccessFailure.messageResource(): Int = when (this) {
+    AccessFailure.RESET_LINK_INVALID -> R.string.iam_reset_link_invalid
+    AccessFailure.PASSWORD_MISMATCH -> R.string.iam_password_mismatch
+    AccessFailure.SESSION_EXPIRED -> R.string.iam_session_expired
     AccessFailure.INVALID_CREDENTIALS -> R.string.iam_invalid_credentials
     AccessFailure.INACTIVE_ACCOUNT -> R.string.iam_inactive_account
     AccessFailure.INVALID_CODE -> R.string.iam_invalid_code

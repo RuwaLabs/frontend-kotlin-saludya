@@ -118,6 +118,25 @@ class RemoteAccessRepositoryTest {
         assertEquals("/api/v1/user-accounts/logout", request.path)
         assertEquals("Bearer signed-token", request.getHeader("Authorization"))
     }
+    @Test fun `profile request carries bearer authentication and patient identity`() = runTest {
+        enqueue(200, """{"id":2,"patientId":1,"role":"PATIENT","active":true,"name":"Lucía","lastname":"Torres","email":"lucia@example.com"}""")
+        assertEquals(AccessResult.Success(PatientAccountProfile(2, 1, "Lucía", "Torres", "lucia@example.com")), repository.profile("signed-token"))
+        val request = server.takeRequest(1, TimeUnit.SECONDS)!!
+        assertEquals("GET", request.method)
+        assertEquals("/api/v1/user-accounts/me", request.path)
+        assertEquals("Bearer signed-token", request.getHeader("Authorization"))
+    }
+    @Test fun `unauthorized protected endpoint means session expired`() = runTest {
+        enqueue(401)
+        failure(repository.profile("signed-token"), AccessFailure.SESSION_EXPIRED)
+    }
+    @Test fun `inactive or incomplete profile cannot be shown as authenticated patient`() = runTest {
+        enqueue(200, """{"active":false}""")
+        failure(repository.profile("signed-token"), AccessFailure.SESSION_EXPIRED)
+        enqueue(200, "{}")
+        failure(repository.profile("signed-token"), AccessFailure.UNEXPECTED)
+    }
+
     @Test fun `transport error is unavailable and cancellation propagates`() = runTest {
         val offline = object : AccessApi by api {
             override suspend fun recoverPassword(request: EmailRequest): retrofit2.Response<Void> = throw java.io.IOException("offline")

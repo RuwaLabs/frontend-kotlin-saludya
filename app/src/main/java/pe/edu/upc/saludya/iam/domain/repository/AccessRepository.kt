@@ -4,7 +4,7 @@ import java.time.Instant
 
 enum class AccessFailure {
     INVALID_CREDENTIALS, INACTIVE_ACCOUNT, INVALID_CODE, EXPIRED_CODE, TOO_MANY_ATTEMPTS,
-    NOT_PATIENT, INVALID_REQUEST, UNAVAILABLE, UNEXPECTED
+    NOT_PATIENT, INVALID_REQUEST, UNAVAILABLE, UNEXPECTED, RESET_LINK_INVALID, PASSWORD_MISMATCH, SESSION_EXPIRED
 }
 
 sealed interface AccessResult<out T> {
@@ -13,6 +13,7 @@ sealed interface AccessResult<out T> {
 }
 
 data class LoginChallenge(val id: String, val maskedEmail: String, val expiresAt: Instant)
+data class PatientAccountProfile(val userId: Long, val patientId: Long, val name: String, val lastname: String, val email: String)
 
 data class PatientSession(
     val accessToken: String, val expiresAt: Instant, val userId: Long, val patientId: Long
@@ -21,6 +22,7 @@ data class PatientSession(
 }
 
 interface AccessRepository {
+    suspend fun profile(token: String): AccessResult<PatientAccountProfile>
     suspend fun login(email: String, password: String): AccessResult<LoginChallenge>
     suspend fun verifyLogin(challengeId: String, code: String): AccessResult<PatientSession>
     suspend fun resendLogin(challengeId: String): AccessResult<Unit>
