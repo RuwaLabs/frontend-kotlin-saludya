@@ -96,16 +96,13 @@ private fun LinkedRelativesContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
         ScreenDescription(
             text = "Reserva y consulta citas de los menores que tienes vinculados.",
         )
-
-        Spacer(modifier = Modifier.height(4.dp))
 
         minors.forEach { minor ->
             LinkedMinorCard(
@@ -113,24 +110,21 @@ private fun LinkedRelativesContent(
                 age = minor.age,
                 onViewDetailsClick = { onViewMinorClick(minor.id) },
             )
-            Spacer(modifier = Modifier.height(4.dp))
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         PrimaryButton(
             text = "Agregar menor vinculado",
             onClick = onAddMinorClick,
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
-
         OutlineActionButton(
             text = "Sincronizar vínculos",
             onClick = onSyncClick,
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
