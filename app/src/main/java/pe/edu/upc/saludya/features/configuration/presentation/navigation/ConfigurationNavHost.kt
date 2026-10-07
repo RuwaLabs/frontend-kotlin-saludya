@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import pe.edu.upc.saludya.features.configuration.presentation.changeEmail.ChangeEmailScreen
 import pe.edu.upc.saludya.features.configuration.presentation.changePhone.ChangePhoneScreen
 import pe.edu.upc.saludya.features.configuration.presentation.configuration.ConfigurationScreen
 import pe.edu.upc.saludya.features.configuration.presentation.myData.MyDataScreen
@@ -44,7 +45,9 @@ fun ConfigurationNavHost(
                 onEditPhoneClick = {
                     navController.navigate(ConfigurationRoutes.CHANGE_PHONE)
                 },
-                onEditEmailClick = { /* TODO: Fase 2 - Cambiar correo */ },
+                onEditEmailClick = {
+                    navController.navigate(ConfigurationRoutes.CHANGE_EMAIL)
+                },
                 onBottomNavSelected = { index ->
                     when (index) {
                         0 -> { /* TODO */ }
@@ -61,6 +64,24 @@ fun ConfigurationNavHost(
 
         composable(route = ConfigurationRoutes.CHANGE_PHONE) {
             ChangePhoneScreen(
+                onBackClick = { navController.popBackStack() },
+                onCodeSent = { /* TODO: Fase 2 - Ir a verificar código */ },
+                onBottomNavSelected = { index ->
+                    when (index) {
+                        0 -> { /* TODO */ }
+                        1 -> { /* TODO */ }
+                        2 -> { /* TODO */ }
+                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
+                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+            )
+        }
+
+        composable(route = ConfigurationRoutes.CHANGE_EMAIL) {
+            ChangeEmailScreen(
                 onBackClick = { navController.popBackStack() },
                 onCodeSent = { /* TODO: Fase 2 - Ir a verificar código */ },
                 onBottomNavSelected = { index ->
