@@ -15,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.iam.domain.model.VerifiedIdentity
 import pe.edu.upc.saludya.iam.presentation.identity.IdentityVerificationRoute
-import pe.edu.upc.saludya.iam.presentation.identity.VerifiedIdentitySummary
+import pe.edu.upc.saludya.iam.presentation.registration.RegistrationRoute
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
                         IdentityVerificationRoute(onContinueRegistration = { verified = it })
                     } else {
                         BackHandler { verified = null }
-                        VerifiedIdentitySummary(identity, onBack = { verified = null })
+                        RegistrationRoute(identity, onBack = { verified = null })
                     }
                 }
             }
