@@ -13,16 +13,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
-
-private val CardTextPrimary = Color(0xFF181C1C)
-private val CardTextSecondary = Color(0xFF6E7978)
-private val CardOutline = Color(0xFFE5E9E7)
 
 @Composable
 fun MinorDetailCard(
@@ -39,8 +34,8 @@ fun MinorDetailCard(
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(1.dp, CardOutline),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
@@ -52,23 +47,23 @@ fun MinorDetailCard(
                 text = fullName,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = CardTextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
                 text = "$documentType $documentNumberMasked",
                 fontSize = 15.sp,
-                color = CardTextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
                 text = "Fecha de nacimiento: $birthDate",
                 fontSize = 15.sp,
-                color = CardTextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
                 text = "Representante: $representativeName",
                 fontSize = 15.sp,
-                color = CardTextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(modifier = Modifier.height(12.dp))
             if (isVerified) {

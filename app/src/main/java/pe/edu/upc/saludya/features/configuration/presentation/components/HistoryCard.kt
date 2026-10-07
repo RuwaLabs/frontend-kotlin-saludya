@@ -20,17 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pe.edu.upc.saludya.core.desingsystem.icon.arrowBack
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
-
-private val CardTextPrimary = Color(0xFF181C1C)
-private val CardTextSecondary = Color(0xFF6E7978)
-private val CardOutline = Color(0xFFE5E9E7)
 
 @Composable
 fun HistoryCard(
@@ -44,8 +39,8 @@ fun HistoryCard(
             .fillMaxWidth()
             .padding(horizontal = 20.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(1.dp, CardOutline),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
@@ -57,13 +52,13 @@ fun HistoryCard(
                 text = title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = CardTextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = subtitle,
                 fontSize = 15.sp,
-                color = CardTextSecondary,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(modifier = Modifier.height(14.dp))
             Row(
