@@ -24,25 +24,45 @@ import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.iam.domain.model.*
 import pe.edu.upc.saludya.iam.domain.repository.RegistrationReceipt
 import java.time.LocalDate
+import pe.edu.upc.saludya.iam.presentation.access.CodeVerificationScreen
 
 @Composable
 fun RegistrationRoute(
     identity: VerifiedIdentity,
     onBack: () -> Unit,
+    onLogin: () -> Unit = onBack,
     viewModel: RegistrationViewModel = hiltViewModel()
 ) {
     LaunchedEffect(identity) { viewModel.prepare(identity) }
     val state by viewModel.state.collectAsState()
-    var emailStep by remember { mutableStateOf(false) }
-    val receipt = state.receipt
-    if (emailStep && receipt != null) {
-        BackHandler { emailStep = false }
-        RegistrationEmailStep(receipt.email, onBack = { emailStep = false })
+    val leave = { viewModel.reset(); onBack() }
+    BackHandler {
+        if (state.status != RegistrationStatus.SUBMITTING) {
+            if (state.awaitingCode && state.receipt == null) viewModel.backToCredentials() else leave()
+        }
+    }
+    if (state.awaitingCode && state.receipt == null) {
+        val message = when (state.status) {
+            RegistrationStatus.CODE_SENT -> R.string.iam_code_sent
+            RegistrationStatus.CODE_FORMAT -> R.string.iam_code_format
+            RegistrationStatus.INVALID_CODE -> R.string.iam_invalid_code
+            RegistrationStatus.EXPIRED_CODE -> R.string.iam_expired_code
+            RegistrationStatus.TOO_MANY_ATTEMPTS -> R.string.iam_too_many_attempts
+            RegistrationStatus.IDENTITY_ALREADY_REGISTERED -> R.string.iam_identity_already_registered
+            RegistrationStatus.IDENTITY_MISMATCH -> R.string.iam_registration_identity_mismatch
+            RegistrationStatus.ADULT_REQUIRED -> R.string.iam_adult_required
+            RegistrationStatus.DUPLICATE_RECORD -> R.string.iam_duplicate_record
+            RegistrationStatus.INVALID_REQUEST -> R.string.iam_registration_invalid_request
+            RegistrationStatus.UNAVAILABLE -> R.string.iam_registration_unavailable
+            RegistrationStatus.ERROR -> R.string.iam_registration_error
+            else -> null
+        }
+        CodeVerificationScreen(state.form.email, state.code, state.status == RegistrationStatus.SUBMITTING,
+            message?.let { stringResource(it) }, message != null && state.status != RegistrationStatus.CODE_SENT,
+            viewModel::editCode, viewModel::verify, viewModel::resend, viewModel::backToCredentials)
     } else {
-        // Avoid navigating away while a non-idempotent registration request is in flight.
-        BackHandler(enabled = state.status == RegistrationStatus.SUBMITTING) { }
-        RegistrationScreen(state, viewModel::edit, viewModel::submit, onBack,
-            onContinueEmail = { if (state.canContinue) emailStep = true })
+        RegistrationScreen(state, viewModel::edit, viewModel::submit, leave,
+            onContinueEmail = { if (state.canContinue) { viewModel.reset(); onLogin() } })
     }
 }
 
@@ -138,21 +158,6 @@ private fun CredentialsInput(
             CredentialsError.PHONE_FORMAT -> R.string.iam_phone_error
         })) }) else null,
         shape = RoundedCornerShape(12.dp), modifier = Modifier.fillMaxWidth())
-}
-
-/** Email verification itself belongs to the next story; this step does not claim a code was sent. */
-@Composable
-fun RegistrationEmailStep(email: String, onBack: () -> Unit) {
-    Column(Modifier.fillMaxSize().safeDrawingPadding().padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text(stringResource(R.string.iam_email_step_title), style = MaterialTheme.typography.headlineSmall)
-        Text(stringResource(R.string.iam_email_step_description))
-        Text(email, color = MaterialTheme.colorScheme.primary)
-        OutlinedButton(onClick = onBack, shape = RoundedCornerShape(12.dp),
-            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
-            Text(stringResource(R.string.iam_back))
-        }
-    }
 }
 
 private val previewIdentity = VerifiedIdentity(IdentityDetails("01234567", "Lucía", "Torres", LocalDate.of(2000, 5, 1)))

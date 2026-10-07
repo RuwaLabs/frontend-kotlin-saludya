@@ -11,11 +11,11 @@
     <string name="iam_phone_hint">9 dígitos</string>
     <string name="iam_email_channel">La verificación de tu cuenta se realizará por correo. El celular se usará como dato de contacto.</string>
     <string name="iam_credentials_continue">Continuar</string>
-    <string name="iam_continue_email">Continuar con correo</string>
+    <string name="iam_continue_email">Ir a iniciar sesión</string>
     <string name="iam_show_password">Mostrar</string>
     <string name="iam_hide_password">Ocultar</string>
-    <string name="iam_submitting">Registrando tus credenciales…</string>
-    <string name="iam_credentials_accepted">Credenciales registradas.</string>
+    <string name="iam_submitting">Procesando tu solicitud…</string>
+    <string name="iam_credentials_accepted">Tu cuenta está lista. Ya puedes iniciar sesión.</string>
     <string name="iam_email_error">Ingresa un correo electrónico válido.</string>
     <string name="iam_email_in_use">Este correo ya está en uso. Ingresa otro correo.</string>
     <string name="iam_password_error">Usa al menos 8 caracteres con letras y números. Si tu contraseña es demasiado larga, acórtala.</string>

@@ -8,6 +8,7 @@ import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.iam.domain.model.*
 import pe.edu.upc.saludya.iam.domain.repository.RegistrationReceipt
 import pe.edu.upc.saludya.iam.presentation.registration.*
+import pe.edu.upc.saludya.iam.presentation.access.CodeVerificationScreen
 import java.time.LocalDate
 
 class RegistrationScreenTest {
@@ -31,13 +32,13 @@ class RegistrationScreenTest {
         compose.onNodeWithText("Las contraseñas no coinciden.").performScrollTo().assertIsDisplayed()
     }
 
-    @Test fun acceptedCredentialsEnableTheEmailHandoff() {
+    @Test fun createdAccountEnablesSignIn() {
         compose.setContent { SaludYaTheme(dynamicColor = false) {
             RegistrationScreen(RegistrationUiState(identity = identity,
                 status = RegistrationStatus.ACCEPTED, receipt = RegistrationReceipt(1, 2, "lucia@example.com")), { _, _ -> }, {}, {}, {})
         } }
-        compose.onNodeWithText("Credenciales registradas.").performScrollTo().assertIsDisplayed()
-        compose.onNodeWithText("Continuar con correo").performScrollTo().assertIsEnabled()
+        compose.onNodeWithText("Tu cuenta está lista. Ya puedes iniciar sesión.").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Ir a iniciar sesión").performScrollTo().assertIsEnabled()
     }
 
     @Test fun pendingSubmissionDisablesContinueAndBack() {
@@ -48,11 +49,11 @@ class RegistrationScreenTest {
         compose.onNodeWithText("Volver").performScrollTo().assertIsNotEnabled()
     }
 
-    @Test fun emailStepShowsRecipientWithoutClaimingThatACodeWasSent() {
+    @Test fun verificationShowsRecipientAndCodeActions() {
         compose.setContent { SaludYaTheme(dynamicColor = false) {
-            RegistrationEmailStep("lucia@example.com", {})
+            CodeVerificationScreen("lucia@example.com", "", false, null, false, {}, {}, {}, {})
         } }
-        compose.onNodeWithText("lucia@example.com").assertIsDisplayed()
-        compose.onNodeWithText("Usaremos este correo electrónico para verificar tu cuenta.").assertIsDisplayed()
+        compose.onNodeWithText("Código de verificación").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Ingresa el código de 6 dígitos enviado a lucia@example.com.").assertIsDisplayed()
     }
 }
