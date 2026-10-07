@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,10 +21,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
+import pe.edu.upc.saludya.core.desingsystem.icon.addCircleOutlineIcon
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.domain.entity.LinkedMinor
 import pe.edu.upc.saludya.features.configuration.presentation.components.LinkedMinorCard
@@ -30,6 +35,9 @@ import pe.edu.upc.saludya.features.configuration.presentation.components.Outline
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
 import pe.edu.upc.saludya.features.configuration.presentation.components.SaludYaTopBar
 import pe.edu.upc.saludya.features.configuration.presentation.components.ScreenDescription
+
+private val EmptyTitleColor = Color(0xFF181C1C)
+private val EmptyTextColor = Color(0xFF56706D)
 
 @Composable
 fun LinkedRelativesScreen(
@@ -74,18 +82,77 @@ fun LinkedRelativesScreen(
                     )
                 }
                 is LinkedRelativesUiState.Success -> {
-                    LinkedRelativesContent(
-                        minors = state.minors,
-                        onViewMinorClick = onViewMinorClick,
-                        onAddMinorClick = onAddMinorClick,
-                        onSyncClick = onSyncClick,
-                    )
+                    if (state.minors.isEmpty()) {
+                        LinkedRelativesEmptyContent(
+                            onAddMinorClick = onAddMinorClick,
+                        )
+                    } else {
+                        LinkedRelativesContent(
+                            minors = state.minors,
+                            onViewMinorClick = onViewMinorClick,
+                            onAddMinorClick = onAddMinorClick,
+                            onSyncClick = onSyncClick,
+                        )
+                    }
                 }
             }
         }
     }
 }
 
+/**
+ * Estado vacío: cuando el usuario no tiene menores vinculados.
+ */
+@Composable
+private fun LinkedRelativesEmptyContent(
+    onAddMinorClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+    ) {
+        Icon(
+            imageVector = addCircleOutlineIcon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(48.dp),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Aún no tienes menores vinculados",
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            color = EmptyTitleColor,
+            lineHeight = 30.sp,
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = "Vincula a un menor para gestionar sus reservas y consultar sus turnos.",
+            fontSize = 15.sp,
+            color = EmptyTextColor,
+            lineHeight = 22.sp,
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        PrimaryButton(
+            text = "Agregar menor",
+            onClick = onAddMinorClick,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+/**
+ * Estado con contenido: lista de menores vinculados.
+ */
 @Composable
 private fun LinkedRelativesContent(
     minors: List<LinkedMinor>,
@@ -128,9 +195,17 @@ private fun LinkedRelativesContent(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "LinkedRelativesScreen")
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "LinkedRelativesScreen - Vacío")
 @Composable
-private fun LinkedRelativesScreenPreview() {
+private fun LinkedRelativesEmptyPreview() {
+    SaludYaTheme(dynamicColor = false) {
+        LinkedRelativesEmptyContent(onAddMinorClick = {})
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "LinkedRelativesScreen - Con datos")
+@Composable
+private fun LinkedRelativesContentPreview() {
     SaludYaTheme(dynamicColor = false) {
         LinkedRelativesContent(
             minors = listOf(
@@ -141,16 +216,6 @@ private fun LinkedRelativesScreenPreview() {
                     documentType = "DNI",
                     documentNumberMasked = "••••2716",
                     birthDate = "12 abr 2018",
-                    representativeName = "Lucía Torres",
-                    isVerified = true,
-                ),
-                LinkedMinor(
-                    id = "2",
-                    fullName = "Sofía Torres",
-                    age = 12,
-                    documentType = "DNI",
-                    documentNumberMasked = "••••5512",
-                    birthDate = "5 ene 2014",
                     representativeName = "Lucía Torres",
                     isVerified = true,
                 ),
