@@ -27,6 +27,7 @@ import pe.edu.upc.saludya.features.configuration.presentation.components.Outline
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
 import pe.edu.upc.saludya.features.configuration.presentation.components.SaludYaTopBar
 import pe.edu.upc.saludya.features.configuration.presentation.components.ScreenDescription
+import pe.edu.upc.saludya.features.configuration.presentation.validation.ValidationDialog
 
 @Composable
 fun VerifyCodeScreen(
@@ -42,6 +43,18 @@ fun VerifyCodeScreen(
         if (uiState is VerifyCodeUiState.Verified) {
             onVerified()
         }
+    }
+
+    // H-X: Modal "Código incorrecto"
+    val current = uiState
+    if (current is VerifyCodeUiState.WrongCode) {
+        ValidationDialog(
+            title = "Código incorrecto",
+            message = current.message,
+            buttonText = "Entendido",
+            onCorrectClick = viewModel::dismissWrongCode,
+        )
+        return
     }
 
     Scaffold(
@@ -69,8 +82,20 @@ fun VerifyCodeScreen(
                     color = MaterialTheme.colorScheme.error,
                 )
             }
+            is VerifyCodeUiState.CodeExpired -> {
+                Text(
+                    text = state.message,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .padding(24.dp),
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
             is VerifyCodeUiState.Verified -> {
                 // Manejado por el LaunchedEffect
+            }
+            is VerifyCodeUiState.WrongCode -> {
+                // Manejado por el early return
             }
             is VerifyCodeUiState.Editing -> {
                 VerifyCodeContent(
