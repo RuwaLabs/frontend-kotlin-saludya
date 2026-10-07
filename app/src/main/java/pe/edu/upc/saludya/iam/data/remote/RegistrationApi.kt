@@ -11,7 +11,8 @@ data class RegisterPatientRequest(
     val birthDate: String,
     val phone: String,
     val email: String,
-    val password: String
+    val password: String,
+    val code: String
 ) {
     override fun toString(): String = "RegisterPatientRequest[REDACTED]"
 }
@@ -19,6 +20,10 @@ data class RegisterPatientRequest(
 data class RegisterPatientResponse(val id: Long? = null, val userId: Long? = null, val dni: String? = null)
 
 interface RegistrationApi {
+    @POST("api/v1/user-accounts/send-verification-code")
+    suspend fun sendCode(@Body request: EmailRequest): Response<Void>
     @POST("api/v1/user-accounts")
     suspend fun register(@Body request: RegisterPatientRequest): Response<RegisterPatientResponse>
 }
+
+data class EmailRequest(val email: String)

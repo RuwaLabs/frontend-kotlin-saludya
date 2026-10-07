@@ -38,7 +38,7 @@ class RemoteRegistrationRepositoryTest {
 
     @Test fun `registration sends verified identity and credentials with backend field names`() = runTest {
         server.enqueue(MockResponse().setResponseCode(201).setBody("{\"id\":1,\"userId\":2,\"dni\":\"01234567\"}"))
-        assertEquals(RegistrationResult.Accepted(RegistrationReceipt(1, 2, credentials.email)), repository.register(identity, credentials))
+        assertEquals(RegistrationResult.Accepted(RegistrationReceipt(1, 2, credentials.email)), repository.register(identity, credentials, "123456"))
         val request = server.takeRequest(1, TimeUnit.SECONDS)!!
         assertEquals("POST", request.method)
         assertEquals("/api/v1/user-accounts", request.path)
@@ -50,56 +50,79 @@ class RemoteRegistrationRepositoryTest {
         assertEquals(credentials.email, json["email"].asString)
         assertEquals(credentials.phone, json["phone"].asString)
         assertEquals(credentials.password, json["password"].asString)
+        assertEquals("123456", json["code"].asString)
         assertFalse(json.has("confirmPassword"))
         assertNull(request.getHeader("Authorization"))
     }
 
     @Test fun `email conflict is different from duplicate DNI`() = runTest {
         server.enqueue(MockResponse().setResponseCode(409).setBody("{\"code\":\"IAM_EMAIL_ALREADY_REGISTERED\"}"))
-        assertEquals(RegistrationResult.EmailInUse, repository.register(identity, credentials))
+        assertEquals(RegistrationResult.EmailInUse, repository.register(identity, credentials, "123456"))
         server.enqueue(MockResponse().setResponseCode(409).setBody("{\"code\":\"IAM_DNI_ALREADY_REGISTERED\"}"))
-        assertEquals(RegistrationResult.IdentityAlreadyRegistered, repository.register(identity, credentials))
+        assertEquals(RegistrationResult.IdentityAlreadyRegistered, repository.register(identity, credentials, "123456"))
     }
 
     @Test fun `generic duplicate does not falsely identify the email`() = runTest {
         server.enqueue(MockResponse().setResponseCode(409).setBody("{\"code\":\"IAM_DUPLICATE_RECORD\"}"))
-        assertEquals(RegistrationResult.DuplicateRecord, repository.register(identity, credentials))
+        assertEquals(RegistrationResult.DuplicateRecord, repository.register(identity, credentials, "123456"))
     }
 
     @Test fun `identity mismatch and adult restriction remain distinct`() = runTest {
         server.enqueue(MockResponse().setResponseCode(422).setBody("{\"code\":\"IAM_IDENTITY_MISMATCH\"}"))
-        assertEquals(RegistrationResult.IdentityMismatch, repository.register(identity, credentials))
+        assertEquals(RegistrationResult.IdentityMismatch, repository.register(identity, credentials, "123456"))
         server.enqueue(MockResponse().setResponseCode(422).setBody("{\"code\":\"IAM_ADULT_REQUIRED\"}"))
-        assertEquals(RegistrationResult.AdultRequired, repository.register(identity, credentials))
+        assertEquals(RegistrationResult.AdultRequired, repository.register(identity, credentials, "123456"))
     }
 
     @Test fun `bad request and outage are reported correctly`() = runTest {
         server.enqueue(MockResponse().setResponseCode(400))
-        assertEquals(RegistrationResult.InvalidRequest, repository.register(identity, credentials))
+        assertEquals(RegistrationResult.InvalidRequest, repository.register(identity, credentials, "123456"))
         server.enqueue(MockResponse().setResponseCode(503))
-        assertEquals(RegistrationResult.Unavailable, repository.register(identity, credentials))
+        assertEquals(RegistrationResult.Unavailable, repository.register(identity, credentials, "123456"))
     }
 
     @Test fun `incomplete response or wrong DNI cannot be accepted`() = runTest {
         for (body in listOf("{}", "{\"id\":1,\"userId\":2,\"dni\":\"87654321\"}", "{\"id\":0,\"userId\":2,\"dni\":\"01234567\"}")) {
             server.enqueue(MockResponse().setResponseCode(201).setBody(body))
-            assertEquals(RegistrationResult.UnexpectedError, repository.register(identity, credentials))
+            assertEquals(RegistrationResult.UnexpectedError, repository.register(identity, credentials, "123456"))
         }
     }
 
     @Test fun `connection error is not registration success`() = runTest {
         val api = object : RegistrationApi {
+            override suspend fun sendCode(request: EmailRequest): Response<Void> = throw IOException("offline")
             override suspend fun register(request: RegisterPatientRequest): Response<RegisterPatientResponse> = throw IOException("offline")
         }
-        assertEquals(RegistrationResult.Unavailable, RemoteRegistrationRepository(api, gson).register(identity, credentials))
+        assertEquals(RegistrationResult.Unavailable, RemoteRegistrationRepository(api, gson).register(identity, credentials, "123456"))
+    }
+
+    @Test fun `code dispatch uses only the email and requires accepted response`() = runTest {
+        server.enqueue(MockResponse().setResponseCode(202))
+        assertEquals(RegistrationResult.CodeSent, repository.sendCode(credentials.email))
+        val request = server.takeRequest(1, TimeUnit.SECONDS)!!
+        assertEquals("/api/v1/user-accounts/send-verification-code", request.path)
+        assertEquals("{\"email\":\"lucia@example.com\"}", request.body.readUtf8())
+        server.enqueue(MockResponse().setResponseCode(503))
+        assertEquals(RegistrationResult.Unavailable, repository.sendCode(credentials.email))
+    }
+
+    @Test fun `wrong expired and exhausted codes cannot create an account`() = runTest {
+        for ((status, code, expected) in listOf(
+            Triple(422, "IAM_INVALID_EMAIL_CODE", RegistrationResult.InvalidCode),
+            Triple(422, "IAM_EMAIL_CODE_EXPIRED", RegistrationResult.ExpiredCode),
+            Triple(429, "IAM_EMAIL_TOO_MANY_ATTEMPTS", RegistrationResult.TooManyAttempts))) {
+            server.enqueue(MockResponse().setResponseCode(status).setBody("{\"code\":\"$code\"}"))
+            assertEquals(expected, repository.register(identity, credentials, "123456"))
+        }
     }
 
     @Test fun `cancellation propagates`() = runTest {
         val api = object : RegistrationApi {
+            override suspend fun sendCode(request: EmailRequest): Response<Void> = throw IOException("offline")
             override suspend fun register(request: RegisterPatientRequest): Response<RegisterPatientResponse> = throw CancellationException()
         }
         try {
-            RemoteRegistrationRepository(api, gson).register(identity, credentials)
+            RemoteRegistrationRepository(api, gson).register(identity, credentials, "123456")
             fail("Cancellation must propagate")
         } catch (_: CancellationException) { }
     }
