@@ -1,5 +1,6 @@
 package pe.edu.upc.saludya.features.configuration.presentation.changeEmail
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,15 +28,26 @@ class ChangeEmailViewModel @Inject constructor() : ViewModel() {
         if (current !is ChangeEmailUiState.Editing) return
 
         val email = current.newEmail.trim()
-        if (email.isEmpty() || !email.contains("@")) {
-            _uiState.value = ChangeEmailUiState.Error("Ingresa un correo válido.")
+
+        // Validación de formato de email
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            _uiState.value = ChangeEmailUiState.InvalidInput(
+                "Ingresa un correo válido o un celular de 9 dígitos, según el campo."
+            )
             return
         }
 
         viewModelScope.launch {
             _uiState.value = current.copy(isSending = true)
-            // Simulación de envío de código (mock)
+            // Simulación de envío
             _uiState.value = ChangeEmailUiState.CodeSent(email)
+        }
+    }
+
+    fun dismissInvalidInput() {
+        val current = _uiState.value
+        if (current is ChangeEmailUiState.InvalidInput) {
+            _uiState.value = ChangeEmailUiState.Editing()
         }
     }
 }

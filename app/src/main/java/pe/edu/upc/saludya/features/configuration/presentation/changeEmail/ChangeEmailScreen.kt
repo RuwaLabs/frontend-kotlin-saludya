@@ -27,6 +27,7 @@ import pe.edu.upc.saludya.features.configuration.presentation.components.Primary
 import pe.edu.upc.saludya.features.configuration.presentation.components.RuleValueField
 import pe.edu.upc.saludya.features.configuration.presentation.components.SaludYaTopBar
 import pe.edu.upc.saludya.features.configuration.presentation.components.ScreenDescription
+import pe.edu.upc.saludya.features.configuration.presentation.validation.ValidationDialog
 
 @Composable
 fun ChangeEmailScreen(
@@ -44,6 +45,29 @@ fun ChangeEmailScreen(
         }
     }
 
+    val current = uiState
+
+    // Modal: "Revisa el dato ingresado" (early return)
+    if (current is ChangeEmailUiState.InvalidInput) {
+        ValidationDialog(
+            title = "Revisa el dato ingresado",
+            message = current.message,
+            buttonText = "Entendido",
+            onCorrectClick = viewModel::dismissInvalidInput,
+        )
+        return
+    }
+
+    // Early return: Error
+    if (current is ChangeEmailUiState.Error) {
+        Text(
+            text = current.message,
+            modifier = Modifier.padding(24.dp),
+            color = MaterialTheme.colorScheme.error,
+        )
+        return
+    }
+
     Scaffold(
         topBar = {
             SaludYaTopBar(
@@ -59,36 +83,16 @@ fun ChangeEmailScreen(
         },
         containerColor = Color.White,
     ) { innerPadding ->
+        // Solo manejamos Editing aquí
         val state = uiState
-        when (state) {
-            is ChangeEmailUiState.Error -> {
-                Text(
-                    text = state.message,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .padding(24.dp),
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-            is ChangeEmailUiState.Editing -> {
-                ChangeEmailContent(
-                    modifier = Modifier.padding(innerPadding),
-                    inputValue = state.newEmail,
-                    isSending = state.isSending,
-                    onValueChange = viewModel::onEmailChange,
-                    onSendCode = viewModel::sendCode,
-                )
-            }
-            is ChangeEmailUiState.CodeSent -> {
-                // Manejado por el LaunchedEffect
-                ChangeEmailContent(
-                    modifier = Modifier.padding(innerPadding),
-                    inputValue = state.newEmail,
-                    isSending = false,
-                    onValueChange = viewModel::onEmailChange,
-                    onSendCode = viewModel::sendCode,
-                )
-            }
+        if (state is ChangeEmailUiState.Editing) {
+            ChangeEmailContent(
+                modifier = Modifier.padding(innerPadding),
+                inputValue = state.newEmail,
+                isSending = state.isSending,
+                onValueChange = viewModel::onEmailChange,
+                onSendCode = viewModel::sendCode,
+            )
         }
     }
 }
