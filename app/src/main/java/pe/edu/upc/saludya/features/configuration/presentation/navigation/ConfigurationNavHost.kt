@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import pe.edu.upc.saludya.features.configuration.presentation.changeEmail.ChangeEmailScreen
 import pe.edu.upc.saludya.features.configuration.presentation.changePhone.ChangePhoneScreen
 import pe.edu.upc.saludya.features.configuration.presentation.configuration.ConfigurationScreen
+import pe.edu.upc.saludya.features.configuration.presentation.linkMinor.LinkMinorScreen
 import pe.edu.upc.saludya.features.configuration.presentation.linkedMinor.LinkedMinorScreen
 import pe.edu.upc.saludya.features.configuration.presentation.linkedRelatives.LinkedRelativesScreen
 import pe.edu.upc.saludya.features.configuration.presentation.myData.MyDataScreen
@@ -150,7 +151,9 @@ fun ConfigurationNavHost(
                 onViewMinorClick = { minorId ->
                     navController.navigate(ConfigurationRoutes.linkedMinor(minorId))
                 },
-                onAddMinorClick = { /* TODO: Ir a "Vincular menor" */ },
+                onAddMinorClick = {
+                    navController.navigate(ConfigurationRoutes.LINK_MINOR)
+                },
                 onSyncClick = { /* TODO */ },
                 onBottomNavSelected = { index ->
                     when (index) {
@@ -183,6 +186,27 @@ fun ConfigurationNavHost(
                 onViewAppointmentsClick = { /* TODO */ },
                 onSyncClick = { /* TODO */ },
                 onUnlinkClick = { /* TODO: Modal "¿Dejar esta vinculación?" */ },
+                onBottomNavSelected = { index ->
+                    when (index) {
+                        0 -> { /* TODO */ }
+                        1 -> { /* TODO */ }
+                        2 -> { /* TODO */ }
+                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
+                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+            )
+        }
+
+        // H10 - Vincular menor
+        composable(route = ConfigurationRoutes.LINK_MINOR) {
+            LinkMinorScreen(
+                onBackClick = { navController.popBackStack() },
+                onVerified = { _, _ ->
+                    // TODO: Fase 2 - Ir a "Verificar identidad"
+                },
                 onBottomNavSelected = { index ->
                     when (index) {
                         0 -> { /* TODO */ }

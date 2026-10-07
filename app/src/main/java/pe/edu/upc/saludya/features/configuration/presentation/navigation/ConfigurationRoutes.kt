@@ -15,10 +15,11 @@ object ConfigurationRoutes {
     const val DEST_PHONE = "phone"
     const val DEST_EMAIL = "email"
 
-    // LINKED_MINOR con argumento minorId
     const val ARG_MINOR_ID = "minorId"
     const val LINKED_MINOR = "configuration/linked-minor"
     const val LINKED_MINOR_WITH_ARG = "$LINKED_MINOR/{$ARG_MINOR_ID}"
+
+    const val LINK_MINOR = "configuration/link-minor"
 
     fun verifyCode(destination: String) = "$VERIFY_CODE/$destination"
     fun linkedMinor(minorId: String) = "$LINKED_MINOR/$minorId"
