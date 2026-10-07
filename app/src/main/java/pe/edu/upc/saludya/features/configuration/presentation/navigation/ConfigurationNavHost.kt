@@ -193,7 +193,6 @@ fun ConfigurationNavHost(
                 onViewAppointmentsClick = { /* TODO */ },
                 onSyncClick = { /* TODO */ },
                 onUnlinkConfirmed = {
-                    // Vuelve a Parientes vinculados (ya sin este menor)
                     navController.navigate(ConfigurationRoutes.LINKED_RELATIVES) {
                         popUpTo(ConfigurationRoutes.LINKED_RELATIVES) { inclusive = true }
                         launchSingleTop = true
@@ -239,8 +238,8 @@ fun ConfigurationNavHost(
             VerifyIdentityScreen(
                 onBackClick = { navController.popBackStack() },
                 onSuccess = {
-                    // TODO: Cuando exista el modal "Vinculación completada", navegar ahí primero
-                    // Por ahora vamos directo al home del menor recién vinculado
+                    // El modal "Vinculación completada" se muestra primero
+                    // El botón "Entendido" del modal dispara este callback → navega a MinorHome
                     navController.navigate(ConfigurationRoutes.minorHome("1"))
                 },
                 onBottomNavSelected = { index ->
