@@ -12,7 +12,7 @@ La consulta utiliza `POST /api/v1/identity-verifications` con los campos `dni`, 
 
 La URL se define en la propiedad Gradle `saludya.apiBaseUrl`, con `/` al final. En Debug, el valor por defecto es `http://10.0.2.2:8080/` para conectar el emulador con el backend local. Para Release se debe configurar la URL HTTPS del servidor; `https://localhost/` es el valor provisional.
 
-La pantalla entrega los datos verificados a través de `onContinueRegistration`. La creación de la cuenta se integra en la siguiente historia. La consulta al registro oficial se realiza desde el backend.
+La pantalla entrega los datos verificados a través de `onContinueRegistration` y abre el formulario de credenciales de US-02. La consulta al registro oficial se realiza desde el backend.
 
 ## Pruebas
 
