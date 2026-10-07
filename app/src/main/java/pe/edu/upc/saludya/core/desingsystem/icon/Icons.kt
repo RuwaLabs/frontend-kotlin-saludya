@@ -439,3 +439,41 @@ val sunIcon: ImageVector
     }
 
 private var _sunIcon: ImageVector? = null
+
+
+// ===== Add/Plus Icon (Parientes vinculados vacío) =====
+
+@Suppress("CheckReturnValue")
+val addCircleOutlineIcon: ImageVector
+    get() {
+        if (_addCircleOutlineIcon != null) return _addCircleOutlineIcon!!
+        _addCircleOutlineIcon =
+            ImageVector.Builder(
+                name = "addCircleOutlineIcon",
+                defaultWidth = 48.dp,
+                defaultHeight = 48.dp,
+                viewportWidth = 48f,
+                viewportHeight = 48f,
+            ).apply {
+                path(
+                    fill = null,
+                    fillAlpha = 1f,
+                    stroke = SolidColor(Color.Black),
+                    strokeAlpha = 1f,
+                    strokeLineWidth = 2.5f,
+                    strokeLineCap = StrokeCap.Round,
+                    strokeLineJoin = StrokeJoin.Round,
+                    strokeLineMiter = 1f,
+                    pathFillType = PathFillType.NonZero,
+                ) {
+                    // Cruz (plus)
+                    moveTo(24f, 12f)
+                    verticalLineTo(36f)
+                    moveTo(12f, 24f)
+                    horizontalLineTo(36f)
+                }
+            }.build()
+        return _addCircleOutlineIcon!!
+    }
+
+private var _addCircleOutlineIcon: ImageVector? = null
