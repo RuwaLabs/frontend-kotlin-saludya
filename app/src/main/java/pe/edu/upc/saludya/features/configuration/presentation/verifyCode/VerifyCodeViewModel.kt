@@ -25,14 +25,25 @@ class VerifyCodeViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             while (true) {
                 val current = _uiState.value
-                if (current is VerifyCodeUiState.Editing && current.secondsRemaining > 0) {
-                    delay(1000.milliseconds)
-                    val latest = _uiState.value
-                    if (latest is VerifyCodeUiState.Editing) {
-                        _uiState.value = latest.copy(secondsRemaining = latest.secondsRemaining - 1)
+                when {
+                    current is VerifyCodeUiState.Editing && current.secondsRemaining > 0 -> {
+                        delay(1000.milliseconds)
+                        val latest = _uiState.value
+                        if (latest is VerifyCodeUiState.Editing) {
+                            val nextSecond = latest.secondsRemaining - 1
+                            if (nextSecond <= 0) {
+                                // El contador llegó a cero → código vencido
+                                _uiState.value = VerifyCodeUiState.CodeExpired(
+                                    "Solicita un nuevo código para completar el cambio."
+                                )
+                            } else {
+                                _uiState.value = latest.copy(secondsRemaining = nextSecond)
+                            }
+                        }
                     }
-                } else {
-                    delay(1000.milliseconds)
+                    else -> {
+                        delay(1000.milliseconds)
+                    }
                 }
             }
         }
@@ -69,14 +80,24 @@ class VerifyCodeViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    /**
-     * El usuario tocó "Entendido" en el modal "Código incorrecto".
-     * Volvemos al estado Editing con el código actual.
-     */
     fun dismissWrongCode() {
         val current = _uiState.value
         if (current is VerifyCodeUiState.WrongCode) {
             _uiState.value = VerifyCodeUiState.Editing()
+        }
+    }
+
+    /**
+     * El usuario tocó "Entendido" en el modal "El código venció".
+     * Reiniciamos el contador y limpiamos el código.
+     */
+    fun dismissCodeExpired() {
+        val current = _uiState.value
+        if (current is VerifyCodeUiState.CodeExpired) {
+            _uiState.value = VerifyCodeUiState.Editing(
+                code = "",
+                secondsRemaining = 45,
+            )
         }
     }
 
