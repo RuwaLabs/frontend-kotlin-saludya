@@ -26,6 +26,7 @@ import pe.edu.upc.saludya.features.configuration.presentation.components.Primary
 import pe.edu.upc.saludya.features.configuration.presentation.components.RuleValueField
 import pe.edu.upc.saludya.features.configuration.presentation.components.SaludYaTopBar
 import pe.edu.upc.saludya.features.configuration.presentation.components.ScreenDescription
+import pe.edu.upc.saludya.features.configuration.presentation.validation.ValidationDialog
 
 @Composable
 fun ChangePhoneScreen(
@@ -43,6 +44,29 @@ fun ChangePhoneScreen(
         }
     }
 
+    val current = uiState
+
+    // Modal: "Revisa el dato ingresado" (early return)
+    if (current is ChangePhoneUiState.InvalidInput) {
+        ValidationDialog(
+            title = "Revisa el dato ingresado",
+            message = current.message,
+            buttonText = "Entendido",
+            onCorrectClick = viewModel::dismissInvalidInput,
+        )
+        return
+    }
+
+    // Early return: Error (no debería llegar aquí, pero por seguridad)
+    if (current is ChangePhoneUiState.Error) {
+        Text(
+            text = current.message,
+            modifier = Modifier.padding(24.dp),
+            color = MaterialTheme.colorScheme.error,
+        )
+        return
+    }
+
     Scaffold(
         topBar = {
             SaludYaTopBar(
@@ -58,36 +82,16 @@ fun ChangePhoneScreen(
         },
         containerColor = Color.White,
     ) { innerPadding ->
+        // Solo manejamos Editing aquí (los otros estados se manejan con early return)
         val state = uiState
-        when (state) {
-            is ChangePhoneUiState.Error -> {
-                Text(
-                    text = state.message,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .padding(24.dp),
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-            is ChangePhoneUiState.Editing -> {
-                ChangePhoneContent(
-                    modifier = Modifier.padding(innerPadding),
-                    inputValue = state.newPhone,
-                    isSending = state.isSending,
-                    onValueChange = viewModel::onPhoneChange,
-                    onSendCode = viewModel::sendCode,
-                )
-            }
-            is ChangePhoneUiState.CodeSent -> {
-                // Manejado por el LaunchedEffect
-                ChangePhoneContent(
-                    modifier = Modifier.padding(innerPadding),
-                    inputValue = state.newPhone,
-                    isSending = false,
-                    onValueChange = viewModel::onPhoneChange,
-                    onSendCode = viewModel::sendCode,
-                )
-            }
+        if (state is ChangePhoneUiState.Editing) {
+            ChangePhoneContent(
+                modifier = Modifier.padding(innerPadding),
+                inputValue = state.newPhone,
+                isSending = state.isSending,
+                onValueChange = viewModel::onPhoneChange,
+                onSendCode = viewModel::sendCode,
+            )
         }
     }
 }
@@ -145,7 +149,7 @@ private fun ChangePhoneContent(
 private fun ChangePhoneScreenPreview() {
     SaludYaTheme(dynamicColor = false) {
         ChangePhoneContent(
-            inputValue = "987 654 482",
+            inputValue = "987654482",
             isSending = false,
             onValueChange = {},
             onSendCode = {},

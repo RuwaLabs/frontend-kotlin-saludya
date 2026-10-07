@@ -18,7 +18,9 @@ class ChangePhoneViewModel @Inject constructor() : ViewModel() {
     fun onPhoneChange(newValue: String) {
         val current = _uiState.value
         if (current is ChangePhoneUiState.Editing) {
-            _uiState.value = current.copy(newPhone = newValue)
+            // Solo dígitos, máximo 9
+            val filtered = newValue.filter { it.isDigit() }.take(9)
+            _uiState.value = current.copy(newPhone = filtered)
         }
     }
 
@@ -27,15 +29,26 @@ class ChangePhoneViewModel @Inject constructor() : ViewModel() {
         if (current !is ChangePhoneUiState.Editing) return
 
         val phone = current.newPhone.trim()
-        if (phone.isEmpty()) {
-            _uiState.value = ChangePhoneUiState.Error("Ingresa un número de celular válido.")
+
+        // Validación: 9 dígitos
+        if (phone.length != 9) {
+            _uiState.value = ChangePhoneUiState.InvalidInput(
+                "Ingresa un correo válido o un celular de 9 dígitos, según el campo."
+            )
             return
         }
 
         viewModelScope.launch {
             _uiState.value = current.copy(isSending = true)
-            // Simulación de envío de código (mock)
+            // Simulación de envío
             _uiState.value = ChangePhoneUiState.CodeSent(phone)
+        }
+    }
+
+    fun dismissInvalidInput() {
+        val current = _uiState.value
+        if (current is ChangePhoneUiState.InvalidInput) {
+            _uiState.value = ChangePhoneUiState.Editing()
         }
     }
 }
