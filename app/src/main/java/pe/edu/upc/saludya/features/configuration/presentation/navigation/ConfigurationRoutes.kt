@@ -8,7 +8,6 @@ object ConfigurationRoutes {
     const val LINKED_RELATIVES = "configuration/linked-relatives"
     const val CHANGE_PASSWORD = "configuration/change-password"
 
-    // VERIFY_CODE con argumento "destination"
     const val ARG_DESTINATION = "destination"
     const val VERIFY_CODE = "configuration/verify-code"
     const val VERIFY_CODE_WITH_ARG = "$VERIFY_CODE/{$ARG_DESTINATION}"

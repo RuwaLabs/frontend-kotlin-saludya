@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import pe.edu.upc.saludya.features.configuration.presentation.changeEmail.ChangeEmailScreen
 import pe.edu.upc.saludya.features.configuration.presentation.changePhone.ChangePhoneScreen
 import pe.edu.upc.saludya.features.configuration.presentation.configuration.ConfigurationScreen
+import pe.edu.upc.saludya.features.configuration.presentation.linkedRelatives.LinkedRelativesScreen
 import pe.edu.upc.saludya.features.configuration.presentation.myData.MyDataScreen
 import pe.edu.upc.saludya.features.configuration.presentation.verifyCode.VerifyCodeScreen
 
@@ -29,7 +30,9 @@ fun ConfigurationNavHost(
                 onMyDataClick = {
                     navController.navigate(ConfigurationRoutes.MY_DATA)
                 },
-                onLinkedRelativesClick = { /* TODO */ },
+                onLinkedRelativesClick = {
+                    navController.navigate(ConfigurationRoutes.LINKED_RELATIVES)
+                },
                 onChangePasswordClick = { /* TODO */ },
                 onLogoutClick = { /* TODO */ },
                 onBottomNavSelected = { index ->
@@ -137,6 +140,27 @@ fun ConfigurationNavHost(
                 descriptionText = descriptionText,
                 onBackClick = { navController.popBackStack() },
                 onVerified = { /* TODO: Fase 2 - Ir a "Cambio realizado" (modal) */ },
+                onBottomNavSelected = { index ->
+                    when (index) {
+                        0 -> { /* TODO */ }
+                        1 -> { /* TODO */ }
+                        2 -> { /* TODO */ }
+                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
+                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+            )
+        }
+
+        // H08 - Parientes vinculados
+        composable(route = ConfigurationRoutes.LINKED_RELATIVES) {
+            LinkedRelativesScreen(
+                onBackClick = { navController.popBackStack() },
+                onViewMinorClick = { /* TODO: Fase 2 - Ir a "Menor vinculado" */ },
+                onAddMinorClick = { /* TODO: Fase 2 - Ir a "Vincular menor" */ },
+                onSyncClick = { /* TODO: Fase 2 - Sincronizar */ },
                 onBottomNavSelected = { index ->
                     when (index) {
                         0 -> { /* TODO */ }
