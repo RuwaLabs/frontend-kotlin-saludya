@@ -1,0 +1,9 @@
+package pe.edu.upc.saludya.features.configuration.presentation.linkedRelatives
+
+import pe.edu.upc.saludya.features.configuration.domain.entity.LinkedMinor
+
+sealed interface LinkedRelativesUiState {
+    data object Loading : LinkedRelativesUiState
+    data class Success(val minors: List<LinkedMinor>) : LinkedRelativesUiState
+    data class Error(val message: String) : LinkedRelativesUiState
+}
