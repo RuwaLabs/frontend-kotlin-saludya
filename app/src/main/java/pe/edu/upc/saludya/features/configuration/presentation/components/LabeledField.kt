@@ -8,20 +8,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
-
-private val LabelColor = Color(0xFF56706D)
-private val FieldTextColor = Color(0xFF181C1C)
-private val FieldBorderColor = Color(0xFFE0E5E4)
 
 @Composable
 fun LabeledField(
@@ -35,7 +31,7 @@ fun LabeledField(
             modifier = Modifier.padding(horizontal = 20.dp),
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
-            color = LabelColor,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Surface(
@@ -44,15 +40,15 @@ fun LabeledField(
                 .padding(horizontal = 20.dp)
                 .height(56.dp),
             shape = RoundedCornerShape(12.dp),
-            color = Color.White,
-            border = BorderStroke(1.dp, FieldBorderColor),
+            color = MaterialTheme.colorScheme.surface,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         ) {
             Box(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Text(
                     text = value,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
-                    color = FieldTextColor,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(top = 16.dp),
                 )
             }
