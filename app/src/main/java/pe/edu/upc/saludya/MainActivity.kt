@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
+import pe.edu.upc.saludya.checkin.presentation.navigation.CheckInNavHost
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 
 @AndroidEntryPoint
@@ -21,12 +22,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SaludYaTheme(dynamicColor = false) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = "SaludYa")
-                }
+                CheckInNavHost()
             }
         }
     }
