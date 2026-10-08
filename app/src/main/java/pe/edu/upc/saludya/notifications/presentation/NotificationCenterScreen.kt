@@ -33,10 +33,7 @@ fun NotificationCenterScreen(
 
     NotificationCenterContent(
         state = state,
-        onAccept = viewModel::onAccept,
-        onReject = viewModel::onReject,
-        onMarkRead = viewModel::onMarkRead,
-        onDismiss = viewModel::onDismiss,
+        onSeeOffer = {},
         modifier = modifier
     )
 }
@@ -45,10 +42,7 @@ fun NotificationCenterScreen(
 @Composable
 fun NotificationCenterContent(
     state: NotificationUiState,
-    onAccept: (AppNotification) -> Unit,
-    onReject: (AppNotification) -> Unit,
-    onMarkRead: (AppNotification) -> Unit,
-    onDismiss: (AppNotification) -> Unit,
+    onSeeOffer: (AppNotification) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -93,10 +87,11 @@ fun NotificationCenterContent(
                         items(state.notifications, key = { it.id }) { notification ->
                             NotificationCard(
                                 notification = notification,
-                                onAccept = { onAccept(notification) },
-                                onReject = { onReject(notification) },
-                                onMarkRead = { onMarkRead(notification) },
-                                onDismiss = { onDismiss(notification) }
+                                onSeeOffer = {
+                                    if (notification.type == NotificationType.REASSIGNMENT_OFFER) {
+                                        onSeeOffer(notification)
+                                    }
+                                }
                             )
                         }
                     }
@@ -124,10 +119,7 @@ private fun NotificationCenterPreview() {
                 ),
                 unreadCount = 1
             ),
-            onAccept = {},
-            onReject = {},
-            onMarkRead = {},
-            onDismiss = {}
+            onSeeOffer = {}
         )
     }
 }

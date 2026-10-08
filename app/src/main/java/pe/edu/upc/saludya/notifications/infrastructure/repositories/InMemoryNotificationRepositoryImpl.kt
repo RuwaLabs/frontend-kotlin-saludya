@@ -6,13 +6,7 @@ import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * In-memory inbox storage kept alive by Hilt as a single instance.
- *
- * saveAll merges (insert-or-update) instead of replacing, so the inbox accumulates history.
- * When an item already exists, the local read flag is preserved so syncing with the backend
- * does not mark a notification as unread again.
- */
+
 @Singleton
 class InMemoryNotificationRepositoryImpl @Inject constructor() : NotificationRepository {
 

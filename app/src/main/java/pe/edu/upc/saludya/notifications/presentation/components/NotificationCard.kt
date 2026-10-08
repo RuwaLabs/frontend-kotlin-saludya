@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import pe.edu.upc.saludya.notifications.domain.AppNotification
 import pe.edu.upc.saludya.notifications.domain.NotificationType
@@ -29,10 +30,7 @@ import pe.edu.upc.saludya.notifications.domain.NotificationType
 @Composable
 fun NotificationCard(
     notification: AppNotification,
-    onAccept: () -> Unit,
-    onReject: () -> Unit,
-    onMarkRead: () -> Unit,
-    onDismiss: () -> Unit,
+    onSeeOffer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isActionable = notification.type == NotificationType.REASSIGNMENT_OFFER &&
@@ -63,18 +61,34 @@ fun NotificationCard(
             Spacer(modifier = Modifier.height(12.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (isActionable) {
-                    TextButton(onClick = onReject) { Text("Rechazar") }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Button(onClick = onAccept) { Text("Aceptar") }
-                } else if (!notification.isRead) {
-                    TextButton(onClick = onMarkRead) { Text("Marcar como leído") }
+                    TextButton(onClick = onSeeOffer) { Text("Ver oferta") }
+                } else {
+                    Text(
+                        text = "Hace 15 min",
+                        style = MaterialTheme.typography.titleSmall
+                    )
                 }
-                TextButton(onClick = onDismiss) { Text("Eliminar") }
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewNotificationCard() {
+    NotificationCard(
+        notification = AppNotification(
+            id = 1,
+            type = NotificationType.PATIENT_CALLED,
+            title = "Horario más temprano disponible",
+            message = "Medicina general · 6 oct\nOferta recibida a las 08:00",
+            createdAt = null,
+            actionId = 1
+        ),
+        onSeeOffer = {}
+    )
 }
