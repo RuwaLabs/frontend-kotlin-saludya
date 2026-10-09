@@ -11,8 +11,8 @@ data class RecoveryHelpRequest(val dni: String, val contactEmail: String)
 data class RecoveryHelpResponse(val instructions: String?, val phone: String?)
 
 interface RecoveryActionsApi {
-    @POST("api/v1/user-accounts/reset-password")
+    @POST("user-accounts/reset-password")
     suspend fun resetPassword(@Body request: ResetPasswordRequest): Response<Void>
-    @POST("api/v1/account-recovery-requests")
+    @POST("account-recovery-requests")
     suspend fun requestHelp(@Body request: RecoveryHelpRequest): Response<RecoveryHelpResponse>
 }

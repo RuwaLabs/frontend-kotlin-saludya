@@ -20,9 +20,9 @@ data class RegisterPatientRequest(
 data class RegisterPatientResponse(val id: Long? = null, val userId: Long? = null, val dni: String? = null)
 
 interface RegistrationApi {
-    @POST("api/v1/user-accounts/send-verification-code")
+    @POST("user-accounts/send-verification-code")
     suspend fun sendCode(@Body request: EmailRequest): Response<Void>
-    @POST("api/v1/user-accounts")
+    @POST("user-accounts")
     suspend fun register(@Body request: RegisterPatientRequest): Response<RegisterPatientResponse>
 }
 

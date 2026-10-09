@@ -16,6 +16,6 @@ data class VerifyIdentityResponse(val verified: Boolean? = null)
 data class IdentityApiError(val code: String? = null)
 
 interface IdentityApi {
-    @POST("api/v1/identity-verifications")
+    @POST("identity-verifications")
     suspend fun verify(@Body request: VerifyIdentityRequest): Response<VerifyIdentityResponse>
 }

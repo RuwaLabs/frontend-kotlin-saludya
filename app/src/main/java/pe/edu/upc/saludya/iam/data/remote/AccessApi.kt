@@ -24,16 +24,16 @@ data class SessionResponse(
 }
 
 interface AccessApi {
-    @GET("api/v1/user-accounts/me")
+    @GET("user-accounts/me")
     suspend fun profile(@Header("Authorization") authorization: String): Response<PatientProfileResponse>
-    @POST("api/v1/user-accounts/login")
+    @POST("user-accounts/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginChallengeResponse>
-    @POST("api/v1/user-accounts/login/verify")
+    @POST("user-accounts/login/verify")
     suspend fun verifyLogin(@Body request: VerifyLoginRequest): Response<SessionResponse>
-    @POST("api/v1/user-accounts/login/resend")
+    @POST("user-accounts/login/resend")
     suspend fun resendLogin(@Body request: ResendLoginRequest): Response<Void>
-    @POST("api/v1/user-accounts/recover-password")
+    @POST("user-accounts/recover-password")
     suspend fun recoverPassword(@Body request: EmailRequest): Response<Void>
-    @POST("api/v1/user-accounts/logout")
+    @POST("user-accounts/logout")
     suspend fun logout(@Header("Authorization") authorization: String): Response<Void>
 }

@@ -55,21 +55,6 @@ object IdentityModule {
     fun clock(): Clock = Clock.system(ZoneId.of("America/Lima"))
 
     @Provides @Singleton
-    fun retrofit(gson: Gson): Retrofit {
-        val client = OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .callTimeout(25, TimeUnit.SECONDS)
-            .retryOnConnectionFailure(false)
-            .build()
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.API_BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-    }
-
-    @Provides @Singleton
     fun identityApi(retrofit: Retrofit): IdentityApi = retrofit.create(IdentityApi::class.java)
 
     @Provides @Singleton
