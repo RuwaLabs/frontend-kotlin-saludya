@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import pe.edu.upc.saludya.features.patientreservations.infrastructure.remote.AppointmentService
 import pe.edu.upc.saludya.features.patientreservations.infrastructure.remote.DoctorService
+import pe.edu.upc.saludya.features.patientreservations.infrastructure.remote.PatientService
 import pe.edu.upc.saludya.features.patientreservations.infrastructure.remote.SpecialityService
 import pe.edu.upc.saludya.features.patientreservations.infrastructure.remote.TimeSlotService
 import retrofit2.Retrofit
@@ -34,4 +35,9 @@ object PatientReservationApiModule {
     @Singleton
     fun provideTimeSlotService(retrofit: Retrofit): TimeSlotService =
         retrofit.create(TimeSlotService::class.java)
+
+    @Provides
+    @Singleton
+    fun providePatientService(retrofit: Retrofit): PatientService =
+        retrofit.create(PatientService::class.java)
 }

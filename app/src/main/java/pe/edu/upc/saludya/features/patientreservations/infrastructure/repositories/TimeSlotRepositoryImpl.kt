@@ -2,6 +2,7 @@ package pe.edu.upc.saludya.features.patientreservations.infrastructure.repositor
 
 import pe.edu.upc.saludya.features.patientreservations.domain.model.TimeSlot
 import pe.edu.upc.saludya.features.patientreservations.domain.repositories.TimeSlotRepository
+import pe.edu.upc.saludya.features.patientreservations.infrastructure.mapper.toDomain
 import pe.edu.upc.saludya.features.patientreservations.infrastructure.remote.TimeSlotService
 import javax.inject.Inject
 
@@ -13,19 +14,7 @@ class TimeSlotRepositoryImpl @Inject constructor(
         try {
             val response = service.getTimeSlotById(id)
             if (response.isSuccessful) {
-                response.body()?.let { dto ->
-                    return TimeSlot(
-                        id = dto.id,
-                        doctorId = dto.doctorId,
-                        date = dto.date,
-                        startHour = dto.startHour,
-                        endHour = dto.endHour,
-                        room = dto.room,
-                        maxCapacity = dto.maxCapacity,
-                        currentBookings = dto.currentBookings,
-                        status = dto.status
-                    )
-                }
+                response.body()?.let { return it.toDomain() }
             }
         } catch (_: Exception) {
         }
@@ -39,21 +28,7 @@ class TimeSlotRepositoryImpl @Inject constructor(
         try {
             val response = service.getTimeSlotAvailableBySpecialityId(specialityId, date)
             if (response.isSuccessful) {
-                response.body()?.let { dtos ->
-                    return dtos.map { dto ->
-                        TimeSlot(
-                            id = dto.id,
-                            doctorId = dto.doctorId,
-                            date = dto.date,
-                            startHour = dto.startHour,
-                            endHour = dto.endHour,
-                            room = dto.room,
-                            maxCapacity = dto.maxCapacity,
-                            currentBookings = dto.currentBookings,
-                            status = dto.status
-                        )
-                    }
-                }
+                return response.body().orEmpty().map { it.toDomain() }
             }
         } catch (_: Exception) {
         }
@@ -67,21 +42,7 @@ class TimeSlotRepositoryImpl @Inject constructor(
         try {
             val response = service.getTimeSlotByDoctorIdAndDate(doctorId, date)
             if (response.isSuccessful) {
-                response.body()?.let { dtos ->
-                    return dtos.map { dto ->
-                        TimeSlot(
-                            id = dto.id,
-                            doctorId = dto.doctorId,
-                            date = dto.date,
-                            startHour = dto.startHour,
-                            endHour = dto.endHour,
-                            room = dto.room,
-                            maxCapacity = dto.maxCapacity,
-                            currentBookings = dto.currentBookings,
-                            status = dto.status
-                        )
-                    }
-                }
+                return response.body().orEmpty().map { it.toDomain() }
             }
         } catch (_: Exception) {
         }

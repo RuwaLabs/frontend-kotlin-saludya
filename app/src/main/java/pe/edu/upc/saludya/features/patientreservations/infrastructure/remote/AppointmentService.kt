@@ -2,6 +2,7 @@ package pe.edu.upc.saludya.features.patientreservations.infrastructure.remote
 
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -13,6 +14,9 @@ interface AppointmentService {
     suspend fun bookAppointment(
         @Body request: BookAppointmentRequestDto
     ): Response<AppointmentDto>
+
+    @DELETE("appointments/{id}")
+    suspend fun cancelAppointment(@Path("id") id: Int): Response<AppointmentDto>
 
     @GET("appointments/{id}")
     suspend fun getAppointmentById(@Path("id") id: Int): Response<AppointmentDto>

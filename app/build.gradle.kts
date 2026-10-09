@@ -23,7 +23,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_BASE_URL", "\"${providers.gradleProperty("saludya.apiBaseUrl").getOrElse("http://10.0.2.2:8080/")}\"")
+        }
         release {
+            buildConfigField("String", "API_BASE_URL", "\"${providers.gradleProperty("saludya.apiBaseUrl").getOrElse("https://localhost/")}\"")
             optimization {
                 enable = false
             }
@@ -34,6 +38,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }

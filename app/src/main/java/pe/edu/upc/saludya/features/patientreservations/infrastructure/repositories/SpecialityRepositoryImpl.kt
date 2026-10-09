@@ -2,6 +2,7 @@ package pe.edu.upc.saludya.features.patientreservations.infrastructure.repositor
 
 import pe.edu.upc.saludya.features.patientreservations.domain.model.Speciality
 import pe.edu.upc.saludya.features.patientreservations.domain.repositories.SpecialityRepository
+import pe.edu.upc.saludya.features.patientreservations.infrastructure.mapper.toDomain
 import pe.edu.upc.saludya.features.patientreservations.infrastructure.remote.SpecialityService
 import javax.inject.Inject
 
@@ -13,13 +14,7 @@ class SpecialityRepositoryImpl @Inject constructor(
         try {
             val response = service.getSpecialityById(id)
             if (response.isSuccessful) {
-                response.body()?.let { dto ->
-                    return Speciality(
-                        id = dto.id,
-                        name = dto.name,
-                        description = dto.description
-                    )
-                }
+                response.body()?.let { return it.toDomain() }
             }
         } catch (_: Exception) {
         }
@@ -30,15 +25,7 @@ class SpecialityRepositoryImpl @Inject constructor(
         try {
             val response = service.getAllSpecialities()
             if (response.isSuccessful) {
-                response.body()?.let { dtos ->
-                    return dtos.map { dto ->
-                        Speciality(
-                            id = dto.id,
-                            name = dto.name,
-                            description = dto.description
-                        )
-                    }
-                }
+                return response.body().orEmpty().map { it.toDomain() }
             }
         } catch (_: Exception) {
         }

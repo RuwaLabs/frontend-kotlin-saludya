@@ -5,10 +5,12 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import pe.edu.upc.saludya.features.patientreservations.domain.repositories.AppointmentRepository
+import pe.edu.upc.saludya.features.patientreservations.domain.repositories.BeneficiaryRepository
 import pe.edu.upc.saludya.features.patientreservations.domain.repositories.DoctorRepository
 import pe.edu.upc.saludya.features.patientreservations.domain.repositories.SpecialityRepository
 import pe.edu.upc.saludya.features.patientreservations.domain.repositories.TimeSlotRepository
 import pe.edu.upc.saludya.features.patientreservations.infrastructure.repositories.AppointmentRepositoryImpl
+import pe.edu.upc.saludya.features.patientreservations.infrastructure.repositories.BeneficiaryRepositoryImpl
 import pe.edu.upc.saludya.features.patientreservations.infrastructure.repositories.DoctorRepositoryImpl
 import pe.edu.upc.saludya.features.patientreservations.infrastructure.repositories.SpecialityRepositoryImpl
 import pe.edu.upc.saludya.features.patientreservations.infrastructure.repositories.TimeSlotRepositoryImpl
@@ -33,4 +35,8 @@ interface PatientReservationRepositoryModule {
     @Binds
     @Singleton
     fun bindTimeSlotRepository(impl: TimeSlotRepositoryImpl): TimeSlotRepository
+
+    @Binds
+    @Singleton
+    fun bindBeneficiaryRepository(impl: BeneficiaryRepositoryImpl): BeneficiaryRepository
 }
