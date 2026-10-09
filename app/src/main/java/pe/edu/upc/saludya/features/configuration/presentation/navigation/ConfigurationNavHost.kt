@@ -1,12 +1,14 @@
 package pe.edu.upc.saludya.features.configuration.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.configuration.presentation.changeEmail.ChangeEmailScreen
 import pe.edu.upc.saludya.features.configuration.presentation.changePhone.ChangePhoneScreen
 import pe.edu.upc.saludya.features.configuration.presentation.configuration.ConfigurationScreen
@@ -121,11 +123,11 @@ fun ConfigurationNavHost(
 
             val descriptionText = when (destination) {
                 ConfigurationRoutes.DEST_PHONE ->
-                    "Ingresa el código de 6 dígitos enviado a tu correo registrado para confirmar el cambio de celular."
+                    stringResource(R.string.verify_code_description_phone)
                 ConfigurationRoutes.DEST_EMAIL ->
-                    "Ingresa el código de 6 dígitos enviado a l••••a@correo.com."
+                    stringResource(R.string.verify_code_description_email)
                 else ->
-                    "Ingresa el código de 6 dígitos enviado."
+                    stringResource(R.string.verify_code_description_default)
             }
 
             VerifyCodeScreen(
@@ -161,7 +163,6 @@ fun ConfigurationNavHost(
                 onAddMinorClick = {
                     navController.navigate(ConfigurationRoutes.LINK_MINOR)
                 },
-                onSyncClick = { /* TODO */ },
                 onBottomNavSelected = { index ->
                     when (index) {
                         0 -> { /* TODO */ }
