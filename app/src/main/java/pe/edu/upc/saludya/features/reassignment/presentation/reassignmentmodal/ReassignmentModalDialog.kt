@@ -1,7 +1,9 @@
 package pe.edu.upc.saludya.features.reassignment.presentation.reassignmentmodal
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaDialog
 
 @Composable
@@ -12,12 +14,12 @@ fun ReassignmentModalDialog(
     onRejectClick: () -> Unit = {},
 ) {
     SaludYaDialog(
-        title = model.title,
+        title = stringResource(R.string.reassignment_modal_title),
         description = model.description,
-        primaryText = model.primaryText,
+        primaryText = stringResource(R.string.reassignment_modal_accept),
         onPrimaryClick = onAcceptClick,
         onDismissRequest = onDismissRequest,
-        secondaryText = model.secondaryText,
+        secondaryText = stringResource(R.string.reassignment_modal_reject),
         onSecondaryClick = onRejectClick,
     )
 }

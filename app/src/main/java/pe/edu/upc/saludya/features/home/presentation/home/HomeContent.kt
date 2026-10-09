@@ -3,8 +3,11 @@ package pe.edu.upc.saludya.features.home.presentation.home
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.AppointmentCard
+import pe.edu.upc.saludya.core.desingsystem.component.InfoCardUiModel
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaDestination
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaHomeHeader
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaInfoCard
@@ -28,19 +31,26 @@ fun HomeContent(
         modifier = modifier,
         header = {
             SaludYaHomeHeader(
-                greeting = model.greeting,
+                greeting = stringResource(R.string.home_greeting),
                 onNotificationsClick = onNotificationsClick,
             )
         },
         selectedDestination = SaludYaDestination.Inicio,
         onDestinationClick = onDestinationClick,
     ) {
-        Text(text = model.subtitle, style = SaludYaTextStyles.Subtitle)
-        Text(text = model.pendingTitle, style = SaludYaTextStyles.SectionTitle)
+        Text(text = stringResource(R.string.home_subtitle), style = SaludYaTextStyles.Subtitle)
+        Text(text = stringResource(R.string.home_pending_title), style = SaludYaTextStyles.SectionTitle)
         AppointmentCard(model = model.nextAppointment, onClick = onAppointmentClick)
-        SaludYaOutlinedButton(text = model.viewAppointmentsText, onClick = onViewAppointmentsClick)
-        SaludYaInfoCard(model = model.history, onClick = onViewHistoryClick)
-        SaludYaPrimaryButton(text = model.reserveText, onClick = onReserveClick)
+        SaludYaOutlinedButton(text = stringResource(R.string.home_view_appointments), onClick = onViewAppointmentsClick)
+        SaludYaInfoCard(
+            model = InfoCardUiModel(
+                title = stringResource(R.string.home_history_title),
+                lines = listOf(stringResource(R.string.home_history_body)),
+                footer = stringResource(R.string.home_history_footer),
+            ),
+            onClick = onViewHistoryClick,
+        )
+        SaludYaPrimaryButton(text = stringResource(R.string.home_reserve), onClick = onReserveClick)
     }
 }
 

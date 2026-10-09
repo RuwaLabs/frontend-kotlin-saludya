@@ -2,7 +2,9 @@ package pe.edu.upc.saludya.features.notifications.presentation.notifications
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaBackHeader
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaDestination
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaInfoCard
@@ -18,12 +20,12 @@ fun NotificationsContent(
 ) {
     SaludYaScreenLayout(
         modifier = modifier,
-        header = { SaludYaBackHeader(title = model.title, onBackClick = onBackClick) },
+        header = { SaludYaBackHeader(title = stringResource(R.string.notifications_title), onBackClick = onBackClick) },
         selectedDestination = SaludYaDestination.Inicio,
         onDestinationClick = onDestinationClick,
     ) {
         model.notifications.forEachIndexed { index, notification ->
-            SaludYaInfoCard(model =  notification, onClick = { onNotificationClick(index) })
+            SaludYaInfoCard(model = notification, onClick = { onNotificationClick(index) })
         }
     }
 }

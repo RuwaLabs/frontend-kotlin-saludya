@@ -2,7 +2,9 @@ package pe.edu.upc.saludya.features.home.presentation.loaderror
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaBackHeader
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaDestination
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaScreenLayout
@@ -18,14 +20,14 @@ fun LoadErrorScreen(
 ) {
     SaludYaScreenLayout(
         modifier = modifier,
-        header = { SaludYaBackHeader(title = model.title, onBackClick = onBackClick) },
+        header = { SaludYaBackHeader(title = stringResource(R.string.load_error_title), onBackClick = onBackClick) },
         selectedDestination = SaludYaDestination.Inicio,
         onDestinationClick = onDestinationClick,
     ) {
         SaludYaStateMessage(
-            title = model.heading,
-            description = model.description,
-            buttonText = model.buttonText,
+            title = stringResource(R.string.load_error_heading),
+            description = stringResource(R.string.load_error_description),
+            buttonText = stringResource(R.string.load_error_button),
             onButtonClick = onRetryClick,
         )
     }

@@ -2,7 +2,9 @@ package pe.edu.upc.saludya.features.home.presentation.historycalendar
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.CalendarDayUiModel
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaBackHeader
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaDestination
@@ -25,7 +27,7 @@ fun HistoryCalendarScreen(
 ) {
     SaludYaScreenLayout(
         modifier = modifier,
-        header = { SaludYaBackHeader(title = model.title, onBackClick = onBackClick) },
+        header = { SaludYaBackHeader(title = stringResource(R.string.history_calendar_title), onBackClick = onBackClick) },
         selectedDestination = SaludYaDestination.Inicio,
         onDestinationClick = onDestinationClick,
     ) {
@@ -35,8 +37,8 @@ fun HistoryCalendarScreen(
             onNextMonthClick = onNextMonthClick,
             onDayClick = onDayClick,
         )
-        SaludYaPrimaryButton(text = model.applyText, onClick = onApplyClick)
-        SaludYaOutlinedButton(text = model.clearText, onClick = onClearClick)
+        SaludYaPrimaryButton(text = stringResource(R.string.history_calendar_apply), onClick = onApplyClick)
+        SaludYaOutlinedButton(text = stringResource(R.string.history_calendar_clear), onClick = onClearClick)
     }
 }
 

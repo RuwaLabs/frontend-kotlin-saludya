@@ -3,7 +3,9 @@ package pe.edu.upc.saludya.features.home.presentation.filteredhistory
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.AppointmentCard
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaBackHeader
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaDestination
@@ -22,7 +24,7 @@ fun FilteredHistoryContent(
 ) {
     SaludYaScreenLayout(
         modifier = modifier,
-        header = { SaludYaBackHeader(title = model.title, onBackClick = onBackClick) },
+        header = { SaludYaBackHeader(title = stringResource(R.string.history_title), onBackClick = onBackClick) },
         selectedDestination = SaludYaDestination.Inicio,
         onDestinationClick = onDestinationClick,
     ) {
@@ -30,7 +32,7 @@ fun FilteredHistoryContent(
         model.items.forEachIndexed { index, item ->
             AppointmentCard(model = item, onClick = { onItemClick(index) })
         }
-        SaludYaOutlinedButton(text = model.changeDateText, onClick = onChangeDateClick)
+        SaludYaOutlinedButton(text = stringResource(R.string.history_change_date), onClick = onChangeDateClick)
     }
 }
 

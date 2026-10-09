@@ -1,7 +1,9 @@
 package pe.edu.upc.saludya.features.reassignment.presentation.confirmrejection
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaDialog
 
 @Composable
@@ -12,12 +14,12 @@ fun ConfirmRejectionDialog(
     onBackClick: () -> Unit = {},
 ) {
     SaludYaDialog(
-        title = model.title,
-        description = model.description,
-        primaryText = model.primaryText,
+        title = stringResource(R.string.confirm_rejection_title),
+        description = listOf(stringResource(R.string.confirm_rejection_description)),
+        primaryText = stringResource(R.string.confirm_rejection_primary),
         onPrimaryClick = onRejectClick,
         onDismissRequest = onDismissRequest,
-        secondaryText = model.secondaryText,
+        secondaryText = stringResource(R.string.confirm_rejection_secondary),
         onSecondaryClick = onBackClick,
     )
 }

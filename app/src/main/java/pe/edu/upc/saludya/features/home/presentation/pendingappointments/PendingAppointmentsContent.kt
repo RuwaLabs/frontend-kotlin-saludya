@@ -3,7 +3,9 @@ package pe.edu.upc.saludya.features.home.presentation.pendingappointments
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.AppointmentCard
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaBackHeader
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaDestination
@@ -20,14 +22,14 @@ fun PendingAppointmentsContent(
 ) {
     SaludYaScreenLayout(
         modifier = modifier,
-        header = { SaludYaBackHeader(title = model.title, onBackClick = onBackClick) },
+        header = { SaludYaBackHeader(title = stringResource(R.string.pending_title), onBackClick = onBackClick) },
         selectedDestination = SaludYaDestination.Inicio,
         onDestinationClick = onDestinationClick,
     ) {
         model.appointments.forEachIndexed { index, appointment ->
             AppointmentCard(model = appointment, onClick = { onAppointmentClick(index) })
         }
-        Text(text = model.hint, style = SaludYaTextStyles.Hint)
+        Text(text = stringResource(R.string.pending_hint), style = SaludYaTextStyles.Hint)
     }
 }
 

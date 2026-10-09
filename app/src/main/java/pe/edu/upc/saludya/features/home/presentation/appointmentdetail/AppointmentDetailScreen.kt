@@ -6,6 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.res.stringResource
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.InfoCardUiModel
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaDestination
 import pe.edu.upc.saludya.features.home.presentation.toAppointmentUiModel
@@ -31,11 +33,11 @@ fun AppointmentDetailScreen(
             appointment = appointment?.toAppointmentUiModel() ?: fallback.appointment,
             reservation = appointment?.let {
                 InfoCardUiModel(
-                    title = "Código de reserva",
+                    title = stringResource(R.string.appointment_detail_reservation_title),
                     lines = listOf(
                         it.bookingCode,
                         "Beneficiario: ${it.patientName}",
-                        "Comprobante enviado a tu correo.",
+                        stringResource(R.string.appointment_detail_reservation_note),
                     ),
                 )
             } ?: fallback.reservation,
