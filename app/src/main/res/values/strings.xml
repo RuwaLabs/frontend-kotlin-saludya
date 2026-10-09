@@ -1,3 +1,152 @@
-﻿<resources>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
     <string name="app_name">SaludYa</string>
+
+    <!-- BottomNavigationBar -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_calendar">Calendario</string>
+    <string name="nav_appointment">Cita</string>
+    <string name="nav_configuration">Configuración</string>
+
+    <!-- SaludYaTopBar / generales -->
+    <string name="topbar_back">Volver</string>
+
+    <!-- ConfigurationScreen -->
+    <string name="config_title">Configuración</string>
+    <string name="config_my_data">Mis datos</string>
+    <string name="config_linked_relatives">Parientes vinculados</string>
+    <string name="config_change_password">Cambiar contraseña</string>
+    <string name="config_logout">Cerrar sesión</string>
+
+    <!-- MyDataScreen -->
+    <string name="my_data_title">Mis datos</string>
+    <string name="my_data_label_name">Nombre</string>
+    <string name="my_data_label_document">Documento</string>
+    <string name="my_data_label_phone">Celular</string>
+    <string name="my_data_label_email">Correo</string>
+    <string name="my_data_info_note">Los datos de identidad verificados se muestran para consulta.</string>
+
+    <!-- ChangeEmailScreen -->
+    <string name="change_email_title">Cambiar correo</string>
+    <string name="change_email_description">Verificaremos el nuevo correo antes de actualizarlo.</string>
+    <string name="change_email_label">Nuevo correo</string>
+    <string name="change_email_placeholder">lucia.torres@correo.com</string>
+    <string name="change_email_send">Enviar código</string>
+    <string name="change_email_sending">Enviando…</string>
+
+    <!-- ChangePhoneScreen -->
+    <string name="change_phone_title">Cambiar celular</string>
+    <string name="change_phone_description">Confirmarás el cambio con un código enviado a tu correo registrado. El celular es un dato de contacto.</string>
+    <string name="change_phone_label">Nuevo celular</string>
+    <string name="change_phone_placeholder">987 654 482</string>
+
+    <!-- VerifyCodeScreen -->
+    <string name="verify_code_title">Verificar correo</string>
+    <string name="verify_code_remaining">Puedes solicitar otro código en 00:%1$s</string>
+    <string name="verify_code_button">Verificar código</string>
+    <string name="verify_code_verifying">Verificando…</string>
+    <string name="verify_code_resend">Reenviar código</string>
+    <string name="verify_code_description_phone">Ingresa el código de 6 dígitos enviado a tu correo registrado para confirmar el cambio de celular.</string>
+    <string name="verify_code_description_email">Ingresa el código de 6 dígitos enviado a l••••a@correo.com.</string>
+    <string name="verify_code_description_default">Ingresa el código de 6 dígitos enviado.</string>
+
+    <!-- VerifyIdentityScreen -->
+    <string name="verify_identity_title">Verificar identidad</string>
+    <string name="verify_identity_description">Completa los datos solicitados para continuar con la validación del vínculo.</string>
+    <string name="verify_identity_name">Nombres del menor</string>
+    <string name="verify_identity_name_placeholder">Mateo</string>
+    <string name="verify_identity_birthdate">Fecha de nacimiento</string>
+    <string name="verify_identity_birthdate_placeholder">12/04/2018</string>
+    <string name="verify_identity_continue">Continuar</string>
+    <string name="verify_identity_submitting">Verificando…</string>
+    <string name="verify_identity_note">La vinculación requiere la validación correspondiente.</string>
+
+    <!-- LinkedRelativesScreen -->
+    <string name="linked_relatives_title">Parientes vinculados</string>
+    <string name="linked_relatives_description">Reserva y consulta citas de los menores que tienes vinculados.</string>
+    <string name="linked_relatives_empty_title">Aún no tienes menores vinculados</string>
+    <string name="linked_relatives_empty_description">Vincula a un menor para gestionar sus reservas y consultar sus turnos.</string>
+    <string name="linked_relatives_add">Agregar menor vinculado</string>
+    <string name="linked_relatives_sync">Sincronizar vínculos</string>
+    <string name="linked_relatives_just_synced">Información actualizada</string>
+    <string name="linked_relatives_just_synced_status">Vínculo activo · datos sincronizados</string>
+    <string name="linked_relatives_view_data">Ver datos</string>
+
+    <!-- LinkedMinorScreen -->
+    <string name="linked_minor_title">Menor vinculado</string>
+    <string name="linked_minor_view_appointments">Ver sus citas</string>
+    <string name="linked_minor_sync">Sincronizar datos</string>
+    <string name="linked_minor_unlink">Dejar vinculación</string>
+    <string name="linked_minor_unlink_confirm_title">¿Dejar esta vinculación?</string>
+    <string name="linked_minor_unlink_confirm_message">Dejarás de gestionar las citas de %1$s desde esta cuenta. Sus reservas se conservan.</string>
+    <string name="linked_minor_unlink_confirm_button">Dejar vinculación</string>
+    <string name="linked_minor_unlink_cancel">Conservar vínculo</string>
+
+    <!-- LinkMinorScreen -->
+    <string name="link_minor_title">Vincular menor</string>
+    <string name="link_minor_description">Ingresa el documento del menor que representas.</string>
+    <string name="link_minor_doc_type">Tipo de documento</string>
+    <string name="link_minor_doc_number">Número de documento</string>
+    <string name="link_minor_doc_number_placeholder">••••2716</string>
+    <string name="link_minor_verify">Verificar documento</string>
+    <string name="link_minor_verifying">Verificando…</string>
+
+    <!-- MinorHomeScreen -->
+    <string name="minor_home_greeting">Hola, %1$s</string>
+    <string name="minor_home_represented_by">Representado por %1$s</string>
+    <string name="minor_home_view_appointments">Ver sus citas</string>
+    <string name="minor_home_history_title">Historial de %1$s</string>
+    <string name="minor_home_history_subtitle">Consulta sus atenciones anteriores.</string>
+    <string name="minor_home_back_to_profile">Volver a mi perfil</string>
+
+    <!-- MinorHeader -->
+    <string name="minor_header_notifications">Notificaciones</string>
+
+    <!-- MinorDetailCard -->
+    <string name="minor_detail_birthdate">Fecha de nacimiento: %1$s</string>
+    <string name="minor_detail_representative">Representante: %1$s</string>
+    <string name="minor_detail_verified">Vínculo verificado</string>
+
+    <!-- LinkedMinorCard -->
+    <string name="linked_minor_card_subtitle">Menor vinculado · %1$d años</string>
+    <string name="linked_minor_card_action">Ver datos y citas</string>
+
+    <!-- HistoryCard -->
+    <string name="history_card_action">Ver historial</string>
+
+    <!-- EditableField -->
+    <string name="editable_field_action">Editar</string>
+
+    <!-- DocumentTypeDropdown -->
+    <string name="doc_type_dni">DNI</string>
+    <string name="doc_type_foreign">Carné de extranjería</string>
+    <string name="doc_type_passport">Pasaporte</string>
+
+    <!-- ValidationDialog -->
+    <string name="validation_default_title">Revisa el valor</string>
+    <string name="validation_default_button">Corregir valor</string>
+
+    <!-- Diálogos genéricos -->
+    <string name="dialog_understood">Entendido</string>
+    <string name="dialog_invalid_input_title">Revisa el dato ingresado</string>
+
+    <!-- Validaciones / errores -->
+    <string name="error_invalid_email_or_phone">Ingresa un correo válido o un celular de 9 dígitos, según el campo.</string>
+    <string name="error_empty_document">Ingresa el número de documento.</string>
+    <string name="error_incomplete_code">Ingresa el código completo.</string>
+    <string name="error_wrong_code_title">Código incorrecto</string>
+    <string name="error_wrong_code_message">Revisa los 6 dígitos e inténtalo otra vez.</string>
+    <string name="error_code_expired_title">El código venció</string>
+    <string name="error_code_expired_message">Solicita un nuevo código para completar el cambio.</string>
+    <string name="error_minor_not_found">Menor no encontrado</string>
+    <string name="error_validation_failed">Revisa los datos del menor. Si necesitas ayuda, consulta con admisión.</string>
+
+    <!-- Error genérico -->
+    <string name="error_generic">Ocurrió un error. Inténtalo de nuevo.</string>
+
+    <!-- Éxitos -->
+    <string name="success_change_done_title">Cambio realizado</string>
+    <string name="success_change_done_message">Verificamos el código y actualizamos tu contacto.</string>
+    <string name="success_link_done_title">Vinculación completada</string>
+    <string name="success_link_done_message">Ahora puedes reservar y consultar citas para Mateo Torres.</string>
 </resources>
