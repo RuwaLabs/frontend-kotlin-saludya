@@ -15,12 +15,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.presentation.components.InfoNote
@@ -44,9 +46,9 @@ fun VerifyIdentityScreen(
     // Modal: "Vinculación completada" (éxito)
     if (current is VerifyIdentityUiState.Success) {
         ValidationDialog(
-            title = "Vinculación completada",
-            message = "Ahora puedes reservar y consultar citas para Mateo Torres.",
-            buttonText = "Entendido",
+            titleRes = R.string.success_link_done_title,
+            message = stringResource(R.string.success_link_done_message),
+            buttonTextRes = R.string.dialog_understood,
             onCorrectClick = onSuccess,
         )
         return
@@ -55,9 +57,9 @@ fun VerifyIdentityScreen(
     // Modal: "No pudimos validar el vínculo" (error)
     if (current is VerifyIdentityUiState.ValidationFailed) {
         ValidationDialog(
-            title = "No pudimos validar el vínculo",
-            message = current.message,
-            buttonText = "Entendido",
+            titleRes = R.string.error_validation_failed,
+            message = stringResource(current.messageRes),
+            buttonTextRes = R.string.dialog_understood,
             onCorrectClick = viewModel::dismissValidationFailed,
         )
         return
@@ -66,7 +68,7 @@ fun VerifyIdentityScreen(
     // Error inesperado
     if (current is VerifyIdentityUiState.Error) {
         Text(
-            text = current.message,
+            text = stringResource(current.messageRes),
             modifier = Modifier.padding(24.dp),
             color = MaterialTheme.colorScheme.error,
         )
@@ -76,7 +78,7 @@ fun VerifyIdentityScreen(
     Scaffold(
         topBar = {
             SaludYaTopBar(
-                title = "Verificar identidad",
+                title = stringResource(R.string.verify_identity_title),
                 onBackClick = onBackClick,
             )
         },
@@ -125,13 +127,13 @@ private fun VerifyIdentityContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         ScreenDescription(
-            text = "Completa los datos solicitados para continuar con la validación del vínculo.",
+            text = stringResource(R.string.verify_identity_description),
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Nombres del menor",
+            text = stringResource(R.string.verify_identity_name),
             modifier = Modifier.padding(horizontal = 20.dp),
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
@@ -143,14 +145,14 @@ private fun VerifyIdentityContent(
         RuleValueField(
             value = minorName,
             onValueChange = onMinorNameChange,
-            placeholder = "Mateo",
+            placeholder = stringResource(R.string.verify_identity_name_placeholder),
             keyboardType = KeyboardType.Text,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Fecha de nacimiento",
+            text = stringResource(R.string.verify_identity_birthdate),
             modifier = Modifier.padding(horizontal = 20.dp),
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
@@ -162,14 +164,17 @@ private fun VerifyIdentityContent(
         RuleValueField(
             value = birthDate,
             onValueChange = onBirthDateChange,
-            placeholder = "12/04/2018",
+            placeholder = stringResource(R.string.verify_identity_birthdate_placeholder),
             keyboardType = KeyboardType.Number,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         PrimaryButton(
-            text = if (isSubmitting) "Verificando..." else "Continuar",
+            text = stringResource(
+                if (isSubmitting) R.string.verify_identity_submitting
+                else R.string.verify_identity_continue
+            ),
             onClick = onSubmit,
             enabled = !isSubmitting,
         )
@@ -177,7 +182,7 @@ private fun VerifyIdentityContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         InfoNote(
-            text = "La vinculación requiere la validación correspondiente.",
+            text = stringResource(R.string.verify_identity_note),
         )
 
         Spacer(modifier = Modifier.height(16.dp))

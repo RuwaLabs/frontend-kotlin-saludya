@@ -1,5 +1,6 @@
 package pe.edu.upc.saludya.features.configuration.presentation.verifyCode
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,10 +16,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.presentation.components.CodeInputField
@@ -43,9 +46,9 @@ fun VerifyCodeScreen(
     // Modal: "Cambio realizado" (éxito)
     if (current is VerifyCodeUiState.Verified) {
         ValidationDialog(
-            title = "Cambio realizado",
-            message = "Verificamos el código y actualizamos tu contacto.",
-            buttonText = "Entendido",
+            titleRes = R.string.success_change_done_title,
+            message = stringResource(R.string.success_change_done_message),
+            buttonTextRes = R.string.dialog_understood,
             onCorrectClick = onVerified,
         )
         return
@@ -54,9 +57,9 @@ fun VerifyCodeScreen(
     // Modal: "Código incorrecto"
     if (current is VerifyCodeUiState.WrongCode) {
         ValidationDialog(
-            title = "Código incorrecto",
-            message = current.message,
-            buttonText = "Entendido",
+            titleRes = R.string.error_wrong_code_title,
+            message = stringResource(current.messageRes),
+            buttonTextRes = R.string.dialog_understood,
             onCorrectClick = viewModel::dismissWrongCode,
         )
         return
@@ -65,9 +68,9 @@ fun VerifyCodeScreen(
     // Modal: "El código venció"
     if (current is VerifyCodeUiState.CodeExpired) {
         ValidationDialog(
-            title = "El código venció",
-            message = current.message,
-            buttonText = "Entendido",
+            titleRes = R.string.error_code_expired_title,
+            message = stringResource(current.messageRes),
+            buttonTextRes = R.string.dialog_understood,
             onCorrectClick = viewModel::dismissCodeExpired,
         )
         return
@@ -76,7 +79,7 @@ fun VerifyCodeScreen(
     Scaffold(
         topBar = {
             SaludYaTopBar(
-                title = "Verificar correo",
+                title = stringResource(R.string.verify_code_title),
                 onBackClick = onBackClick,
             )
         },
@@ -91,21 +94,12 @@ fun VerifyCodeScreen(
         when (val state = uiState) {
             is VerifyCodeUiState.Error -> {
                 Text(
-                    text = state.message,
+                    text = stringResource(state.messageRes),
                     modifier = Modifier
                         .padding(innerPadding)
                         .padding(24.dp),
                     color = MaterialTheme.colorScheme.error,
                 )
-            }
-            is VerifyCodeUiState.Verified -> {
-                // Manejado por el early return
-            }
-            is VerifyCodeUiState.WrongCode -> {
-                // Manejado por el early return
-            }
-            is VerifyCodeUiState.CodeExpired -> {
-                // Manejado por el early return
             }
             is VerifyCodeUiState.Editing -> {
                 VerifyCodeContent(
@@ -113,12 +107,16 @@ fun VerifyCodeScreen(
                     descriptionText = descriptionText,
                     code = state.code,
                     secondsRemaining = state.secondsRemaining,
-                    error = state.error,
+                    errorRes = state.errorRes,
                     isVerifying = state.isVerifying,
                     onCodeChange = viewModel::onCodeChange,
                     onVerify = viewModel::verifyCode,
                     onResend = viewModel::resendCode,
                 )
+            }
+            else -> {
+                // Estados ya manejados por early return:
+                // Verified, WrongCode, CodeExpired
             }
         }
     }
@@ -130,7 +128,7 @@ private fun VerifyCodeContent(
     descriptionText: String,
     code: String,
     secondsRemaining: Int,
-    error: String?,
+    @StringRes errorRes: Int?,
     isVerifying: Boolean,
     onCodeChange: (String) -> Unit,
     onVerify: () -> Unit,
@@ -156,16 +154,16 @@ private fun VerifyCodeContent(
 
         val secondsFormatted = secondsRemaining.toString().padStart(2, '0')
         Text(
-            text = "Puedes solicitar otro código en 00:$secondsFormatted",
+            text = stringResource(R.string.verify_code_remaining, secondsFormatted),
             modifier = Modifier.padding(horizontal = 20.dp),
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        if (error != null) {
+        if (errorRes != null) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = error,
+                text = stringResource(errorRes),
                 modifier = Modifier.padding(horizontal = 20.dp),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.error,
@@ -175,7 +173,10 @@ private fun VerifyCodeContent(
         Spacer(modifier = Modifier.height(20.dp))
 
         PrimaryButton(
-            text = if (isVerifying) "Verificando..." else "Verificar código",
+            text = stringResource(
+                if (isVerifying) R.string.verify_code_verifying
+                else R.string.verify_code_button
+            ),
             onClick = onVerify,
             enabled = !isVerifying,
         )
@@ -183,7 +184,7 @@ private fun VerifyCodeContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlineActionButton(
-            text = "Reenviar código",
+            text = stringResource(R.string.verify_code_resend),
             onClick = onResend,
         )
 
@@ -199,7 +200,7 @@ private fun VerifyCodeScreenPreview() {
             descriptionText = "Ingresa el código de 6 dígitos enviado a l••••a@correo.com.",
             code = "241860",
             secondsRemaining = 45,
-            error = null,
+            errorRes = null,
             isVerifying = false,
             onCodeChange = {},
             onVerify = {},

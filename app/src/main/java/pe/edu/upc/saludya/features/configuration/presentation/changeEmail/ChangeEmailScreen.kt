@@ -16,11 +16,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
@@ -50,9 +52,9 @@ fun ChangeEmailScreen(
     // Modal: "Revisa el dato ingresado" (early return)
     if (current is ChangeEmailUiState.InvalidInput) {
         ValidationDialog(
-            title = "Revisa el dato ingresado",
-            message = current.message,
-            buttonText = "Entendido",
+            titleRes = R.string.dialog_invalid_input_title,
+            message = stringResource(current.messageRes),
+            buttonTextRes = R.string.dialog_understood,
             onCorrectClick = viewModel::dismissInvalidInput,
         )
         return
@@ -61,7 +63,7 @@ fun ChangeEmailScreen(
     // Early return: Error
     if (current is ChangeEmailUiState.Error) {
         Text(
-            text = current.message,
+            text = stringResource(current.messageRes),
             modifier = Modifier.padding(24.dp),
             color = MaterialTheme.colorScheme.error,
         )
@@ -71,7 +73,7 @@ fun ChangeEmailScreen(
     Scaffold(
         topBar = {
             SaludYaTopBar(
-                title = "Cambiar correo",
+                title = stringResource(R.string.change_email_title),
                 onBackClick = onBackClick,
             )
         },
@@ -83,7 +85,6 @@ fun ChangeEmailScreen(
         },
         containerColor = Color.White,
     ) { innerPadding ->
-        // Solo manejamos Editing aquí
         val state = uiState
         if (state is ChangeEmailUiState.Editing) {
             ChangeEmailContent(
@@ -113,13 +114,13 @@ private fun ChangeEmailContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         ScreenDescription(
-            text = "Verificaremos el nuevo correo antes de actualizarlo.",
+            text = stringResource(R.string.change_email_description),
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Nuevo correo",
+            text = stringResource(R.string.change_email_label),
             modifier = Modifier.padding(horizontal = 20.dp),
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -130,14 +131,17 @@ private fun ChangeEmailContent(
         RuleValueField(
             value = inputValue,
             onValueChange = onValueChange,
-            placeholder = "lucia.torres@correo.com",
+            placeholder = stringResource(R.string.change_email_placeholder),
             keyboardType = KeyboardType.Email,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         PrimaryButton(
-            text = if (isSending) "Enviando..." else "Enviar código",
+            text = stringResource(
+                if (isSending) R.string.change_email_sending
+                else R.string.change_email_send
+            ),
             onClick = onSendCode,
             enabled = !isSending,
         )

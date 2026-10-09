@@ -16,11 +16,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.presentation.components.DocumentTypeDropdown
@@ -28,8 +31,6 @@ import pe.edu.upc.saludya.features.configuration.presentation.components.Primary
 import pe.edu.upc.saludya.features.configuration.presentation.components.RuleValueField
 import pe.edu.upc.saludya.features.configuration.presentation.components.SaludYaTopBar
 import pe.edu.upc.saludya.features.configuration.presentation.components.ScreenDescription
-
-private val DocumentTypes = listOf("DNI", "Carné de extranjería", "Pasaporte")
 
 @Composable
 fun LinkMinorScreen(
@@ -47,10 +48,16 @@ fun LinkMinorScreen(
         }
     }
 
+    val documentTypes = listOf(
+        stringResource(R.string.doc_type_dni),
+        stringResource(R.string.doc_type_foreign),
+        stringResource(R.string.doc_type_passport),
+    )
+
     Scaffold(
         topBar = {
             SaludYaTopBar(
-                title = "Vincular menor",
+                title = stringResource(R.string.link_minor_title),
                 onBackClick = onBackClick,
             )
         },
@@ -65,7 +72,7 @@ fun LinkMinorScreen(
         when (val state = uiState) {
             is LinkMinorUiState.Error -> {
                 Text(
-                    text = state.message,
+                    text = stringResource(state.messageRes),
                     modifier = Modifier
                         .padding(innerPadding)
                         .padding(24.dp),
@@ -81,6 +88,7 @@ fun LinkMinorScreen(
                     documentType = state.documentType,
                     documentNumber = state.documentNumber,
                     isVerifying = state.isVerifying,
+                    documentTypes = documentTypes,
                     onDocumentTypeChange = viewModel::onDocumentTypeChange,
                     onDocumentNumberChange = viewModel::onDocumentNumberChange,
                     onVerify = viewModel::verifyDocument,
@@ -96,6 +104,7 @@ private fun LinkMinorContent(
     documentType: String,
     documentNumber: String,
     isVerifying: Boolean,
+    documentTypes: List<String>,
     onDocumentTypeChange: (String) -> Unit,
     onDocumentNumberChange: (String) -> Unit,
     onVerify: () -> Unit,
@@ -108,25 +117,25 @@ private fun LinkMinorContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         ScreenDescription(
-            text = "Ingresa el documento del menor que representas.",
+            text = stringResource(R.string.link_minor_description),
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         DocumentTypeDropdown(
-            label = "Tipo de documento",
+            label = stringResource(R.string.link_minor_doc_type),
             selected = documentType,
-            options = DocumentTypes,
+            options = documentTypes,
             onSelected = onDocumentTypeChange,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Número de documento",
+            text = stringResource(R.string.link_minor_doc_number),
             modifier = Modifier.padding(horizontal = 20.dp),
             fontSize = 14.sp,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+            fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
@@ -135,14 +144,17 @@ private fun LinkMinorContent(
         RuleValueField(
             value = documentNumber,
             onValueChange = onDocumentNumberChange,
-            placeholder = "••••2716",
+            placeholder = stringResource(R.string.link_minor_doc_number_placeholder),
             keyboardType = KeyboardType.Number,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         PrimaryButton(
-            text = if (isVerifying) "Verificando..." else "Verificar documento",
+            text = stringResource(
+                if (isVerifying) R.string.link_minor_verifying
+                else R.string.link_minor_verify
+            ),
             onClick = onVerify,
             enabled = !isVerifying,
         )
@@ -159,6 +171,7 @@ private fun LinkMinorScreenPreview() {
             documentType = "DNI",
             documentNumber = "••••2716",
             isVerifying = false,
+            documentTypes = listOf("DNI", "Carné de extranjería", "Pasaporte"),
             onDocumentTypeChange = {},
             onDocumentNumberChange = {},
             onVerify = {},

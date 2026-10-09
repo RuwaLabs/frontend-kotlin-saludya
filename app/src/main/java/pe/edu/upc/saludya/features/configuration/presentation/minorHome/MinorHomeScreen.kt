@@ -20,9 +20,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.domain.entity.LinkedMinor
@@ -69,7 +71,7 @@ fun MinorHomeScreen(
                 }
                 is MinorHomeUiState.Error -> {
                     Text(
-                        text = state.message,
+                        text = stringResource(state.messageRes),
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -94,6 +96,8 @@ private fun MinorHomeContent(
     onViewHistoryClick: () -> Unit,
     onBackToProfileClick: () -> Unit,
 ) {
+    val firstName = minor.fullName.split(" ").first()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -102,7 +106,7 @@ private fun MinorHomeContent(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         MinorHeader(
-            greeting = "Hola, ${minor.fullName.split(" ").first()}",
+            greeting = stringResource(R.string.minor_home_greeting, firstName),
             representativeName = minor.representativeName,
         )
 
@@ -117,18 +121,18 @@ private fun MinorHomeContent(
         )
 
         PrimaryButton(
-            text = "Ver sus citas",
+            text = stringResource(R.string.minor_home_view_appointments),
             onClick = onViewAppointmentsClick,
         )
 
         HistoryCard(
-            title = "Historial de ${minor.fullName.split(" ").first()}",
-            subtitle = "Consulta sus atenciones anteriores.",
+            title = stringResource(R.string.minor_home_history_title, firstName),
+            subtitle = stringResource(R.string.minor_home_history_subtitle),
             onViewHistoryClick = onViewHistoryClick,
         )
 
         OutlineActionButton(
-            text = "Volver a mi perfil",
+            text = stringResource(R.string.minor_home_back_to_profile),
             onClick = onBackToProfileClick,
         )
 

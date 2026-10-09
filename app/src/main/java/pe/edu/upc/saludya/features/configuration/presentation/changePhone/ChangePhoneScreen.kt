@@ -16,10 +16,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
@@ -49,18 +51,18 @@ fun ChangePhoneScreen(
     // Modal: "Revisa el dato ingresado" (early return)
     if (current is ChangePhoneUiState.InvalidInput) {
         ValidationDialog(
-            title = "Revisa el dato ingresado",
-            message = current.message,
-            buttonText = "Entendido",
+            titleRes = R.string.dialog_invalid_input_title,
+            message = stringResource(current.messageRes),
+            buttonTextRes = R.string.dialog_understood,
             onCorrectClick = viewModel::dismissInvalidInput,
         )
         return
     }
 
-    // Early return: Error (no debería llegar aquí, pero por seguridad)
+    // Early return: Error
     if (current is ChangePhoneUiState.Error) {
         Text(
-            text = current.message,
+            text = stringResource(current.messageRes),
             modifier = Modifier.padding(24.dp),
             color = MaterialTheme.colorScheme.error,
         )
@@ -70,7 +72,7 @@ fun ChangePhoneScreen(
     Scaffold(
         topBar = {
             SaludYaTopBar(
-                title = "Cambiar celular",
+                title = stringResource(R.string.change_phone_title),
                 onBackClick = onBackClick,
             )
         },
@@ -82,7 +84,6 @@ fun ChangePhoneScreen(
         },
         containerColor = Color.White,
     ) { innerPadding ->
-        // Solo manejamos Editing aquí (los otros estados se manejan con early return)
         val state = uiState
         if (state is ChangePhoneUiState.Editing) {
             ChangePhoneContent(
@@ -112,13 +113,13 @@ private fun ChangePhoneContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         ScreenDescription(
-            text = "Confirmarás el cambio con un código enviado a tu correo registrado. El celular es un dato de contacto.",
+            text = stringResource(R.string.change_phone_description),
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Nuevo celular",
+            text = stringResource(R.string.change_phone_label),
             modifier = Modifier.padding(horizontal = 20.dp),
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -129,13 +130,16 @@ private fun ChangePhoneContent(
         RuleValueField(
             value = inputValue,
             onValueChange = onValueChange,
-            placeholder = "987 654 482",
+            placeholder = stringResource(R.string.change_phone_placeholder),
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         PrimaryButton(
-            text = if (isSending) "Enviando..." else "Enviar código",
+            text = stringResource(
+                if (isSending) R.string.change_email_sending
+                else R.string.change_email_send
+            ),
             onClick = onSendCode,
             enabled = !isSending,
         )

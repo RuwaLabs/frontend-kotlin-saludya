@@ -30,11 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.icon.addCircleOutlineIcon
 import pe.edu.upc.saludya.core.desingsystem.icon.arrowBack
@@ -52,7 +54,6 @@ fun LinkedRelativesScreen(
     onBackClick: () -> Unit = {},
     onViewMinorClick: (String) -> Unit = {},
     onAddMinorClick: () -> Unit = {},
-    onSyncClick: () -> Unit = {},
     onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -60,7 +61,7 @@ fun LinkedRelativesScreen(
     Scaffold(
         topBar = {
             SaludYaTopBar(
-                title = "Parientes vinculados",
+                title = stringResource(R.string.linked_relatives_title),
                 onBackClick = onBackClick,
             )
         },
@@ -83,7 +84,7 @@ fun LinkedRelativesScreen(
                 }
                 is LinkedRelativesUiState.Error -> {
                     Text(
-                        text = state.message,
+                        text = stringResource(state.messageRes),
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -105,7 +106,7 @@ fun LinkedRelativesScreen(
                                 minors = state.minors,
                                 onViewMinorClick = onViewMinorClick,
                                 onAddMinorClick = onAddMinorClick,
-                                onSyncClick = onSyncClick,
+                                onSyncClick = viewModel::markAsSynced,
                             )
                         }
                     }
@@ -115,9 +116,6 @@ fun LinkedRelativesScreen(
     }
 }
 
-/**
- * Estado vacío: cuando el usuario no tiene menores vinculados.
- */
 @Composable
 private fun LinkedRelativesEmptyContent(
     onAddMinorClick: () -> Unit,
@@ -138,7 +136,7 @@ private fun LinkedRelativesEmptyContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Aún no tienes menores vinculados",
+            text = stringResource(R.string.linked_relatives_empty_title),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -148,7 +146,7 @@ private fun LinkedRelativesEmptyContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Vincula a un menor para gestionar sus reservas y consultar sus turnos.",
+            text = stringResource(R.string.linked_relatives_empty_description),
             fontSize = 15.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             lineHeight = 22.sp,
@@ -157,7 +155,7 @@ private fun LinkedRelativesEmptyContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         PrimaryButton(
-            text = "Agregar menor",
+            text = stringResource(R.string.linked_relatives_add),
             onClick = onAddMinorClick,
         )
 
@@ -165,10 +163,6 @@ private fun LinkedRelativesEmptyContent(
     }
 }
 
-/**
- * Estado "recién sincronizado": muestra el mensaje "Información actualizada"
- * y cards con "Vínculo activo · datos sincronizados".
- */
 @Composable
 private fun LinkedRelativesJustSyncedContent(
     minors: List<LinkedMinor>,
@@ -182,7 +176,6 @@ private fun LinkedRelativesJustSyncedContent(
             .padding(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        // "✓ Información actualizada" en verde
         Row(
             modifier = Modifier.padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -195,7 +188,7 @@ private fun LinkedRelativesJustSyncedContent(
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
-                text = "Información actualizada",
+                text = stringResource(R.string.linked_relatives_just_synced),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
@@ -215,7 +208,7 @@ private fun LinkedRelativesJustSyncedContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         PrimaryButton(
-            text = "Agregar menor vinculado",
+            text = stringResource(R.string.linked_relatives_add),
             onClick = onAddMinorClick,
         )
 
@@ -250,7 +243,7 @@ private fun JustSyncedMinorCard(
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "Vínculo activo · datos sincronizados",
+                text = stringResource(R.string.linked_relatives_just_synced_status),
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -260,7 +253,7 @@ private fun JustSyncedMinorCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Ver datos",
+                    text = stringResource(R.string.linked_relatives_view_data),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -279,9 +272,6 @@ private fun JustSyncedMinorCard(
     }
 }
 
-/**
- * Estado con contenido: lista de menores vinculados.
- */
 @Composable
 private fun LinkedRelativesContent(
     minors: List<LinkedMinor>,
@@ -297,7 +287,7 @@ private fun LinkedRelativesContent(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         ScreenDescription(
-            text = "Reserva y consulta citas de los menores que tienes vinculados.",
+            text = stringResource(R.string.linked_relatives_description),
         )
 
         minors.forEach { minor ->
@@ -311,12 +301,12 @@ private fun LinkedRelativesContent(
         Spacer(modifier = Modifier.height(4.dp))
 
         PrimaryButton(
-            text = "Agregar menor vinculado",
+            text = stringResource(R.string.linked_relatives_add),
             onClick = onAddMinorClick,
         )
 
         OutlineActionButton(
-            text = "Sincronizar vínculos",
+            text = stringResource(R.string.linked_relatives_sync),
             onClick = onSyncClick,
         )
 

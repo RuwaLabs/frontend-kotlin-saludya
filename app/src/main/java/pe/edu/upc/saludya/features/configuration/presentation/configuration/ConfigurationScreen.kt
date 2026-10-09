@@ -19,9 +19,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.domain.entity.Patient
@@ -44,7 +46,7 @@ fun ConfigurationScreen(
     Scaffold(
         topBar = {
             SaludYaTopBar(
-                title = "Configuración",
+                title = stringResource(R.string.config_title),
                 onBackClick = onBackClick,
             )
         },
@@ -67,7 +69,7 @@ fun ConfigurationScreen(
                 }
                 is ConfigurationUiState.Error -> {
                     Text(
-                        text = state.message,
+                        text = stringResource(state.messageRes),
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -112,22 +114,22 @@ private fun ConfigurationContent(
         Spacer(modifier = Modifier.height(4.dp))
 
         OutlineActionButton(
-            text = "Mis datos",
+            text = stringResource(R.string.config_my_data),
             onClick = onMyDataClick,
         )
 
         OutlineActionButton(
-            text = "Parientes vinculados",
+            text = stringResource(R.string.config_linked_relatives),
             onClick = onLinkedRelativesClick,
         )
 
         OutlineActionButton(
-            text = "Cambiar contraseña",
+            text = stringResource(R.string.config_change_password),
             onClick = onChangePasswordClick,
         )
 
         OutlineActionButton(
-            text = "Cerrar sesión",
+            text = stringResource(R.string.config_logout),
             onClick = onLogoutClick,
         )
 

@@ -18,9 +18,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.domain.entity.Patient
@@ -42,7 +44,7 @@ fun MyDataScreen(
     Scaffold(
         topBar = {
             SaludYaTopBar(
-                title = "Mis datos",
+                title = stringResource(R.string.my_data_title),
                 onBackClick = onBackClick,
             )
         },
@@ -65,7 +67,7 @@ fun MyDataScreen(
                 }
                 is MyDataUiState.Error -> {
                     Text(
-                        text = state.message,
+                        text = stringResource(state.messageRes),
                         modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -96,21 +98,21 @@ private fun MyDataContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         LabeledField(
-            label = "Nombre",
+            label = stringResource(R.string.my_data_label_name),
             value = patient.fullName,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         LabeledField(
-            label = "Documento",
+            label = stringResource(R.string.my_data_label_document),
             value = "${patient.documentType} ${patient.documentNumberMasked}",
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         EditableField(
-            label = "Celular",
+            label = stringResource(R.string.my_data_label_phone),
             value = patient.phoneNumber,
             onClick = onEditPhoneClick,
         )
@@ -118,7 +120,7 @@ private fun MyDataContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         EditableField(
-            label = "Correo",
+            label = stringResource(R.string.my_data_label_email),
             value = patient.email,
             onClick = onEditEmailClick,
         )
@@ -126,7 +128,7 @@ private fun MyDataContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         InfoNote(
-            text = "Los datos de identidad verificados se muestran para consulta.",
+            text = stringResource(R.string.my_data_info_note),
         )
 
         Spacer(modifier = Modifier.height(24.dp))

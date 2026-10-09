@@ -20,9 +20,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.domain.entity.LinkedMinor
@@ -58,10 +60,13 @@ fun LinkedMinorScreen(
     val current = uiState
     if (current is LinkedMinorUiState.ConfirmingUnlink) {
         ConfirmDialog(
-            title = "¿Dejar esta vinculación?",
-            message = "Dejarás de gestionar las citas de ${current.minor.fullName.split(" ").first()} desde esta cuenta. Sus reservas se conservan.",
-            confirmText = "Dejar vinculación",
-            cancelText = "Conservar vínculo",
+            title = stringResource(R.string.linked_minor_unlink_confirm_title),
+            message = stringResource(
+                R.string.linked_minor_unlink_confirm_message,
+                current.minor.fullName.split(" ").first(),
+            ),
+            confirmText = stringResource(R.string.linked_minor_unlink_confirm_button),
+            cancelText = stringResource(R.string.linked_minor_unlink_cancel),
             onConfirm = viewModel::confirmUnlink,
             onCancel = viewModel::cancelUnlink,
         )
@@ -71,7 +76,7 @@ fun LinkedMinorScreen(
     // Error inesperado (early return)
     if (current is LinkedMinorUiState.Error) {
         Text(
-            text = current.message,
+            text = stringResource(current.messageRes),
             modifier = Modifier.padding(24.dp),
             color = MaterialTheme.colorScheme.error,
         )
@@ -81,7 +86,7 @@ fun LinkedMinorScreen(
     Scaffold(
         topBar = {
             SaludYaTopBar(
-                title = "Menor vinculado",
+                title = stringResource(R.string.linked_minor_title),
                 onBackClick = onBackClick,
             )
         },
@@ -144,17 +149,17 @@ private fun LinkedMinorContent(
         Spacer(modifier = Modifier.height(4.dp))
 
         PrimaryButton(
-            text = "Ver sus citas",
+            text = stringResource(R.string.linked_minor_view_appointments),
             onClick = onViewAppointmentsClick,
         )
 
         OutlineActionButton(
-            text = "Sincronizar datos",
+            text = stringResource(R.string.linked_minor_sync),
             onClick = onSyncClick,
         )
 
         OutlineActionButton(
-            text = "Dejar vinculación",
+            text = stringResource(R.string.linked_minor_unlink),
             onClick = onUnlinkClick,
         )
 
