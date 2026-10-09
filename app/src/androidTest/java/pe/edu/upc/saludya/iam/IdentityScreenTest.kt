@@ -1,12 +1,12 @@
-package pe.edu.upc.saludya.iam
+package pe.edu.upc.saludya.features.iam
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import org.junit.Rule
 import org.junit.Test
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
-import pe.edu.upc.saludya.iam.domain.model.*
-import pe.edu.upc.saludya.iam.presentation.identity.*
+import pe.edu.upc.saludya.features.iam.domain.model.*
+import pe.edu.upc.saludya.features.iam.presentation.identity.*
 import java.time.LocalDate
 
 class IdentityScreenTest {

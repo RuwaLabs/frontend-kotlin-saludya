@@ -1,4 +1,4 @@
-package pe.edu.upc.saludya.iam
+package pe.edu.upc.saludya.features.iam
 
 import com.google.gson.Gson
 import kotlinx.coroutines.CancellationException
@@ -9,10 +9,10 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import pe.edu.upc.saludya.iam.data.remote.*
-import pe.edu.upc.saludya.iam.data.repository.RemoteIdentityRepository
-import pe.edu.upc.saludya.iam.domain.model.IdentityDetails
-import pe.edu.upc.saludya.iam.domain.repository.IdentityVerificationResult
+import pe.edu.upc.saludya.features.iam.infrastructure.remote.*
+import pe.edu.upc.saludya.features.iam.infrastructure.repositories.RemoteIdentityRepository
+import pe.edu.upc.saludya.features.iam.domain.model.IdentityDetails
+import pe.edu.upc.saludya.features.iam.domain.repository.IdentityVerificationResult
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

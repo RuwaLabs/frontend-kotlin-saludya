@@ -7,6 +7,9 @@ import pe.edu.upc.saludya.core.desingsystem.icon.calendarIcon
 import pe.edu.upc.saludya.core.desingsystem.icon.homeIcon
 import pe.edu.upc.saludya.core.desingsystem.icon.qrCodeIcon
 import pe.edu.upc.saludya.core.desingsystem.icon.settingsIcon
+import pe.edu.upc.saludya.navigation.AsistenciaDestination
+import pe.edu.upc.saludya.navigation.ConfiguracionDestination
+import pe.edu.upc.saludya.navigation.HomeGraph
 import pe.edu.upc.saludya.features.patientreservations.presentation.navigation.PatientReservationsNavGraphRoute
 
 enum class NavigationItem(
@@ -15,7 +18,7 @@ enum class NavigationItem(
     val title: Int
 ) {
     HOME(
-        route = InicioRoute,
+        route = HomeGraph,
         icon = homeIcon,
         title = R.string.reservation_tab_home
     ),
@@ -25,12 +28,12 @@ enum class NavigationItem(
         title = R.string.reservation_tab_book
     ),
     ATTENDANCE(
-        route = AsistenciaRoute,
+        route = AsistenciaDestination,
         icon = qrCodeIcon,
         title = R.string.reservation_tab_attendance
     ),
     SETTINGS(
-        route = ConfiguracionRoute,
+        route = ConfiguracionDestination,
         icon = settingsIcon,
         title = R.string.reservation_tab_settings
     )

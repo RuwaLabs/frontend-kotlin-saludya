@@ -1,8 +1,8 @@
-package pe.edu.upc.saludya.iam
+package pe.edu.upc.saludya.features.iam
 
 import org.junit.Assert.*
 import org.junit.Test
-import pe.edu.upc.saludya.iam.domain.model.*
+import pe.edu.upc.saludya.features.iam.domain.model.*
 import java.time.LocalDate
 
 class IdentityValidatorTest {

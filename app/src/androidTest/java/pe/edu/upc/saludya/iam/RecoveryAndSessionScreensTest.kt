@@ -1,4 +1,4 @@
-package pe.edu.upc.saludya.iam
+package pe.edu.upc.saludya.features.iam
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -6,8 +6,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
-import pe.edu.upc.saludya.iam.domain.repository.AccessFailure
-import pe.edu.upc.saludya.iam.presentation.access.*
+import pe.edu.upc.saludya.features.iam.domain.repository.AccessFailure
+import pe.edu.upc.saludya.features.iam.presentation.access.*
 
 class RecoveryAndSessionScreensTest {
     @get:Rule val compose = createComposeRule()

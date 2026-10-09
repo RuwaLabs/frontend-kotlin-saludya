@@ -1,4 +1,4 @@
-﻿package pe.edu.upc.saludya.core.di
+package pe.edu.upc.saludya.core.di
 
 import android.content.Context
 import androidx.room3.Room
@@ -8,7 +8,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import pe.edu.upc.saludya.home.infrastructure.local.AppDatabase
+import pe.edu.upc.saludya.features.home.infrastructure.local.AppDatabase
 import javax.inject.Singleton
 
 @Module

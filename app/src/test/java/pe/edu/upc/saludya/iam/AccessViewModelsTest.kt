@@ -1,4 +1,4 @@
-package pe.edu.upc.saludya.iam
+package pe.edu.upc.saludya.features.iam
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -8,9 +8,9 @@ import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import pe.edu.upc.saludya.iam.domain.model.*
-import pe.edu.upc.saludya.iam.domain.repository.*
-import pe.edu.upc.saludya.iam.presentation.access.*
+import pe.edu.upc.saludya.features.iam.domain.model.*
+import pe.edu.upc.saludya.features.iam.domain.repository.*
+import pe.edu.upc.saludya.features.iam.presentation.access.*
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneId

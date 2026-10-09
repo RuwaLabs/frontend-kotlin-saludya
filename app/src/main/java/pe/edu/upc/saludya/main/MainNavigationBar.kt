@@ -16,19 +16,17 @@ import androidx.navigation.NavController
 fun MainNavigationBar(navController: NavController) {
 
     var selectedItem by rememberSaveable {
-        mutableStateOf(NavigationItem.BOOK)
+        mutableStateOf(NavigationItem.HOME)
     }
 
     BottomAppBar {
         NavigationItem.entries.forEach { item ->
-
             NavigationBarItem(
                 selected = selectedItem == item,
                 onClick = {
                     navController.navigate(item.route) {
                         launchSingleTop = true
-                        popUpTo(selectedItem.route) {
-                            inclusive = true
+                        popUpTo(NavigationItem.HOME.route) {
                             saveState = true
                         }
                         restoreState = true

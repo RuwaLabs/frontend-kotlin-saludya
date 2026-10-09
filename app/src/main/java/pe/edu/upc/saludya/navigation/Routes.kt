@@ -2,6 +2,10 @@ package pe.edu.upc.saludya.navigation
 
 import kotlinx.serialization.Serializable
 
+@Serializable data object IamRoute
+
+@Serializable data object MainRoute
+
 @Serializable data object HomeGraph
 
 @Serializable data object HomeDestination
@@ -21,3 +25,6 @@ import kotlinx.serialization.Serializable
 @Serializable data object OfferRejectedDestination
 
 @Serializable data class OfferDetailDestination(val offerId: Long)
+
+@Serializable data object AsistenciaDestination
+@Serializable data object ConfiguracionDestination
