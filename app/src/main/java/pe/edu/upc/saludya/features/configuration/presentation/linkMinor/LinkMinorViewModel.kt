@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import pe.edu.upc.saludya.R
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,7 +36,7 @@ class LinkMinorViewModel @Inject constructor() : ViewModel() {
 
         val number = current.documentNumber.trim()
         if (number.isEmpty()) {
-            _uiState.value = LinkMinorUiState.Error("Ingresa el número de documento.")
+            _uiState.value = LinkMinorUiState.Error(R.string.error_empty_document)
             return
         }
 

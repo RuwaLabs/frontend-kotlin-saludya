@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import pe.edu.upc.saludya.R
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,13 +40,13 @@ class VerifyIdentityViewModel @Inject constructor() : ViewModel() {
         // Validación básica de campos no vacíos
         if (name.isEmpty()) {
             _uiState.value = VerifyIdentityUiState.ValidationFailed(
-                "Revisa los datos del menor. Si necesitas ayuda, consulta con admisión."
+                R.string.error_validation_failed
             )
             return
         }
         if (date.isEmpty()) {
             _uiState.value = VerifyIdentityUiState.ValidationFailed(
-                "Revisa los datos del menor. Si necesitas ayuda, consulta con admisión."
+                R.string.error_validation_failed
             )
             return
         }
@@ -61,16 +62,12 @@ class VerifyIdentityViewModel @Inject constructor() : ViewModel() {
                 _uiState.value = VerifyIdentityUiState.Success
             } else {
                 _uiState.value = VerifyIdentityUiState.ValidationFailed(
-                    "Revisa los datos del menor. Si necesitas ayuda, consulta con admisión."
+                    R.string.error_validation_failed
                 )
             }
         }
     }
 
-    /**
-     * El usuario tocó "Entendido" en el modal "No pudimos validar el vínculo".
-     * Volvemos al formulario con los datos que ingresó.
-     */
     fun dismissValidationFailed() {
         val current = _uiState.value
         if (current is VerifyIdentityUiState.ValidationFailed) {

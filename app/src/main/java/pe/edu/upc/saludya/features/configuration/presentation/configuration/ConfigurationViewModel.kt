@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.configuration.application.usecase.GetPatientProfileUseCase
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ class ConfigurationViewModel @Inject constructor(
             _uiState.value = ConfigurationUiState.Loading
             runCatching { getPatientProfileUseCase() }
                 .onSuccess { _uiState.value = ConfigurationUiState.Success(it) }
-                .onFailure { _uiState.value = ConfigurationUiState.Error(it.message ?: "Error") }
+                .onFailure { _uiState.value = ConfigurationUiState.Error(R.string.error_generic) }
         }
     }
 }

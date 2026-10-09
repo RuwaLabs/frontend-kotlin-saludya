@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import pe.edu.upc.saludya.R
 import kotlin.time.Duration.Companion.milliseconds
 import javax.inject.Inject
 
@@ -34,7 +35,7 @@ class VerifyCodeViewModel @Inject constructor() : ViewModel() {
                             if (nextSecond <= 0) {
                                 // El contador llegó a cero → código vencido
                                 _uiState.value = VerifyCodeUiState.CodeExpired(
-                                    "Solicita un nuevo código para completar el cambio."
+                                    R.string.error_code_expired_message
                                 )
                             } else {
                                 _uiState.value = latest.copy(secondsRemaining = nextSecond)
@@ -52,7 +53,7 @@ class VerifyCodeViewModel @Inject constructor() : ViewModel() {
     fun onCodeChange(newCode: String) {
         val current = _uiState.value
         if (current is VerifyCodeUiState.Editing) {
-            _uiState.value = current.copy(code = newCode, error = null)
+            _uiState.value = current.copy(code = newCode, errorRes = null)
         }
     }
 
@@ -61,12 +62,12 @@ class VerifyCodeViewModel @Inject constructor() : ViewModel() {
         if (current !is VerifyCodeUiState.Editing) return
 
         if (current.code.length < 6) {
-            _uiState.value = current.copy(error = "Ingresa el código completo.")
+            _uiState.value = current.copy(errorRes = R.string.error_incomplete_code)
             return
         }
 
         viewModelScope.launch {
-            _uiState.value = current.copy(isVerifying = true, error = null)
+            _uiState.value = current.copy(isVerifying = true, errorRes = null)
             delay(800.milliseconds)
 
             // Código correcto simulado: "241860"
@@ -74,7 +75,7 @@ class VerifyCodeViewModel @Inject constructor() : ViewModel() {
                 _uiState.value = VerifyCodeUiState.Verified
             } else {
                 _uiState.value = VerifyCodeUiState.WrongCode(
-                    "Revisa los 6 dígitos e inténtalo otra vez."
+                    R.string.error_wrong_code_message
                 )
             }
         }
@@ -87,10 +88,6 @@ class VerifyCodeViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    /**
-     * El usuario tocó "Entendido" en el modal "El código venció".
-     * Reiniciamos el contador y limpiamos el código.
-     */
     fun dismissCodeExpired() {
         val current = _uiState.value
         if (current is VerifyCodeUiState.CodeExpired) {
@@ -104,7 +101,11 @@ class VerifyCodeViewModel @Inject constructor() : ViewModel() {
     fun resendCode() {
         val current = _uiState.value
         if (current is VerifyCodeUiState.Editing) {
-            _uiState.value = current.copy(secondsRemaining = 45, code = "", error = null)
+            _uiState.value = current.copy(
+                secondsRemaining = 45,
+                code = "",
+                errorRes = null,
+            )
         }
     }
 }

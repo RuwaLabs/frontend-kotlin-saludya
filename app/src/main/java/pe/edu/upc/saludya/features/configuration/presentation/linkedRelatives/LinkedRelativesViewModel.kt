@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.configuration.application.usecase.GetLinkedMinorsUseCase
 import javax.inject.Inject
 
@@ -35,7 +36,9 @@ class LinkedRelativesViewModel @Inject constructor(
                     )
                     pendingJustSynced = false
                 }
-                .onFailure { _uiState.value = LinkedRelativesUiState.Error(it.message ?: "Error") }
+                .onFailure {
+                    _uiState.value = LinkedRelativesUiState.Error(R.string.error_generic)
+                }
         }
     }
 

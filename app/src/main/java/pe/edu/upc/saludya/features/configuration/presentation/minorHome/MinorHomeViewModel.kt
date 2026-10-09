@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.configuration.application.usecase.GetLinkedMinorByIdUseCase
 import javax.inject.Inject
 
@@ -24,13 +25,13 @@ class MinorHomeViewModel @Inject constructor(
             runCatching { getLinkedMinorByIdUseCase(minorId) }
                 .onSuccess { minor ->
                     _uiState.value = if (minor == null) {
-                        MinorHomeUiState.Error("Menor no encontrado")
+                        MinorHomeUiState.Error(R.string.error_minor_not_found)
                     } else {
                         MinorHomeUiState.Success(minor)
                     }
                 }
                 .onFailure {
-                    _uiState.value = MinorHomeUiState.Error(it.message ?: "Error")
+                    _uiState.value = MinorHomeUiState.Error(R.string.error_generic)
                 }
         }
     }

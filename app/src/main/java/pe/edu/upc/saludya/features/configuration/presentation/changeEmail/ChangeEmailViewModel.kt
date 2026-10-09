@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import pe.edu.upc.saludya.R
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +33,7 @@ class ChangeEmailViewModel @Inject constructor() : ViewModel() {
         // Validación de formato de email
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _uiState.value = ChangeEmailUiState.InvalidInput(
-                "Ingresa un correo válido o un celular de 9 dígitos, según el campo."
+                R.string.error_invalid_email_or_phone
             )
             return
         }
