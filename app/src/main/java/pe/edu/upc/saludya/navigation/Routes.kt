@@ -28,3 +28,19 @@ import kotlinx.serialization.Serializable
 
 @Serializable data object AsistenciaDestination
 @Serializable data object ConfiguracionDestination
+
+// ===== Configuration (bounded context) =====
+
+@Serializable data object ConfigurationGraph
+
+@Serializable data object ConfigurationDestination
+@Serializable data object MyDataDestination
+@Serializable data object ChangePhoneDestination
+@Serializable data object ChangeEmailDestination
+@Serializable data object LinkedRelativesDestination
+@Serializable data object LinkMinorDestination
+@Serializable data object VerifyIdentityDestination
+
+@Serializable data class VerifyCodeDestination(val destination: String)
+@Serializable data class LinkedMinorDestination(val minorId: String)
+@Serializable data class MinorHomeDestination(val minorId: String)
