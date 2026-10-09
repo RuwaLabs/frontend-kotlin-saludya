@@ -1,5 +1,6 @@
 package pe.edu.upc.saludya.core.desingsystem.component
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,10 +20,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.icon.appointmentIcon
 import pe.edu.upc.saludya.core.desingsystem.icon.calendarIcon
 import pe.edu.upc.saludya.core.desingsystem.icon.homeIcon
@@ -30,13 +33,13 @@ import pe.edu.upc.saludya.core.desingsystem.icon.sunIcon
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 
 enum class SaludYaBottomNavItem(
-    val label: String,
+    @StringRes val labelRes: Int,
     val icon: ImageVector,
 ) {
-    HOME("Inicio", homeIcon),
-    CALENDAR("Calendario", calendarIcon),
-    APPOINTMENT("Cita", appointmentIcon),
-    CONFIGURATION("Configuración", sunIcon),
+    HOME(R.string.nav_home, homeIcon),
+    CALENDAR(R.string.nav_calendar, calendarIcon),
+    APPOINTMENT(R.string.nav_appointment, appointmentIcon),
+    CONFIGURATION(R.string.nav_configuration, sunIcon),
 }
 
 @Composable
@@ -55,6 +58,7 @@ fun BottomNavigationBar(
     ) {
         SaludYaBottomNavItem.entries.forEachIndexed { index, item ->
             val isSelected = index == selectedIndex
+            val label = stringResource(item.labelRes)
 
             Column(
                 modifier = Modifier
@@ -71,14 +75,14 @@ fun BottomNavigationBar(
             ) {
                 Icon(
                     imageVector = item.icon,
-                    contentDescription = item.label,
+                    contentDescription = label,
                     tint = if (isSelected) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(22.dp),
                 )
                 Box(modifier = Modifier.height(4.dp))
                 Text(
-                    text = item.label,
+                    text = label,
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                     color = if (isSelected) MaterialTheme.colorScheme.primary
