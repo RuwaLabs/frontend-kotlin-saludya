@@ -9,11 +9,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import pe.edu.upc.saludya.features.checkin.presentation.navigation.checkInNavGraph
-import pe.edu.upc.saludya.features.configuration.presentation.navigation.ConfigurationNavHost
+import pe.edu.upc.saludya.features.configuration.presentation.navigation.configurationNavGraph
 import pe.edu.upc.saludya.features.home.presentation.navigation.homeNavGraph
 import pe.edu.upc.saludya.features.notifications.presentation.navigation.notificationsNavGraph
 import pe.edu.upc.saludya.features.patientreservations.presentation.navigation.patientReservationsNavGraph
-import pe.edu.upc.saludya.navigation.ConfiguracionDestination
 import pe.edu.upc.saludya.navigation.HomeGraph
 import pe.edu.upc.saludya.navigation.OfferAcceptedDestination
 import pe.edu.upc.saludya.navigation.OfferDetailDestination
@@ -38,6 +37,7 @@ fun MainScreen() {
             notificationsNavGraph(navController)
             patientReservationsNavGraph(navController)
             checkInNavGraph(navController)
+            configurationNavGraph(navController)
 
             composable<OfferDetailDestination> { entry ->
                 val route = entry.toRoute<OfferDetailDestination>()
@@ -48,10 +48,6 @@ fun MainScreen() {
                     onRejected = { navController.navigate(OfferRejectedDestination) },
                     onDestinationClick = { navController.navigateToAppDestination(it) },
                 )
-            }
-
-            composable<ConfiguracionDestination> {
-                ConfigurationNavHost()
             }
         }
     }
