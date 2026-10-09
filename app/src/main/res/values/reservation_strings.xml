@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Navegación inferior -->
+    <string name="reservation_tab_home">Inicio</string>
+    <string name="reservation_tab_book">Reservar cita</string>
+    <string name="reservation_tab_attendance">Asistencia</string>
+    <string name="reservation_tab_settings">Configuración</string>
+
+    <!-- Comunes -->
+    <string name="reservation_back">Volver</string>
+    <string name="reservation_continue">Continuar</string>
+    <string name="reservation_error_load_title">No se pudo cargar</string>
+    <string name="reservation_error_load_generic_title">No se pudieron cargar</string>
+    <string name="reservation_status_selected">Seleccionado</string>
+    <string name="reservation_status_select">Seleccionar →</string>
+    <string name="reservation_professional_default">Profesional</string>
+
+    <!-- R01 · Reserva tu cita -->
+    <string name="reservation_tucita_title">Reserva tu cita</string>
+    <string name="reservation_search_speciality_label">Buscar especialidad</string>
+    <string name="reservation_search_speciality_placeholder">Buscar por nombre…</string>
+    <string name="reservation_speciality_availability">Ver disponibilidad</string>
+    <string name="reservation_error_specialities">No se pudieron cargar las especialidades</string>
+
+    <!-- R02 · ¿Para quién es la cita? -->
+    <string name="reservation_beneficiary_title">¿Para quién es la cita?</string>
+    <string name="reservation_error_beneficiaries">No se pudieron cargar los beneficiarios</string>
+    <string name="reservation_beneficiary_titular">Titular · DNI %1$s</string>
+    <string name="reservation_beneficiary_minor">Menor vinculado · DNI %1$s</string>
+
+    <!-- R03 · Elige la fecha -->
+    <string name="reservation_date_title">Elige la fecha</string>
+    <string name="reservation_date_loading">Cargando disponibilidad…</string>
+    <string name="reservation_view_slots">Ver horarios</string>
+    <string name="reservation_date_legend_available">● Disponible</string>
+    <string name="reservation_date_selected">%1$d Fecha seleccionada</string>
+
+    <!-- R04 · Elige al profesional -->
+    <string name="reservation_professional_title">Elige al profesional</string>
+    <string name="reservation_choose_by_time">Elegir por horario</string>
+    <string name="reservation_search_professional_label">Buscar profesional</string>
+    <string name="reservation_search_professional_placeholder">Nombre del profesional…</string>
+    <string name="reservation_error_professionals">No se pudieron cargar los profesionales</string>
+
+    <!-- R05 · Elige la hora · R06 · Horarios disponibles -->
+    <string name="reservation_time_title_professional">Elige la hora</string>
+    <string name="reservation_time_title_speciality">Horarios disponibles</string>
+    <string name="reservation_doctor_room">%1$s · Consultorio %2$s</string>
+    <string name="reservation_error_timeslots">No se pudieron cargar los horarios</string>
+    <string name="reservation_slot_no_spots">Sin cupos</string>
+    <string name="reservation_slot_selected_one">1 cupo · Seleccionado</string>
+    <string name="reservation_slot_selected_many">%1$d cupos · Seleccionado</string>
+    <string name="reservation_slot_available_one">1 cupo disponible</string>
+    <string name="reservation_slot_available_many">%1$d cupos disponibles</string>
+
+    <!-- R07 · Confirma tu cita -->
+    <string name="reservation_summary_title">Confirma tu cita</string>
+    <string name="reservation_error_booking_title">No se pudo reservar</string>
+    <string name="reservation_status_pending">Pendiente de confirmar</string>
+    <string name="reservation_summary_hint">Verifica el beneficiario, la fecha y el horario antes de reservar.</string>
+    <string name="reservation_confirm_booking">Confirmar reserva</string>
+    <string name="reservation_edit">Volver y corregir</string>
+    <string name="reservation_error_summary">No se pudo cargar el resumen</string>
+    <string name="reservation_datetime">%1$s · %2$s–%3$s</string>
+    <string name="reservation_place">Centro de Salud · Consultorio %1$s</string>
+    <string name="reservation_beneficiary_line">%1$s · %2$s</string>
+    <string name="reservation_beneficiary_titular_label">Titular</string>
+    <string name="reservation_beneficiary_minor_label">Menor</string>
+
+    <!-- R08 · Reserva confirmada -->
+    <string name="reservation_confirmed_title">Reserva confirmada</string>
+    <string name="reservation_confirmed_message">¡Tu cita ya está reservada!</string>
+    <string name="reservation_status_confirmed">Confirmada</string>
+    <string name="reservation_confirmed_code">Código: %1$s\nEnviamos el comprobante a tu correo.</string>
+    <string name="reservation_view_my_appointments">Ver mis citas</string>
+    <string name="reservation_error_load_booking">No se pudo cargar la reserva</string>
+
+    <!-- R09 · Sin horarios disponibles -->
+    <string name="reservation_no_slots_title">Sin horarios disponibles</string>
+    <string name="reservation_no_slots_message_title">Este día está completo</string>
+    <string name="reservation_no_slots_message_description">Puedes elegir otra fecha con disponibilidad.</string>
+    <string name="reservation_choose_another_date">Elegir otra fecha</string>
+    <string name="reservation_next_availability">Próxima disponibilidad</string>
+    <string name="reservation_view_slots_arrow">Ver horarios →</string>
+
+    <!-- R10 · Búsqueda sin resultados -->
+    <string name="reservation_no_results_title">Sin resultados</string>
+    <string name="reservation_no_results_description">No encontramos esa especialidad en este establecimiento.</string>
+    <string name="reservation_clear_search">Limpiar búsqueda</string>
+
+    <!-- R11 · Cupo ocupado -->
+    <string name="reservation_dialog_slot_taken_title">El cupo ya fue tomado</string>
+    <string name="reservation_dialog_slot_taken_body">Otra persona reservó este horario. Elige otro horario disponible.</string>
+
+    <!-- R12 · Cruce de reservas -->
+    <string name="reservation_dialog_overlap_title">Ya tienes una cita en ese horario</string>
+    <string name="reservation_dialog_overlap_body">%1$s tiene una reserva que coincide con el bloque elegido. Selecciona otro horario.</string>
+    <string name="reservation_dialog_choose_another_slot">Elegir otro horario</string>
+
+    <!-- R13 · Confirmar cancelación -->
+    <string name="reservation_dialog_cancel_title">¿Cancelar esta reserva?</string>
+    <string name="reservation_dialog_cancel_body">El cupo quedará disponible para otra persona.</string>
+    <string name="reservation_dialog_cancel_booking">Cancelar reserva</string>
+    <string name="reservation_dialog_keep">Conservar cita</string>
+
+    <!-- R14 · Cancelación fuera de plazo -->
+    <string name="reservation_dialog_deadline_title">El plazo de cancelación terminó</string>
+    <string name="reservation_dialog_deadline_body">Comunícate con admisión para revisar tu caso. Tu reserva continúa confirmada.</string>
+    <string name="reservation_dialog_back_to_detail">Volver al detalle</string>
+
+    <!-- R15 · Correo pendiente -->
+    <string name="reservation_dialog_email_title">Tu reserva está confirmada</string>
+    <string name="reservation_dialog_email_body">No pudimos enviar el comprobante por correo. La cita sigue activa y puedes consultar su código en Mis citas.</string>
+    <string name="reservation_dialog_view_reservation">Ver mi reserva</string>
+
+    <!-- R16 · Confirmar cita -->
+    <string name="reservation_dialog_confirm_title">Confirmar cita</string>
+    <string name="reservation_dialog_confirm_question">¿Confirmas esta reserva?</string>
+    <string name="reservation_dialog_confirm">Confirmar</string>
+    <string name="reservation_dialog_cancel_action">Cancelar</string>
+
+    <!-- Formato de fechas y tratamiento profesional -->
+    <string name="reservation_doctor_prefix_female">Dra.</string>
+    <string name="reservation_doctor_prefix_male">Dr.</string>
+    <string name="reservation_weekday_monday">Lun</string>
+    <string name="reservation_weekday_tuesday">Mar</string>
+    <string name="reservation_weekday_wednesday">Mié</string>
+    <string name="reservation_weekday_thursday">Jue</string>
+    <string name="reservation_weekday_friday">Vie</string>
+    <string name="reservation_weekday_saturday">Sáb</string>
+    <string name="reservation_weekday_sunday">Dom</string>
+    <string name="reservation_month_january">Enero</string>
+    <string name="reservation_month_february">Febrero</string>
+    <string name="reservation_month_march">Marzo</string>
+    <string name="reservation_month_april">Abril</string>
+    <string name="reservation_month_may">Mayo</string>
+    <string name="reservation_month_june">Junio</string>
+    <string name="reservation_month_july">Julio</string>
+    <string name="reservation_month_august">Agosto</string>
+    <string name="reservation_month_september">Septiembre</string>
+    <string name="reservation_month_october">Octubre</string>
+    <string name="reservation_month_november">Noviembre</string>
+    <string name="reservation_month_december">Diciembre</string>
+</resources>
