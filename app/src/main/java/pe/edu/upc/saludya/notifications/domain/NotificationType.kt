@@ -1,6 +1,5 @@
 package pe.edu.upc.saludya.notifications.domain
 
-
 enum class NotificationType {
     REASSIGNMENT_OFFER,
     APPOINTMENT_BOOKED,

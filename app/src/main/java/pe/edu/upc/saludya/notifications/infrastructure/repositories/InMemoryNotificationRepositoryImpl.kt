@@ -6,7 +6,6 @@ import java.time.Instant
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class InMemoryNotificationRepositoryImpl @Inject constructor() : NotificationRepository {
 

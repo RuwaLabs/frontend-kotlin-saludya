@@ -8,7 +8,6 @@ import retrofit2.http.Query
 
 interface ReassignmentOfferService {
 
-    /** GET /reassignment-offers/pending -> JSON array of offers. */
     @GET("reassignment-offers/pending")
     suspend fun getPending(
         @Query("appointmentId") appointmentId: Long? = null
