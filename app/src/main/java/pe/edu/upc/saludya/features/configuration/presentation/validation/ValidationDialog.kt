@@ -1,5 +1,6 @@
 package pe.edu.upc.saludya.features.configuration.presentation.validation
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,34 +13,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
 
 /**
  * Modal genérico para mostrar un mensaje de validación/error/éxito al usuario.
- *
- * Reutilizable para:
- *  - "Revisa el valor"
- *  - "Código incorrecto"
- *  - "El código venció"
- *  - "Cambio realizado"
- *  - "Vinculación completada"
- *  - "No pudimos validar el vínculo"
- *  - "Revisa el dato ingresado"
- *  - etc.
  */
 @Composable
 fun ValidationDialog(
     message: String,
     onCorrectClick: () -> Unit,
-    title: String = "Revisa el valor",
-    buttonText: String = "Corregir valor",
+    @StringRes titleRes: Int = R.string.validation_default_title,
+    @StringRes buttonTextRes: Int = R.string.validation_default_button,
 ) {
     Dialog(
         onDismissRequest = { /* No dismissable: el usuario debe confirmar */ },
@@ -63,7 +56,7 @@ fun ValidationDialog(
                     .padding(horizontal = 20.dp, vertical = 24.dp),
             ) {
                 Text(
-                    text = title,
+                    text = stringResource(titleRes),
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -82,7 +75,7 @@ fun ValidationDialog(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 PrimaryButton(
-                    text = buttonText,
+                    text = stringResource(buttonTextRes),
                     onClick = onCorrectClick,
                 )
             }
@@ -96,9 +89,9 @@ private fun ValidationDialogErrorPreview() {
     SaludYaTheme(dynamicColor = false) {
         Surface(color = Color(0x80000000)) {
             ValidationDialog(
-                title = "Código incorrecto",
+                titleRes = R.string.error_wrong_code_title,
                 message = "Revisa los 6 dígitos e inténtalo otra vez.",
-                buttonText = "Entendido",
+                buttonTextRes = R.string.dialog_understood,
                 onCorrectClick = {},
             )
         }
@@ -111,9 +104,9 @@ private fun ValidationDialogSuccessPreview() {
     SaludYaTheme(dynamicColor = false) {
         Surface(color = Color(0x80000000)) {
             ValidationDialog(
-                title = "Cambio realizado",
+                titleRes = R.string.success_change_done_title,
                 message = "Verificamos el código y actualizamos tu contacto.",
-                buttonText = "Entendido",
+                buttonTextRes = R.string.dialog_understood,
                 onCorrectClick = {},
             )
         }
