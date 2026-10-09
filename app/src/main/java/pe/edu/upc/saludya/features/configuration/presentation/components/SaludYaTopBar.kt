@@ -15,9 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.icon.arrowBack
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 
@@ -39,7 +41,7 @@ fun SaludYaTopBar(
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = arrowBack,
-                    contentDescription = "Volver",
+                    contentDescription = stringResource(R.string.topbar_back),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp),
                 )

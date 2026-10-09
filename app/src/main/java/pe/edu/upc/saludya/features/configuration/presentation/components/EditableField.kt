@@ -20,10 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.icon.arrowBack
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 
@@ -74,7 +76,7 @@ fun EditableField(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Editar",
+                    text = stringResource(R.string.editable_field_action),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary,

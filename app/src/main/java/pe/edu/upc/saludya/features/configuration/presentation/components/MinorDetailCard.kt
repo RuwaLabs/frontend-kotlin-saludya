@@ -13,10 +13,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 
 @Composable
@@ -56,19 +58,19 @@ fun MinorDetailCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                text = "Fecha de nacimiento: $birthDate",
+                text = stringResource(R.string.minor_detail_birthdate, birthDate),
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                text = "Representante: $representativeName",
+                text = stringResource(R.string.minor_detail_representative, representativeName),
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(modifier = Modifier.height(12.dp))
             if (isVerified) {
                 Text(
-                    text = "Vínculo verificado",
+                    text = stringResource(R.string.minor_detail_verified),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
