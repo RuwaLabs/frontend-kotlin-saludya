@@ -1,4 +1,4 @@
-﻿package pe.edu.upc.saludya
+package pe.edu.upc.saludya
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
