@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.R
-import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.presentation.components.DocumentTypeDropdown
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
@@ -37,7 +36,6 @@ fun LinkMinorScreen(
     viewModel: LinkMinorViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onVerified: (String, String) -> Unit = { _, _ -> },
-    onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -59,12 +57,6 @@ fun LinkMinorScreen(
             SaludYaTopBar(
                 title = stringResource(R.string.link_minor_title),
                 onBackClick = onBackClick,
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                selectedIndex = 3,
-                onItemSelected = onBottomNavSelected,
             )
         },
         containerColor = Color.White,

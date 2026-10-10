@@ -6,7 +6,7 @@ import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.desingsystem.icon.calendarIcon
 import pe.edu.upc.saludya.core.desingsystem.icon.homeIcon
 import pe.edu.upc.saludya.core.desingsystem.icon.qrCodeIcon
-import pe.edu.upc.saludya.core.desingsystem.icon.settingsIcon
+import pe.edu.upc.saludya.core.desingsystem.icon.settings
 import pe.edu.upc.saludya.features.checkin.presentation.navigation.CheckInGraph
 import pe.edu.upc.saludya.navigation.ConfigurationGraph
 import pe.edu.upc.saludya.navigation.HomeGraph
@@ -34,7 +34,7 @@ enum class NavigationItem(
     ),
     SETTINGS(
         route = ConfigurationGraph,
-        icon = settingsIcon,
+        icon = settings,
         title = R.string.reservation_tab_settings
     )
 }

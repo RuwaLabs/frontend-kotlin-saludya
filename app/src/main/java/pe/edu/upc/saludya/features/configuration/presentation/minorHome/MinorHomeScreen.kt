@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.R
-import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.domain.entity.LinkedMinor
 import pe.edu.upc.saludya.features.configuration.presentation.components.AppointmentCard
@@ -42,7 +41,6 @@ fun MinorHomeScreen(
     onViewAppointmentsClick: () -> Unit = {},
     onViewHistoryClick: () -> Unit = {},
     onBackToProfileClick: () -> Unit = {},
-    onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -52,12 +50,6 @@ fun MinorHomeScreen(
 
     Scaffold(
         topBar = {},
-        bottomBar = {
-            BottomNavigationBar(
-                selectedIndex = 0,
-                onItemSelected = onBottomNavSelected,
-            )
-        },
         containerColor = Color.White,
     ) { innerPadding ->
         Box(
