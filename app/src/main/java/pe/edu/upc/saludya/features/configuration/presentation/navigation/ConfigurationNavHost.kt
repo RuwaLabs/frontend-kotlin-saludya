@@ -39,7 +39,6 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
                 onLinkedRelativesClick = { navController.navigate(LinkedRelativesDestination) },
                 onChangePasswordClick = { /* TODO */ },
                 onLogoutClick = { /* TODO */ },
-                onBottomNavSelected = { /* TODO */ },
             )
         }
 
@@ -48,7 +47,6 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
                 onBackClick = { navController.popBackStack() },
                 onEditPhoneClick = { navController.navigate(ChangePhoneDestination) },
                 onEditEmailClick = { navController.navigate(ChangeEmailDestination) },
-                onBottomNavSelected = { /* TODO */ },
             )
         }
 
@@ -58,7 +56,6 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
                 onCodeSent = {
                     navController.navigate(VerifyCodeDestination(ConfigurationDestinations.PHONE))
                 },
-                onBottomNavSelected = { /* TODO */ },
             )
         }
 
@@ -68,7 +65,6 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
                 onCodeSent = {
                     navController.navigate(VerifyCodeDestination(ConfigurationDestinations.EMAIL))
                 },
-                onBottomNavSelected = { /* TODO */ },
             )
         }
 
@@ -91,7 +87,6 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
                         launchSingleTop = true
                     }
                 },
-                onBottomNavSelected = { /* TODO */ },
             )
         }
 
@@ -104,7 +99,6 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
                 onAddMinorClick = {
                     navController.navigate(LinkMinorDestination)
                 },
-                onBottomNavSelected = { /* TODO */ },
             )
         }
 
@@ -121,7 +115,6 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
                         launchSingleTop = true
                     }
                 },
-                onBottomNavSelected = { /* TODO */ },
             )
         }
 
@@ -131,7 +124,6 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
                 onVerified = { _, _ ->
                     navController.navigate(VerifyIdentityDestination)
                 },
-                onBottomNavSelected = { /* TODO */ },
             )
         }
 
@@ -141,7 +133,6 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
                 onSuccess = {
                     navController.navigate(MinorHomeDestination("1"))
                 },
-                onBottomNavSelected = { /* TODO */ },
             )
         }
 
@@ -158,7 +149,6 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
                         launchSingleTop = true
                     }
                 },
-                onBottomNavSelected = { /* TODO */ },
             )
         }
     }
