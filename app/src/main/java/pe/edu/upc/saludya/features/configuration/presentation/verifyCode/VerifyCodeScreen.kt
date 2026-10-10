@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.R
-import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.presentation.components.CodeInputField
 import pe.edu.upc.saludya.features.configuration.presentation.components.OutlineActionButton
@@ -37,13 +36,12 @@ fun VerifyCodeScreen(
     viewModel: VerifyCodeViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onVerified: () -> Unit = {},
-    onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     val current = uiState
 
-    // Modal: "Cambio realizado" (éxito)
+    // Modal: "Cambio realizado" (Ã©xito)
     if (current is VerifyCodeUiState.Verified) {
         ValidationDialog(
             titleRes = R.string.success_change_done_title,
@@ -54,7 +52,7 @@ fun VerifyCodeScreen(
         return
     }
 
-    // Modal: "Código incorrecto"
+    // Modal: "CÃ³digo incorrecto"
     if (current is VerifyCodeUiState.WrongCode) {
         ValidationDialog(
             titleRes = R.string.error_wrong_code_title,
@@ -65,7 +63,7 @@ fun VerifyCodeScreen(
         return
     }
 
-    // Modal: "El código venció"
+    // Modal: "El cÃ³digo venciÃ³"
     if (current is VerifyCodeUiState.CodeExpired) {
         ValidationDialog(
             titleRes = R.string.error_code_expired_title,
@@ -81,12 +79,6 @@ fun VerifyCodeScreen(
             SaludYaTopBar(
                 title = stringResource(R.string.verify_code_title),
                 onBackClick = onBackClick,
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                selectedIndex = 3,
-                onItemSelected = onBottomNavSelected,
             )
         },
         containerColor = Color.White,

@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.R
-import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.domain.entity.Patient
 import pe.edu.upc.saludya.features.configuration.presentation.components.EditableField
@@ -37,7 +36,6 @@ fun MyDataScreen(
     onBackClick: () -> Unit = {},
     onEditPhoneClick: () -> Unit = {},
     onEditEmailClick: () -> Unit = {},
-    onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -46,12 +44,6 @@ fun MyDataScreen(
             SaludYaTopBar(
                 title = stringResource(R.string.my_data_title),
                 onBackClick = onBackClick,
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                selectedIndex = 3,
-                onItemSelected = onBottomNavSelected,
             )
         },
         containerColor = Color.White,

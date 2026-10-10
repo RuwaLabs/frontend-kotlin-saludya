@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.R
-import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.presentation.components.InfoNote
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
@@ -37,13 +36,12 @@ fun VerifyIdentityScreen(
     viewModel: VerifyIdentityViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onSuccess: () -> Unit = {},
-    onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     val current = uiState
 
-    // Modal: "Vinculación completada" (éxito)
+    // Modal: "VinculaciÃ³n completada" (Ã©xito)
     if (current is VerifyIdentityUiState.Success) {
         ValidationDialog(
             titleRes = R.string.success_link_done_title,
@@ -54,7 +52,7 @@ fun VerifyIdentityScreen(
         return
     }
 
-    // Modal: "No pudimos validar el vínculo" (error)
+    // Modal: "No pudimos validar el vÃ­nculo" (error)
     if (current is VerifyIdentityUiState.ValidationFailed) {
         ValidationDialog(
             titleRes = R.string.error_validation_failed,
@@ -80,12 +78,6 @@ fun VerifyIdentityScreen(
             SaludYaTopBar(
                 title = stringResource(R.string.verify_identity_title),
                 onBackClick = onBackClick,
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                selectedIndex = 3,
-                onItemSelected = onBottomNavSelected,
             )
         },
         containerColor = Color.White,

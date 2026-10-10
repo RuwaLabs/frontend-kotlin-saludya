@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.R
-import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.domain.entity.LinkedMinor
 import pe.edu.upc.saludya.features.configuration.presentation.components.ConfirmDialog
@@ -42,7 +41,6 @@ fun LinkedMinorScreen(
     onViewAppointmentsClick: () -> Unit = {},
     onSyncClick: () -> Unit = {},
     onUnlinkConfirmed: () -> Unit = {},
-    onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -56,7 +54,7 @@ fun LinkedMinorScreen(
         }
     }
 
-    // Modal: "¿Dejar esta vinculación?" (early return)
+    // Modal: "Â¿Dejar esta vinculaciÃ³n?" (early return)
     val current = uiState
     if (current is LinkedMinorUiState.ConfirmingUnlink) {
         ConfirmDialog(
@@ -88,12 +86,6 @@ fun LinkedMinorScreen(
             SaludYaTopBar(
                 title = stringResource(R.string.linked_minor_title),
                 onBackClick = onBackClick,
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                selectedIndex = 3,
-                onItemSelected = onBottomNavSelected,
             )
         },
         containerColor = Color.White,

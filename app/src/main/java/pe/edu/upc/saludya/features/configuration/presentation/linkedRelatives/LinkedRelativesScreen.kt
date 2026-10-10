@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.R
-import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.icon.addCircleOutlineIcon
 import pe.edu.upc.saludya.core.desingsystem.icon.arrowBack
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
@@ -54,7 +53,6 @@ fun LinkedRelativesScreen(
     onBackClick: () -> Unit = {},
     onViewMinorClick: (String) -> Unit = {},
     onAddMinorClick: () -> Unit = {},
-    onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -63,12 +61,6 @@ fun LinkedRelativesScreen(
             SaludYaTopBar(
                 title = stringResource(R.string.linked_relatives_title),
                 onBackClick = onBackClick,
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                selectedIndex = 3,
-                onItemSelected = onBottomNavSelected,
             )
         },
         containerColor = Color.White,
@@ -181,7 +173,7 @@ private fun LinkedRelativesJustSyncedContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "✓",
+                text = "âœ“",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -314,7 +306,7 @@ private fun LinkedRelativesContent(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "LinkedRelativesScreen - Vacío")
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "LinkedRelativesScreen - VacÃ­o")
 @Composable
 private fun LinkedRelativesEmptyPreview() {
     SaludYaTheme(dynamicColor = false) {
@@ -322,7 +314,7 @@ private fun LinkedRelativesEmptyPreview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "LinkedRelativesScreen - Recién sincronizado")
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, name = "LinkedRelativesScreen - ReciÃ©n sincronizado")
 @Composable
 private fun LinkedRelativesJustSyncedPreview() {
     SaludYaTheme(dynamicColor = false) {

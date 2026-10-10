@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.R
-import pe.edu.upc.saludya.core.desingsystem.component.BottomNavigationBar
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 import pe.edu.upc.saludya.features.configuration.presentation.components.PrimaryButton
 import pe.edu.upc.saludya.features.configuration.presentation.components.RuleValueField
@@ -36,7 +35,6 @@ fun ChangeEmailScreen(
     viewModel: ChangeEmailViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
     onCodeSent: (String) -> Unit = {},
-    onBottomNavSelected: (Int) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -75,12 +73,6 @@ fun ChangeEmailScreen(
             SaludYaTopBar(
                 title = stringResource(R.string.change_email_title),
                 onBackClick = onBackClick,
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                selectedIndex = 3,
-                onItemSelected = onBottomNavSelected,
             )
         },
         containerColor = Color.White,
