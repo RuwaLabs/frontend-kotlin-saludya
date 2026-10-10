@@ -1,13 +1,11 @@
 package pe.edu.upc.saludya.features.configuration.presentation.navigation
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.configuration.presentation.changeEmail.ChangeEmailScreen
 import pe.edu.upc.saludya.features.configuration.presentation.changePhone.ChangePhoneScreen
@@ -19,278 +17,154 @@ import pe.edu.upc.saludya.features.configuration.presentation.minorHome.MinorHom
 import pe.edu.upc.saludya.features.configuration.presentation.myData.MyDataScreen
 import pe.edu.upc.saludya.features.configuration.presentation.verifyCode.VerifyCodeScreen
 import pe.edu.upc.saludya.features.configuration.presentation.verifyIdentity.VerifyIdentityScreen
+import pe.edu.upc.saludya.navigation.ChangeEmailDestination
+import pe.edu.upc.saludya.navigation.ChangePhoneDestination
+import pe.edu.upc.saludya.navigation.ConfigurationDestination
+import pe.edu.upc.saludya.navigation.ConfigurationGraph
+import pe.edu.upc.saludya.navigation.LinkMinorDestination
+import pe.edu.upc.saludya.navigation.LinkedMinorDestination
+import pe.edu.upc.saludya.navigation.LinkedRelativesDestination
+import pe.edu.upc.saludya.navigation.MinorHomeDestination
+import pe.edu.upc.saludya.navigation.MyDataDestination
+import pe.edu.upc.saludya.navigation.VerifyCodeDestination
+import pe.edu.upc.saludya.navigation.VerifyIdentityDestination
 
-@Composable
-fun ConfigurationNavHost(
-    navController: NavHostController = rememberNavController(),
-    startDestination: String = ConfigurationRoutes.CONFIGURATION,
-) {
-    NavHost(
-        navController = navController,
-        startDestination = startDestination,
-    ) {
-        // H01 - Configuración
-        composable(route = ConfigurationRoutes.CONFIGURATION) {
+fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
+    navigation<ConfigurationGraph>(startDestination = ConfigurationDestination) {
+
+        composable<ConfigurationDestination> {
             ConfigurationScreen(
-                onBackClick = { /* Pantalla raíz: sin acción */ },
-                onMyDataClick = { navController.navigate(ConfigurationRoutes.MY_DATA) },
-                onLinkedRelativesClick = { navController.navigate(ConfigurationRoutes.LINKED_RELATIVES) },
+                onBackClick = { navController.popBackStack() },
+                onMyDataClick = { navController.navigate(MyDataDestination) },
+                onLinkedRelativesClick = { navController.navigate(LinkedRelativesDestination) },
                 onChangePasswordClick = { /* TODO */ },
                 onLogoutClick = { /* TODO */ },
-                onBottomNavSelected = { index ->
-                    when (index) {
-                        0 -> { /* TODO */ }
-                        1 -> { /* TODO */ }
-                        2 -> { /* TODO */ }
-                        3 -> { /* Configuración */ }
-                    }
-                },
+                onBottomNavSelected = { /* TODO */ },
             )
         }
 
-        // H02 - Mis datos
-        composable(route = ConfigurationRoutes.MY_DATA) {
+        composable<MyDataDestination> {
             MyDataScreen(
                 onBackClick = { navController.popBackStack() },
-                onEditPhoneClick = { navController.navigate(ConfigurationRoutes.CHANGE_PHONE) },
-                onEditEmailClick = { navController.navigate(ConfigurationRoutes.CHANGE_EMAIL) },
-                onBottomNavSelected = { index ->
-                    when (index) {
-                        0 -> { /* TODO */ }
-                        1 -> { /* TODO */ }
-                        2 -> { /* TODO */ }
-                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
-                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
-                            launchSingleTop = true
-                        }
-                    }
-                },
+                onEditPhoneClick = { navController.navigate(ChangePhoneDestination) },
+                onEditEmailClick = { navController.navigate(ChangeEmailDestination) },
+                onBottomNavSelected = { /* TODO */ },
             )
         }
 
-        // H05 - Cambiar celular
-        composable(route = ConfigurationRoutes.CHANGE_PHONE) {
+        composable<ChangePhoneDestination> {
             ChangePhoneScreen(
                 onBackClick = { navController.popBackStack() },
                 onCodeSent = {
-                    navController.navigate(ConfigurationRoutes.verifyCode(ConfigurationRoutes.DEST_PHONE))
+                    navController.navigate(VerifyCodeDestination(ConfigurationDestinations.PHONE))
                 },
-                onBottomNavSelected = { index ->
-                    when (index) {
-                        0 -> { /* TODO */ }
-                        1 -> { /* TODO */ }
-                        2 -> { /* TODO */ }
-                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
-                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
-                            launchSingleTop = true
-                        }
-                    }
-                },
+                onBottomNavSelected = { /* TODO */ },
             )
         }
 
-        // H06 - Cambiar correo
-        composable(route = ConfigurationRoutes.CHANGE_EMAIL) {
+        composable<ChangeEmailDestination> {
             ChangeEmailScreen(
                 onBackClick = { navController.popBackStack() },
                 onCodeSent = {
-                    navController.navigate(ConfigurationRoutes.verifyCode(ConfigurationRoutes.DEST_EMAIL))
+                    navController.navigate(VerifyCodeDestination(ConfigurationDestinations.EMAIL))
                 },
-                onBottomNavSelected = { index ->
-                    when (index) {
-                        0 -> { /* TODO */ }
-                        1 -> { /* TODO */ }
-                        2 -> { /* TODO */ }
-                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
-                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
-                            launchSingleTop = true
-                        }
-                    }
-                },
+                onBottomNavSelected = { /* TODO */ },
             )
         }
 
-        // H07 - Verificar código
-        composable(
-            route = ConfigurationRoutes.VERIFY_CODE_WITH_ARG,
-            arguments = listOf(
-                navArgument(ConfigurationRoutes.ARG_DESTINATION) { type = NavType.StringType },
-            ),
-        ) { backStackEntry ->
-            val destination = backStackEntry.arguments
-                ?.getString(ConfigurationRoutes.ARG_DESTINATION)
-                .orEmpty()
-
-            val descriptionText = when (destination) {
-                ConfigurationRoutes.DEST_PHONE ->
+        composable<VerifyCodeDestination> { entry ->
+            val route = entry.toRoute<VerifyCodeDestination>()
+            val descriptionText = when (route.destination) {
+                ConfigurationDestinations.PHONE ->
                     stringResource(R.string.verify_code_description_phone)
-                ConfigurationRoutes.DEST_EMAIL ->
+                ConfigurationDestinations.EMAIL ->
                     stringResource(R.string.verify_code_description_email)
                 else ->
                     stringResource(R.string.verify_code_description_default)
             }
-
             VerifyCodeScreen(
                 descriptionText = descriptionText,
                 onBackClick = { navController.popBackStack() },
                 onVerified = {
-                    navController.navigate(ConfigurationRoutes.MY_DATA) {
-                        popUpTo(ConfigurationRoutes.MY_DATA) { inclusive = false }
+                    navController.navigate(MyDataDestination) {
+                        popUpTo(MyDataDestination) { inclusive = false }
                         launchSingleTop = true
                     }
                 },
-                onBottomNavSelected = { index ->
-                    when (index) {
-                        0 -> { /* TODO */ }
-                        1 -> { /* TODO */ }
-                        2 -> { /* TODO */ }
-                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
-                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
-                            launchSingleTop = true
-                        }
-                    }
-                },
+                onBottomNavSelected = { /* TODO */ },
             )
         }
 
-        // H08 - Parientes vinculados
-        composable(route = ConfigurationRoutes.LINKED_RELATIVES) {
+        composable<LinkedRelativesDestination> {
             LinkedRelativesScreen(
                 onBackClick = { navController.popBackStack() },
                 onViewMinorClick = { minorId ->
-                    navController.navigate(ConfigurationRoutes.linkedMinor(minorId))
+                    navController.navigate(LinkedMinorDestination(minorId))
                 },
                 onAddMinorClick = {
-                    navController.navigate(ConfigurationRoutes.LINK_MINOR)
+                    navController.navigate(LinkMinorDestination)
                 },
-                onBottomNavSelected = { index ->
-                    when (index) {
-                        0 -> { /* TODO */ }
-                        1 -> { /* TODO */ }
-                        2 -> { /* TODO */ }
-                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
-                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
-                            launchSingleTop = true
-                        }
-                    }
-                },
+                onBottomNavSelected = { /* TODO */ },
             )
         }
 
-        // H09 - Menor vinculado
-        composable(
-            route = ConfigurationRoutes.LINKED_MINOR_WITH_ARG,
-            arguments = listOf(
-                navArgument(ConfigurationRoutes.ARG_MINOR_ID) { type = NavType.StringType },
-            ),
-        ) { backStackEntry ->
-            val minorId = backStackEntry.arguments
-                ?.getString(ConfigurationRoutes.ARG_MINOR_ID)
-                .orEmpty()
-
+        composable<LinkedMinorDestination> { entry ->
+            val route = entry.toRoute<LinkedMinorDestination>()
             LinkedMinorScreen(
-                minorId = minorId,
+                minorId = route.minorId,
                 onBackClick = { navController.popBackStack() },
                 onViewAppointmentsClick = { /* TODO */ },
                 onSyncClick = { /* TODO */ },
                 onUnlinkConfirmed = {
-                    navController.navigate(ConfigurationRoutes.LINKED_RELATIVES) {
-                        popUpTo(ConfigurationRoutes.LINKED_RELATIVES) { inclusive = true }
+                    navController.navigate(LinkedRelativesDestination) {
+                        popUpTo(LinkedRelativesDestination) { inclusive = true }
                         launchSingleTop = true
                     }
                 },
-                onBottomNavSelected = { index ->
-                    when (index) {
-                        0 -> { /* TODO */ }
-                        1 -> { /* TODO */ }
-                        2 -> { /* TODO */ }
-                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
-                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
-                            launchSingleTop = true
-                        }
-                    }
-                },
+                onBottomNavSelected = { /* TODO */ },
             )
         }
 
-        // H10 - Vincular menor
-        composable(route = ConfigurationRoutes.LINK_MINOR) {
+        composable<LinkMinorDestination> {
             LinkMinorScreen(
                 onBackClick = { navController.popBackStack() },
                 onVerified = { _, _ ->
-                    navController.navigate(ConfigurationRoutes.VERIFY_IDENTITY)
+                    navController.navigate(VerifyIdentityDestination)
                 },
-                onBottomNavSelected = { index ->
-                    when (index) {
-                        0 -> { /* TODO */ }
-                        1 -> { /* TODO */ }
-                        2 -> { /* TODO */ }
-                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
-                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
-                            launchSingleTop = true
-                        }
-                    }
-                },
+                onBottomNavSelected = { /* TODO */ },
             )
         }
 
-        // H11 - Verificar identidad
-        composable(route = ConfigurationRoutes.VERIFY_IDENTITY) {
+        composable<VerifyIdentityDestination> {
             VerifyIdentityScreen(
                 onBackClick = { navController.popBackStack() },
                 onSuccess = {
-                    // El modal "Vinculación completada" se muestra primero
-                    // El botón "Entendido" del modal dispara este callback → navega a MinorHome
-                    navController.navigate(ConfigurationRoutes.minorHome("1"))
+                    navController.navigate(MinorHomeDestination("1"))
                 },
-                onBottomNavSelected = { index ->
-                    when (index) {
-                        0 -> { /* TODO */ }
-                        1 -> { /* TODO */ }
-                        2 -> { /* TODO */ }
-                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
-                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
-                            launchSingleTop = true
-                        }
-                    }
-                },
+                onBottomNavSelected = { /* TODO */ },
             )
         }
 
-        // H12 - Home del menor
-        composable(
-            route = ConfigurationRoutes.MINOR_HOME_WITH_ARG,
-            arguments = listOf(
-                navArgument(ConfigurationRoutes.ARG_MINOR_ID) { type = NavType.StringType },
-            ),
-        ) { backStackEntry ->
-            val minorId = backStackEntry.arguments
-                ?.getString(ConfigurationRoutes.ARG_MINOR_ID)
-                .orEmpty()
-
+        composable<MinorHomeDestination> { entry ->
+            val route = entry.toRoute<MinorHomeDestination>()
             MinorHomeScreen(
-                minorId = minorId,
+                minorId = route.minorId,
                 onBackClick = { navController.popBackStack() },
                 onViewAppointmentsClick = { /* TODO */ },
                 onViewHistoryClick = { /* TODO */ },
                 onBackToProfileClick = {
-                    navController.navigate(ConfigurationRoutes.CONFIGURATION) {
-                        popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
+                    navController.navigate(ConfigurationDestination) {
+                        popUpTo(ConfigurationDestination) { inclusive = false }
                         launchSingleTop = true
                     }
                 },
-                onBottomNavSelected = { index ->
-                    when (index) {
-                        0 -> { /* Inicio: ya estamos aquí */ }
-                        1 -> { /* TODO */ }
-                        2 -> { /* TODO */ }
-                        3 -> navController.navigate(ConfigurationRoutes.CONFIGURATION) {
-                            popUpTo(ConfigurationRoutes.CONFIGURATION) { inclusive = false }
-                            launchSingleTop = true
-                        }
-                    }
-                },
+                onBottomNavSelected = { /* TODO */ },
             )
         }
     }
+}
+
+private object ConfigurationDestinations {
+    const val PHONE = "phone"
+    const val EMAIL = "email"
 }
