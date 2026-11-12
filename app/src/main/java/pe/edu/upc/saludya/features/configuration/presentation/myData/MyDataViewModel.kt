@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
 import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.configuration.application.usecase.GetPatientProfileUseCase
 import javax.inject.Inject
@@ -26,9 +27,15 @@ class MyDataViewModel @Inject constructor(
     fun loadProfile() {
         viewModelScope.launch {
             _uiState.value = MyDataUiState.Loading
-            runCatching { getPatientProfileUseCase() }
-                .onSuccess { _uiState.value = MyDataUiState.Success(it) }
-                .onFailure { _uiState.value = MyDataUiState.Error(R.string.error_generic) }
+
+            try {
+                val patient = getPatientProfileUseCase()
+                _uiState.value = MyDataUiState.Success(patient)
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (exception: Exception) {
+                _uiState.value = MyDataUiState.Error(R.string.error_generic)
+            }
         }
     }
 }

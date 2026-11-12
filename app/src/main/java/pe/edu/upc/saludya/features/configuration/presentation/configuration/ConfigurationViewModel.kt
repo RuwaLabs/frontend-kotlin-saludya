@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.configuration.application.usecase.GetPatientProfileUseCase
@@ -26,9 +27,15 @@ class ConfigurationViewModel @Inject constructor(
     fun loadProfile() {
         viewModelScope.launch {
             _uiState.value = ConfigurationUiState.Loading
-            runCatching { getPatientProfileUseCase() }
-                .onSuccess { _uiState.value = ConfigurationUiState.Success(it) }
-                .onFailure { _uiState.value = ConfigurationUiState.Error(R.string.error_generic) }
+
+            try {
+                val patient = getPatientProfileUseCase()
+                _uiState.value = ConfigurationUiState.Success(patient)
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (exception: Exception) {
+                _uiState.value = ConfigurationUiState.Error(R.string.error_generic)
+            }
         }
     }
 }
