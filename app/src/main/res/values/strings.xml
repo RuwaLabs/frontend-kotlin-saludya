@@ -13,6 +13,7 @@
 
     <!-- ConfigurationScreen -->
     <string name="config_title">Configuración</string>
+    <string name="patient_role_holder">Titular</string>
     <string name="config_my_data">Mis datos</string>
     <string name="config_linked_relatives">Parientes vinculados</string>
     <string name="config_change_password">Cambiar contraseña</string>

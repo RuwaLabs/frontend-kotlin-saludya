@@ -106,7 +106,7 @@ private fun ConfigurationContent(
 
         PatientInfoCard(
             fullName = patient.fullName,
-            role = patient.role,
+            role = stringResource(R.string.patient_role_holder),
             documentType = patient.documentType,
             documentNumberMasked = patient.documentNumberMasked,
         )
