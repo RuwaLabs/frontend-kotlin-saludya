@@ -1,0 +1,34 @@
+<resources>
+    <string name="iam_credentials_title">Completa tu registro</string>
+    <string name="iam_credentials_description">Registra los datos con los que accederás a tu cuenta.</string>
+    <string name="iam_email">Correo electrónico</string>
+    <string name="iam_email_hint">nombre@correo.com</string>
+    <string name="iam_password">Contraseña</string>
+    <string name="iam_password_hint">Mínimo 8 caracteres, con letras y números</string>
+    <string name="iam_confirm_password">Confirmar contraseña</string>
+    <string name="iam_confirm_password_hint">Repite tu contraseña</string>
+    <string name="iam_phone">Celular</string>
+    <string name="iam_phone_hint">9 dígitos</string>
+    <string name="iam_email_channel">La verificación de tu cuenta se realizará por correo. El celular se usará como dato de contacto.</string>
+    <string name="iam_credentials_continue">Continuar</string>
+    <string name="iam_continue_email">Ir a iniciar sesión</string>
+    <string name="iam_show_password">Mostrar</string>
+    <string name="iam_hide_password">Ocultar</string>
+    <string name="iam_submitting">Procesando tu solicitud…</string>
+    <string name="iam_credentials_accepted">Tu cuenta está lista. Ya puedes iniciar sesión.</string>
+    <string name="iam_email_error">Ingresa un correo electrónico válido.</string>
+    <string name="iam_email_in_use">Este correo ya está en uso. Ingresa otro correo.</string>
+    <string name="iam_password_error">Usa al menos 8 caracteres con letras y números. Si tu contraseña es demasiado larga, acórtala.</string>
+    <string name="iam_password_mismatch">Las contraseñas no coinciden.</string>
+    <string name="iam_phone_error">El celular debe tener exactamente 9 dígitos numéricos.</string>
+    <string name="iam_identity_required">Primero verifica tu identidad para continuar.</string>
+    <string name="iam_identity_already_registered">Este DNI ya tiene una cuenta registrada.</string>
+    <string name="iam_registration_identity_mismatch">No pudimos confirmar tu identidad. Vuelve al paso anterior y revisa tus datos.</string>
+    <string name="iam_adult_required">El titular de la cuenta debe ser mayor de edad.</string>
+    <string name="iam_duplicate_record">El correo o el DNI ya está registrado. Revisa tus datos.</string>
+    <string name="iam_registration_invalid_request">Revisa los datos ingresados antes de continuar.</string>
+    <string name="iam_registration_unavailable">No pudimos confirmar el registro. Revisa tu conexión y reintenta más tarde.</string>
+    <string name="iam_registration_error">No pudimos confirmar tus credenciales. Intenta nuevamente.</string>
+    <string name="iam_email_step_title">Verificación de correo</string>
+    <string name="iam_email_step_description">Usaremos este correo electrónico para verificar tu cuenta.</string>
+</resources>

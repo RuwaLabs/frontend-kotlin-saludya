@@ -1,9 +1,9 @@
 ﻿package pe.edu.upc.saludya.core.desingsystem.theme
 import androidx.compose.ui.graphics.Color
 
-val primaryLight = Color(0xFF006A65)
+val primaryLight = Color(0xFF0C926B)
 val onPrimaryLight = Color(0xFFFFFFFF)
-val primaryContainerLight = Color(0xFF5DB7B0)
+val primaryContainerLight = Color(0xFFE3F2ED)
 val onPrimaryContainerLight = Color(0xFF004642)
 val secondaryLight = Color(0xFF456461)
 val onSecondaryLight = Color(0xFFFFFFFF)

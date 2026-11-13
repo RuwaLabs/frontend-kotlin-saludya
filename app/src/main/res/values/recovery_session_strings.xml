@@ -1,0 +1,27 @@
+<resources>
+    <string name="iam_reset_title">Nueva contraseña</string>
+    <string name="iam_new_password">Nueva contraseña</string>
+    <string name="iam_reset_description">Define una nueva contraseña para recuperar el acceso a tu cuenta.</string>
+    <string name="iam_reset_save">Guardar contraseña</string>
+    <string name="iam_reset_success">Tu contraseña se actualizó. Ya puedes iniciar sesión.</string>
+    <string name="iam_reset_link_invalid">El enlace expiró o ya no es válido. Solicita un nuevo enlace de recuperación.</string>
+    <string name="iam_reset_link_label">Enlace de recuperación</string>
+    <string name="iam_reset_paste">Pega el enlace que recibiste en tu correo.</string>
+    <string name="iam_reset_open">Abrir enlace</string>
+    <string name="iam_reset_have_link">Ya tengo un enlace</string>
+    <string name="iam_reset_request_new">Solicitar nuevo enlace</string>
+    <string name="iam_help_title">Recupera el acceso a tu cuenta</string>
+    <string name="iam_help_description">Si no tienes acceso a tu correo ni a tu celular, indica tu DNI y un correo alternativo donde podamos contactarte.</string>
+    <string name="iam_help_contact_email">Correo de contacto alternativo</string>
+    <string name="iam_help_send">Solicitar ayuda</string>
+    <string name="iam_help_success">Recibimos tu solicitud de ayuda. El personal autorizado verificará tu identidad antes de restablecer las credenciales.</string>
+    <string name="iam_help_identity_check">Acude al área de admisión con tu DNI original para verificar tu identidad.</string>
+    <string name="iam_help_no_access">No tengo acceso a mi correo ni celular</string>
+    <string name="iam_help_phone">Contacto: %1$s</string>
+    <string name="iam_logout_confirm_title">¿Cerrar sesión?</string>
+    <string name="iam_logout_confirm_description">Para volver a acceder a tu cuenta, tendrás que iniciar sesión nuevamente.</string>
+    <string name="iam_cancel">Cancelar</string>
+    <string name="iam_profile_refresh">Ver mi perfil</string>
+    <string name="iam_expiration_title">Tu sesión expiró</string>
+    <string name="iam_expiration_description">Por seguridad, vuelve a iniciar sesión para continuar usando tu cuenta.</string>
+</resources>

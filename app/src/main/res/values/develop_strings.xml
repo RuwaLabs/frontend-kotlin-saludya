@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home / dashboard -->
+    <string name="home_greeting">Hola, Lucía</string>
+    <string name="home_subtitle">¿Cómo podemos ayudarte hoy?</string>
+    <string name="home_pending_title">Citas pendientes</string>
+    <string name="home_view_appointments">Ver mis citas</string>
+    <string name="home_history_title">Historial</string>
+    <string name="home_history_body">Tus últimas atenciones y citas finalizadas.</string>
+    <string name="home_history_footer">Ver historial →</string>
+    <string name="home_reserve">Reservar una cita</string>
+
+    <!-- Pending appointments -->
+    <string name="pending_title">Citas pendientes</string>
+    <string name="pending_hint">Selecciona una cita para ver su detalle.</string>
+
+    <!-- Appointment detail -->
+    <string name="appointment_detail_title">Detalle de cita</string>
+    <string name="appointment_detail_reservation_title">Código de reserva</string>
+    <string name="appointment_detail_reservation_note">Comprobante enviado a tu correo.</string>
+    <string name="appointment_detail_register_arrival">Registrar mi llegada</string>
+    <string name="appointment_detail_cancel">Cancelar reserva</string>
+    <string name="appointment_detail_note">La cancelación está sujeta al plazo del establecimiento.</string>
+
+    <!-- History -->
+    <string name="history_title">Historial</string>
+    <string name="history_filter">Filtrar por fecha</string>
+    <string name="history_change_date">Cambiar fecha</string>
+    <string name="history_calendar_title">Filtrar historial</string>
+    <string name="history_calendar_apply">Aplicar fecha</string>
+    <string name="history_calendar_clear">Quitar filtro</string>
+
+    <!-- No appointments -->
+    <string name="no_appointments_title">Citas pendientes</string>
+    <string name="no_appointments_heading">Aún no tienes citas</string>
+    <string name="no_appointments_description">Reserva una cita para ti o para un menor vinculado. Aquí podrás consultar sus detalles.</string>
+    <string name="no_appointments_button">Reservar cita</string>
+
+    <!-- Load error -->
+    <string name="load_error_title">Mis citas</string>
+    <string name="load_error_heading">No pudimos cargar tus citas</string>
+    <string name="load_error_description">Revisa tu conexión y vuelve a intentarlo.</string>
+    <string name="load_error_button">Reintentar</string>
+
+    <!-- Notifications -->
+    <string name="notifications_title">Notificaciones</string>
+    <string name="notifications_empty_heading">Todo al día</string>
+    <string name="notifications_empty_description">Aquí aparecerán tus confirmaciones, ofertas y avisos de atención.</string>
+    <string name="notifications_empty_button">Volver al inicio</string>
+    <string name="notification_offer_available">Se liberó un cupo</string>
+    <string name="notification_offer_message">Puedes adelantar tu cita. Acepta o rechaza la propuesta.</string>
+    <string name="notification_offer_footer">Ver oferta →</string>
+    <string name="notification_error">No se pudo cargar</string>
+
+    <!-- Offer accepted -->
+    <string name="offer_accepted_title">Horario actualizado</string>
+    <string name="offer_accepted_headline">¡Tu cita fue reasignada!</string>
+    <string name="offer_accepted_note">El horario anterior quedó liberado. Enviamos el nuevo comprobante a tu correo.</string>
+    <string name="offer_accepted_view">Ver mi cita</string>
+
+    <!-- Offer rejected -->
+    <string name="offer_rejected_title">Oferta rechazada</string>
+    <string name="offer_rejected_description">Conservamos tu horario original: 6 oct a las 09:00.</string>
+    <string name="offer_rejected_view">Ver mi cita</string>
+
+    <!-- Reassignment success -->
+    <string name="reassignment_success_title">Reasignación exitosa</string>
+    <string name="reassignment_success_description">Tu cita ahora es el 6 oct a las 08:30.</string>
+    <string name="reassignment_success_view">Ver detalle</string>
+
+    <!-- Reassignment / offer detail -->
+    <string name="offer_detail_title">Reasignación disponible</string>
+    <string name="offer_detail_current_title">Horario actual</string>
+    <string name="offer_detail_offered_title">Nuevo horario ofrecido</string>
+    <string name="offer_detail_note">Si aceptas, la nueva reserva reemplazará tu horario actual.</string>
+    <string name="offer_detail_accept">Aceptar nuevo horario</string>
+    <string name="offer_detail_reject">Rechazar oferta</string>
+    <string name="reassignment_modal_title">Reasignación de horario</string>
+    <string name="reassignment_modal_accept">Aceptar nuevo horario</string>
+    <string name="reassignment_modal_reject">Rechazar oferta</string>
+    <string name="confirm_rejection_title">¿Rechazar esta oferta?</string>
+    <string name="confirm_rejection_description">Conservarás tu cita del 6 oct a las 09:00.</string>
+    <string name="confirm_rejection_primary">Rechazar oferta</string>
+    <string name="confirm_rejection_secondary">Volver</string>
+    <string name="slot_taken_title">El horario ya no está disponible</string>
+    <string name="slot_taken_description">Otra persona aceptó el cupo. Tu cita original sigue confirmada.</string>
+    <string name="slot_taken_primary">Ver mi cita</string>
+    <string name="offer_expired_title">La oferta venció</string>
+    <string name="offer_expired_description">El plazo para aceptar terminó. Tu reserva original sigue confirmada.</string>
+    <string name="offer_expired_primary">Ver mi cita</string>
+</resources>
