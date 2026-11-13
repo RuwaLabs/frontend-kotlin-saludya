@@ -1,13 +1,12 @@
 package pe.edu.upc.saludya.features.configuration.presentation.navigation
 
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.configuration.presentation.changeEmail.ChangeEmailScreen
+import pe.edu.upc.saludya.features.configuration.presentation.changePassword.ChangePasswordScreen
 import pe.edu.upc.saludya.features.configuration.presentation.changePhone.ChangePhoneScreen
 import pe.edu.upc.saludya.features.configuration.presentation.configuration.ConfigurationScreen
 import pe.edu.upc.saludya.features.configuration.presentation.linkMinor.LinkMinorScreen
@@ -15,9 +14,9 @@ import pe.edu.upc.saludya.features.configuration.presentation.linkedMinor.Linked
 import pe.edu.upc.saludya.features.configuration.presentation.linkedRelatives.LinkedRelativesScreen
 import pe.edu.upc.saludya.features.configuration.presentation.minorHome.MinorHomeScreen
 import pe.edu.upc.saludya.features.configuration.presentation.myData.MyDataScreen
-import pe.edu.upc.saludya.features.configuration.presentation.verifyCode.VerifyCodeScreen
 import pe.edu.upc.saludya.features.configuration.presentation.verifyIdentity.VerifyIdentityScreen
 import pe.edu.upc.saludya.navigation.ChangeEmailDestination
+import pe.edu.upc.saludya.navigation.ChangePasswordDestination
 import pe.edu.upc.saludya.navigation.ChangePhoneDestination
 import pe.edu.upc.saludya.navigation.ConfigurationDestination
 import pe.edu.upc.saludya.navigation.ConfigurationGraph
@@ -26,10 +25,12 @@ import pe.edu.upc.saludya.navigation.LinkedMinorDestination
 import pe.edu.upc.saludya.navigation.LinkedRelativesDestination
 import pe.edu.upc.saludya.navigation.MinorHomeDestination
 import pe.edu.upc.saludya.navigation.MyDataDestination
-import pe.edu.upc.saludya.navigation.VerifyCodeDestination
 import pe.edu.upc.saludya.navigation.VerifyIdentityDestination
 
-fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
+fun NavGraphBuilder.configurationNavGraph(
+    navController: NavController,
+    onSessionEnded: () -> Unit = {},
+) {
     navigation<ConfigurationGraph>(startDestination = ConfigurationDestination) {
 
         composable<ConfigurationDestination> {
@@ -37,7 +38,7 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
                 onBackClick = { navController.popBackStack() },
                 onMyDataClick = { navController.navigate(MyDataDestination) },
                 onLinkedRelativesClick = { navController.navigate(LinkedRelativesDestination) },
-                onChangePasswordClick = { /* TODO */ },
+                onChangePasswordClick = { navController.navigate(ChangePasswordDestination) },
                 onLogoutClick = { /* TODO */ },
             )
         }
@@ -53,8 +54,10 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
         composable<ChangePhoneDestination> {
             ChangePhoneScreen(
                 onBackClick = { navController.popBackStack() },
-                onCodeSent = {
-                    navController.navigate(VerifyCodeDestination(ConfigurationDestinations.PHONE))
+                onSaved = {
+                    navController.navigate(MyDataDestination) {
+                        popUpTo(MyDataDestination) { inclusive = true }
+                    }
                 },
             )
         }
@@ -62,31 +65,18 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
         composable<ChangeEmailDestination> {
             ChangeEmailScreen(
                 onBackClick = { navController.popBackStack() },
-                onCodeSent = {
-                    navController.navigate(VerifyCodeDestination(ConfigurationDestinations.EMAIL))
+                onSaved = {
+                    navController.navigate(MyDataDestination) {
+                        popUpTo(MyDataDestination) { inclusive = true }
+                    }
                 },
             )
         }
 
-        composable<VerifyCodeDestination> { entry ->
-            val route = entry.toRoute<VerifyCodeDestination>()
-            val descriptionText = when (route.destination) {
-                ConfigurationDestinations.PHONE ->
-                    stringResource(R.string.verify_code_description_phone)
-                ConfigurationDestinations.EMAIL ->
-                    stringResource(R.string.verify_code_description_email)
-                else ->
-                    stringResource(R.string.verify_code_description_default)
-            }
-            VerifyCodeScreen(
-                descriptionText = descriptionText,
+        composable<ChangePasswordDestination> {
+            ChangePasswordScreen(
                 onBackClick = { navController.popBackStack() },
-                onVerified = {
-                    navController.navigate(MyDataDestination) {
-                        popUpTo(MyDataDestination) { inclusive = false }
-                        launchSingleTop = true
-                    }
-                },
+                onSessionEnded = onSessionEnded,
             )
         }
 
@@ -121,17 +111,21 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
         composable<LinkMinorDestination> {
             LinkMinorScreen(
                 onBackClick = { navController.popBackStack() },
-                onVerified = { _, _ ->
-                    navController.navigate(VerifyIdentityDestination)
+                onVerified = { _, documentNumber ->
+                    navController.navigate(VerifyIdentityDestination(documentNumber))
                 },
             )
         }
 
-        composable<VerifyIdentityDestination> {
+        composable<VerifyIdentityDestination> { entry ->
+            val route = entry.toRoute<VerifyIdentityDestination>()
             VerifyIdentityScreen(
+                dni = route.dni,
                 onBackClick = { navController.popBackStack() },
-                onSuccess = {
-                    navController.navigate(MinorHomeDestination("1"))
+                onSuccess = { linkId ->
+                    navController.navigate(MinorHomeDestination(linkId)) {
+                        popUpTo(LinkedRelativesDestination) { inclusive = false }
+                    }
                 },
             )
         }
@@ -152,9 +146,4 @@ fun NavGraphBuilder.configurationNavGraph(navController: NavController) {
             )
         }
     }
-}
-
-private object ConfigurationDestinations {
-    const val PHONE = "phone"
-    const val EMAIL = "email"
 }

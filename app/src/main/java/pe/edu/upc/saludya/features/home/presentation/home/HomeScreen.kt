@@ -1,6 +1,7 @@
 package pe.edu.upc.saludya.features.home.presentation.home
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -20,13 +21,17 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val fallback = HomeUiModel()
+    LaunchedEffect(Unit) { viewModel.load() }
     val appointment = state.nextAppointment
 
     HomeContent(
         model = HomeUiModel(
-            nextAppointment = appointment?.toAppointmentUiModel() ?: fallback.nextAppointment,
+            greeting = state.patientName?.let { "Hola, $it" } ?: "Hola",
+            nextAppointment = appointment?.toAppointmentUiModel(),
         ),
+        isLoading = state.isLoading,
+        errorMessage = state.errorMessage,
+        onRetryClick = viewModel::load,
         modifier = modifier,
         onNotificationsClick = onNotificationsClick,
         onAppointmentClick = { appointment?.let { onAppointmentClick(it.id) } },

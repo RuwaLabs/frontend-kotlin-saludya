@@ -12,5 +12,6 @@ import pe.edu.upc.saludya.features.checkin.domain.model.AttendanceTicket
 data class TicketUiState(
     val isLoading: Boolean = false,
     val ticket: AttendanceTicket? = null,
+    val isAttended: Boolean = false,
     val errorMessage: String? = null,
 )

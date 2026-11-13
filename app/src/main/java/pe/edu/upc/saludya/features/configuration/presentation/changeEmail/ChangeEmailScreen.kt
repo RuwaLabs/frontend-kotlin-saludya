@@ -34,14 +34,14 @@ import pe.edu.upc.saludya.features.configuration.presentation.validation.Validat
 fun ChangeEmailScreen(
     viewModel: ChangeEmailViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onCodeSent: (String) -> Unit = {},
+    onSaved: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     LaunchedEffect(uiState) {
         val state = uiState
-        if (state is ChangeEmailUiState.CodeSent) {
-            onCodeSent(state.newEmail)
+        if (state is ChangeEmailUiState.Saved) {
+            onSaved()
         }
     }
 
@@ -60,11 +60,10 @@ fun ChangeEmailScreen(
 
     // Early return: Error
     if (current is ChangeEmailUiState.Error) {
-        Text(
-            text = stringResource(current.messageRes),
-            modifier = Modifier.padding(24.dp),
-            color = MaterialTheme.colorScheme.error,
-        )
+        Column(modifier = Modifier.padding(24.dp)) {
+            Text(stringResource(current.messageRes), color = MaterialTheme.colorScheme.error)
+            PrimaryButton(text = stringResource(R.string.dialog_understood), onClick = viewModel::retry)
+        }
         return
     }
 
@@ -84,7 +83,7 @@ fun ChangeEmailScreen(
                 inputValue = state.newEmail,
                 isSending = state.isSending,
                 onValueChange = viewModel::onEmailChange,
-                onSendCode = viewModel::sendCode,
+                onSendCode = viewModel::save,
             )
         }
     }

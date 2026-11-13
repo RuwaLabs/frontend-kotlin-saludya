@@ -37,9 +37,10 @@ import kotlinx.serialization.Serializable
 @Serializable data object MyDataDestination
 @Serializable data object ChangePhoneDestination
 @Serializable data object ChangeEmailDestination
+@Serializable data object ChangePasswordDestination
 @Serializable data object LinkedRelativesDestination
 @Serializable data object LinkMinorDestination
-@Serializable data object VerifyIdentityDestination
+@Serializable data class VerifyIdentityDestination(val dni: String)
 
 @Serializable data class VerifyCodeDestination(val destination: String)
 @Serializable data class LinkedMinorDestination(val minorId: String)

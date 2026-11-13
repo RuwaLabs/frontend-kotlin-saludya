@@ -26,4 +26,7 @@ data class QueueUiState(
     /** El consultorio llamó al paciente: corresponde mostrar "¡Es tu turno!". */
     val isCalled: Boolean
         get() = ticket?.isCalled == true
+
+    val isAttended: Boolean
+        get() = ticket?.isAttended == true
 }

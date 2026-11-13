@@ -7,7 +7,7 @@ sealed interface ChangePhoneUiState {
         val newPhone: String = "",
         val isSending: Boolean = false,
     ) : ChangePhoneUiState
-    data class CodeSent(val newPhone: String) : ChangePhoneUiState
+    data object Saved : ChangePhoneUiState
     data class InvalidInput(@StringRes val messageRes: Int) : ChangePhoneUiState
     data class Error(@StringRes val messageRes: Int) : ChangePhoneUiState
 }

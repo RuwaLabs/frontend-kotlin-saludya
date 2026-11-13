@@ -14,5 +14,6 @@ data class TurnCalledUiState(
     val isLoading: Boolean = false,
     val ticket: AttendanceTicket? = null,
     val postCallToleranceMinutes: Int = 5,
+    val isAttended: Boolean = false,
     val errorMessage: String? = null,
 )

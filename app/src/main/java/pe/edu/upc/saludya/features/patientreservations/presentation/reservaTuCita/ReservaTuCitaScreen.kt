@@ -42,7 +42,6 @@ fun ReservaTuCitaScreen(
 
     SaludYaScreen(
         title = stringResource(R.string.reservation_tucita_title),
-        onBack = onBack,
         modifier = modifier
     ) {
         SaludYaSearchField(

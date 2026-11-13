@@ -7,7 +7,7 @@ sealed interface ChangeEmailUiState {
         val newEmail: String = "",
         val isSending: Boolean = false,
     ) : ChangeEmailUiState
-    data class CodeSent(val newEmail: String) : ChangeEmailUiState
+    data object Saved : ChangeEmailUiState
     data class InvalidInput(@StringRes val messageRes: Int) : ChangeEmailUiState
     data class Error(@StringRes val messageRes: Int) : ChangeEmailUiState
 }

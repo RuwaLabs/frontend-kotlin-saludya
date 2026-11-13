@@ -23,7 +23,7 @@ class RecoveryActionsRepositoryTest {
     private lateinit var repository: RemoteRecoveryActionsRepository
     @Before fun setup() {
         server = MockWebServer(); server.start()
-        api = Retrofit.Builder().baseUrl(server.url("/"))
+        api = Retrofit.Builder().baseUrl(server.url("/api/v1/"))
             .addConverterFactory(GsonConverterFactory.create()).build().create(RecoveryActionsApi::class.java)
         repository = RemoteRecoveryActionsRepository(api, Gson())
     }

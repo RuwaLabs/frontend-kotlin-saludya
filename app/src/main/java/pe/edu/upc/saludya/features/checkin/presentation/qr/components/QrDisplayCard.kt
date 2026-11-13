@@ -81,8 +81,9 @@ fun QrDisplayCard(
                 Spacer(Modifier.height(16.dp))
                 Text(
                     text = buildString {
-                        if (qrCodeInfo.isSample) append("QR de muestra · ")
+                        append("Código de reserva: ")
                         append(qrCodeInfo.token)
+                        if (qrCodeInfo.isSample) append(" · Imagen de muestra (no escaneable)")
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.onSurfaceVariant,

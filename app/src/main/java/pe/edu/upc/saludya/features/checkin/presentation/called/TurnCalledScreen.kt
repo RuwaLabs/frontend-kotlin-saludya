@@ -12,6 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.features.checkin.presentation.components.AttendedDialog
 import pe.edu.upc.saludya.features.checkin.presentation.components.CheckInScaffold
 import pe.edu.upc.saludya.features.checkin.presentation.components.InfoCard
 import pe.edu.upc.saludya.features.checkin.presentation.components.InfoNote
@@ -31,6 +32,7 @@ fun TurnCalledScreen(
     appointmentId: Int,
     onBackClick: () -> Unit,
     onViewTicket: () -> Unit,
+    onAttended: () -> Unit,
     onBottomNavItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TurnCalledViewModel = hiltViewModel(),
@@ -41,9 +43,14 @@ fun TurnCalledScreen(
         uiState = uiState,
         onBackClick = onBackClick,
         onViewTicket = onViewTicket,
+        onRefresh = viewModel::refresh,
         onBottomNavItemSelected = onBottomNavItemSelected,
         modifier = modifier,
     )
+
+    if (uiState.isAttended) {
+        AttendedDialog(onGoHome = onAttended)
+    }
 }
 
 /** Contenido sin estado de la pantalla. */
@@ -52,6 +59,7 @@ fun TurnCalledContent(
     uiState: TurnCalledUiState,
     onBackClick: () -> Unit,
     onViewTicket: () -> Unit,
+    onRefresh: () -> Unit = {},
     onBottomNavItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -87,7 +95,7 @@ fun TurnCalledContent(
             lines = listOfNotNull(
                 "${reservation.patientFullName} · ${reservation.specialty}",
                 reservation.toDoctorLabel(),
-                ticket.queueEntry.calledAt?.let { "Llamada registrada: ${it.toHourLabel()}" },
+                ticket.queueEntry?.calledAt?.let { "Llamada registrada: ${it.toHourLabel()}" },
             ),
         )
 
@@ -101,6 +109,10 @@ fun TurnCalledContent(
         Spacer(Modifier.height(16.dp))
 
         OutlineActionButton(text = "Ver mi ticket", onClick = onViewTicket)
+
+        Spacer(Modifier.height(12.dp))
+
+        OutlineActionButton(text = "Actualizar", onClick = onRefresh)
     }
 }
 

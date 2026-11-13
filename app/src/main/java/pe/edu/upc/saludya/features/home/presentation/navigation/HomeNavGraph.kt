@@ -24,6 +24,8 @@ import pe.edu.upc.saludya.navigation.NoAppointmentsDestination
 import pe.edu.upc.saludya.navigation.NotificationsGraph
 import pe.edu.upc.saludya.navigation.PendingAppointmentsDestination
 import pe.edu.upc.saludya.navigation.navigateToAppDestination
+import pe.edu.upc.saludya.features.patientreservations.presentation.navigation.PatientReservationsNavGraphRoute
+import pe.edu.upc.saludya.features.checkin.presentation.navigation.CheckInGraph
 
 fun NavGraphBuilder.homeNavGraph(navController: NavController) {
     navigation<HomeGraph>(startDestination = HomeDestination) {
@@ -34,7 +36,7 @@ fun NavGraphBuilder.homeNavGraph(navController: NavController) {
                 onAppointmentClick = { id -> navController.navigate(AppointmentDetailDestination(id)) },
                 onViewAppointmentsClick = { navController.navigate(PendingAppointmentsDestination) },
                 onViewHistoryClick = { navController.navigate(HistoryDestination) },
-                onReserveClick = { },
+                onReserveClick = { navController.navigate(PatientReservationsNavGraphRoute) },
                 onDestinationClick = { navController.navigateToAppDestination(it) },
             )
         }
@@ -52,8 +54,8 @@ fun NavGraphBuilder.homeNavGraph(navController: NavController) {
             AppointmentDetailScreen(
                 appointmentId = route.appointmentId,
                 onBackClick = { navController.popBackStack() },
-                onRegisterArrivalClick = { },
-                onCancelClick = { },
+                onRegisterArrivalClick = { navController.navigate(CheckInGraph) },
+                onCancelClick = { navController.popBackStack() },
                 onDestinationClick = { navController.navigateToAppDestination(it) },
             )
         }
@@ -88,7 +90,7 @@ fun NavGraphBuilder.homeNavGraph(navController: NavController) {
         composable<NoAppointmentsDestination> {
             NoAppointmentsScreen(
                 onBackClick = { navController.popBackStack() },
-                onReserveClick = { },
+                onReserveClick = { navController.navigate(PatientReservationsNavGraphRoute) },
                 onDestinationClick = { navController.navigateToAppDestination(it) },
             )
         }

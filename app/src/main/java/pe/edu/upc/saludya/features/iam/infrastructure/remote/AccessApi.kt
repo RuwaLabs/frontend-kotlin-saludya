@@ -5,6 +5,8 @@ import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.GET
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
 data class LoginRequest(val email: String, val password: String) {
     override fun toString(): String = "LoginRequest[REDACTED]"
@@ -16,6 +18,7 @@ data class VerifyLoginRequest(val challengeId: String, val code: String) {
 data class ResendLoginRequest(val challengeId: String)
 data class PatientProfileResponse(val id: Long?, val patientId: Long?, val role: String?, val active: Boolean?,
     val name: String?, val lastname: String?, val email: String?)
+data class UpdateContactRequest(val email: String, val phone: String)
 data class SessionResponse(
     val accessToken: String?, val tokenType: String?, val expiresAt: String?,
     val userId: Long?, val role: String?, val patientId: Long?
@@ -24,6 +27,8 @@ data class SessionResponse(
 }
 
 interface AccessApi {
+    @PUT("user-accounts/{id}")
+    suspend fun updateContact(@Path("id") id: Long, @Body request: UpdateContactRequest): Response<PatientProfileResponse>
     @GET("user-accounts/me")
     suspend fun profile(@Header("Authorization") authorization: String): Response<PatientProfileResponse>
     @POST("user-accounts/login")

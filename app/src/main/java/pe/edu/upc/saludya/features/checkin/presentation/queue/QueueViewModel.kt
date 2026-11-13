@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pe.edu.upc.saludya.features.checkin.application.usecase.LeaveQueueUseCase
 import pe.edu.upc.saludya.features.checkin.application.usecase.ObserveQueueStatusUseCase
+import pe.edu.upc.saludya.features.checkin.domain.repositories.CheckInRepository
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +23,7 @@ class QueueViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     observeQueueStatus: ObserveQueueStatusUseCase,
     private val leaveQueue: LeaveQueueUseCase,
+    private val repository: CheckInRepository,
 ) : ViewModel() {
 
     private val appointmentId: Int = checkNotNull(savedStateHandle["appointmentId"])
@@ -51,6 +53,8 @@ class QueueViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), QueueUiState(isLoading = true))
 
     fun onLeaveQueueClick() = local.update { it.copy(isLeaveDialogVisible = true) }
+
+    fun refresh() = repository.refresh(appointmentId)
 
     fun onLeaveQueueDismiss() = local.update { it.copy(isLeaveDialogVisible = false) }
 

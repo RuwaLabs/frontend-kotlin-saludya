@@ -21,7 +21,7 @@ import pe.edu.upc.saludya.navigation.navigateToAppDestination
 import pe.edu.upc.saludya.features.reassignment.presentation.offerdetail.OfferDetailScreen
 
 @Composable
-fun MainScreen() {
+fun MainScreen(onSessionEnded: () -> Unit = {}) {
 
     val navController = rememberNavController()
 
@@ -37,7 +37,7 @@ fun MainScreen() {
             notificationsNavGraph(navController)
             patientReservationsNavGraph(navController)
             checkInNavGraph(navController)
-            configurationNavGraph(navController)
+            configurationNavGraph(navController, onSessionEnded)
 
             composable<OfferDetailDestination> { entry ->
                 val route = entry.toRoute<OfferDetailDestination>()

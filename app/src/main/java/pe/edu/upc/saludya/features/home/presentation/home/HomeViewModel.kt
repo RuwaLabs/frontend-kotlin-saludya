@@ -9,26 +9,31 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pe.edu.upc.saludya.features.home.application.GetUpcomingAppointmentsUseCase
+import pe.edu.upc.saludya.features.configuration.application.usecase.GetPatientProfileUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getUpcomingAppointments: GetUpcomingAppointmentsUseCase
+    private val getUpcomingAppointments: GetUpcomingAppointmentsUseCase,
+    private val getPatientProfile: GetPatientProfileUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
-
-    init {
-        load()
-    }
 
     fun load() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
                 val upcoming = getUpcomingAppointments()
-                _uiState.update { it.copy(nextAppointment = upcoming.firstOrNull(), isLoading = false) }
+                val profile = getPatientProfile()
+                _uiState.update {
+                    it.copy(
+                        nextAppointment = upcoming.firstOrNull(),
+                        patientName = profile.fullName.substringBefore(" "),
+                        isLoading = false,
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
             }

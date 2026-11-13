@@ -23,7 +23,13 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
         composable<MainRoute> {
-            MainScreen()
+            MainScreen(
+                onSessionEnded = {
+                    navController.navigate(IamRoute) {
+                        popUpTo(MainRoute) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }

@@ -26,7 +26,7 @@ class RemoteAccessRepositoryTest {
     private val clock = Clock.fixed(Instant.parse("2026-10-07T12:00:00Z"), ZoneOffset.UTC)
     @Before fun setup() {
         server = MockWebServer(); server.start()
-        api = Retrofit.Builder().baseUrl(server.url("/"))
+        api = Retrofit.Builder().baseUrl(server.url("/api/v1/"))
             .addConverterFactory(GsonConverterFactory.create()).build().create(AccessApi::class.java)
         repository = RemoteAccessRepository(api, Gson(), clock)
     }

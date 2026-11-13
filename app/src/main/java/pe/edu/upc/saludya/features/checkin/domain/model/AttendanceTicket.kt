@@ -10,10 +10,15 @@ data class AttendanceTicket(
     val code: String,
     val reservation: Reservation,
     val checkIn: CheckIn,
-    val queueEntry: QueueEntry,
+    val queueEntry: QueueEntry? = null,
 ) {
     val isCalled: Boolean
-        get() = queueEntry.status == QueueEntryStatus.CALLED
+        get() = queueEntry?.status == QueueEntryStatus.CALLED
+
+    /** La atención terminó: admisión o el consultorio marcaron la cita como atendida. */
+    val isAttended: Boolean
+        get() = reservation.status == AppointmentStatus.ATTENDED ||
+            queueEntry?.status == QueueEntryStatus.ATTENDED
 }
 
 /**

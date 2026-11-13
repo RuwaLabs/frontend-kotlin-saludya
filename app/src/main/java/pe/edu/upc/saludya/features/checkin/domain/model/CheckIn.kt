@@ -17,7 +17,7 @@ enum class CheckInStatus { VALID, EXPIRED, INVALID }
 data class CheckIn(
     val id: Int,
     val appointmentId: Int,
-    val qrToken: String,
+    val qrToken: String?,
     val status: CheckInStatus,
     val checkedInAt: LocalDateTime,
 )

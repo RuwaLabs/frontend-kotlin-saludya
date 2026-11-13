@@ -1,6 +1,7 @@
 package pe.edu.upc.saludya.main
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -27,11 +28,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.currentBackStackEntryAsState
 import pe.edu.upc.saludya.core.desingsystem.theme.SaludYaTheme
 
 @Composable
@@ -39,6 +44,16 @@ fun MainNavigationBar(navController: NavController) {
 
     var selectedItem by rememberSaveable {
         mutableStateOf(NavigationItem.HOME)
+    }
+
+    val currentEntry by navController.currentBackStackEntryAsState()
+    LaunchedEffect(currentEntry) {
+        val destination = currentEntry?.destination ?: return@LaunchedEffect
+        val match = NavigationItem.entries.firstOrNull { item ->
+            val graphName = item.route::class.simpleName.orEmpty()
+            destination.hierarchy.any { it.route?.contains(graphName) == true }
+        }
+        if (match != null) selectedItem = match
     }
 
     Surface(
@@ -61,10 +76,9 @@ fun MainNavigationBar(navController: NavController) {
                     onClick = {
                         navController.navigate(item.route) {
                             launchSingleTop = true
-                            popUpTo(NavigationItem.HOME.route) {
-                                saveState = true
+                            popUpTo(navController.graph.id) {
+                                inclusive = false
                             }
-                            restoreState = true
                         }
                         selectedItem = item
                     },
@@ -99,11 +113,11 @@ private fun NavigationTab(
         modifier = modifier
             .clip(shape)
             .background(background)
-            .selectable(
-                selected = selected,
-                onClick = onClick,
+            .clickable(
                 role = Role.Tab,
+                onClick = onClick,
             )
+            .semantics { this.selected = selected }
             .padding(horizontal = 4.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),

@@ -30,7 +30,7 @@ class RemoteRegistrationRepositoryTest {
     @Before fun setup() {
         server = MockWebServer()
         server.start()
-        val api = Retrofit.Builder().baseUrl(server.url("/"))
+        val api = Retrofit.Builder().baseUrl(server.url("/api/v1/"))
             .addConverterFactory(GsonConverterFactory.create(gson)).build().create(RegistrationApi::class.java)
         repository = RemoteRegistrationRepository(api, gson)
     }

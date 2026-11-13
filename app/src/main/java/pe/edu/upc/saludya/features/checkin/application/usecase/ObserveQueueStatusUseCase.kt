@@ -4,7 +4,6 @@ import javax.inject.Inject
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import pe.edu.upc.saludya.features.checkin.domain.model.AttendanceTicket
 import pe.edu.upc.saludya.features.checkin.domain.model.QueuePosition
 import pe.edu.upc.saludya.features.checkin.domain.repositories.CheckInRepository
@@ -19,12 +18,11 @@ class ObserveQueueStatusUseCase @Inject constructor(
     operator fun invoke(appointmentId: Int): Flow<QueueStatus> = combine(
         repository.observeTicket(appointmentId),
         repository.observeQueuePosition(appointmentId),
-        flow { emit(repository.getConfiguration()) },
-    ) { ticket, position, configuration ->
+    ) { ticket, position ->
         QueueStatus(
             ticket = ticket,
             position = position,
-            isQueueVisible = configuration.attendanceQueueVisible,
+            isQueueVisible = true,
         )
     }
 }

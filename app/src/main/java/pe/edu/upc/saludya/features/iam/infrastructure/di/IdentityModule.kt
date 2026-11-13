@@ -26,6 +26,8 @@ import pe.edu.upc.saludya.features.iam.domain.repository.AccessRepository
 import pe.edu.upc.saludya.features.iam.domain.repository.RecoveryActionsRepository
 import pe.edu.upc.saludya.features.iam.infrastructure.remote.RecoveryActionsApi
 import pe.edu.upc.saludya.features.iam.infrastructure.repositories.RemoteRecoveryActionsRepository
+import pe.edu.upc.saludya.features.iam.domain.repository.PatientSessionStorage
+import pe.edu.upc.saludya.features.iam.infrastructure.local.DataStorePatientSessionStorage
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -39,6 +41,9 @@ abstract class IdentityBindings {
 
     @Binds @Singleton
     abstract fun registrationRepository(implementation: RemoteRegistrationRepository): RegistrationRepository
+
+    @Binds @Singleton
+    abstract fun patientSessionStorage(implementation: DataStorePatientSessionStorage): PatientSessionStorage
 }
 
 @Module

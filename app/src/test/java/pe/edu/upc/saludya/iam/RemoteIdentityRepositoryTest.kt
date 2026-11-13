@@ -29,7 +29,7 @@ class RemoteIdentityRepositoryTest {
     @Before fun setup() {
         server = MockWebServer()
         server.start()
-        val api = Retrofit.Builder().baseUrl(server.url("/"))
+        val api = Retrofit.Builder().baseUrl(server.url("/api/v1/"))
             .addConverterFactory(GsonConverterFactory.create(gson)).build().create(IdentityApi::class.java)
         repository = RemoteIdentityRepository(api, gson)
     }

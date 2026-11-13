@@ -9,10 +9,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pe.edu.upc.saludya.R
+import pe.edu.upc.saludya.core.session.SessionProvider
+import pe.edu.upc.saludya.features.iam.infrastructure.remote.AccessApi
+import pe.edu.upc.saludya.features.iam.infrastructure.remote.UpdateContactRequest
+import pe.edu.upc.saludya.features.patientreservations.infrastructure.remote.PatientService
 import javax.inject.Inject
 
 @HiltViewModel
-class ChangeEmailViewModel @Inject constructor() : ViewModel() {
+class ChangeEmailViewModel @Inject constructor(
+    private val session: SessionProvider,
+    private val accounts: AccessApi,
+    private val patients: PatientService,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ChangeEmailUiState>(ChangeEmailUiState.Editing())
     val uiState: StateFlow<ChangeEmailUiState> = _uiState.asStateFlow()
@@ -24,7 +32,7 @@ class ChangeEmailViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun sendCode() {
+    fun save() {
         val current = _uiState.value
         if (current !is ChangeEmailUiState.Editing) return
 
@@ -40,8 +48,22 @@ class ChangeEmailViewModel @Inject constructor() : ViewModel() {
 
         viewModelScope.launch {
             _uiState.value = current.copy(isSending = true)
-            // Simulación de envío
-            _uiState.value = ChangeEmailUiState.CodeSent(email)
+            try {
+                val token = session.accessToken ?: error("No hay sesión")
+                val accountResponse = accounts.profile("Bearer $token")
+                val account = accountResponse.body() ?: error("No se pudo cargar la cuenta")
+                val patientId = session.patientId ?: error("No hay paciente")
+                if (account.patientId != patientId.toLong()) error("Cuenta incorrecta")
+                val patient = patients.getPatient(patientId).body() ?: error("No se pudo cargar el teléfono")
+                val response = accounts.updateContact(
+                    account.id ?: error("No hay cuenta"),
+                    UpdateContactRequest(email, patient.phone ?: error("No hay teléfono")),
+                )
+                if (!response.isSuccessful) error("No se pudo guardar el correo")
+                _uiState.value = ChangeEmailUiState.Saved
+            } catch (_: Exception) {
+                _uiState.value = ChangeEmailUiState.Error(R.string.error_generic)
+            }
         }
     }
 
@@ -51,4 +73,5 @@ class ChangeEmailViewModel @Inject constructor() : ViewModel() {
             _uiState.value = ChangeEmailUiState.Editing()
         }
     }
+    fun retry() { _uiState.value = ChangeEmailUiState.Editing() }
 }

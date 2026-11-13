@@ -21,6 +21,12 @@ data class PatientSession(
     override fun toString(): String = "PatientSession[REDACTED]"
 }
 
+data class PasswordRecoveryChallenge(
+    val challengeId: String, val maskedEmail: String, val expiresAt: Instant
+)
+
+data class PasswordResetGrant(val resetToken: String, val expiresAt: Instant)
+
 interface AccessRepository {
     suspend fun profile(token: String): AccessResult<PatientAccountProfile>
     suspend fun login(email: String, password: String): AccessResult<LoginChallenge>
