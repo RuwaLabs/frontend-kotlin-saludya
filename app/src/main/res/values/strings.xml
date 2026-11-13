@@ -17,6 +17,27 @@
     <string name="config_linked_relatives">Parientes vinculados</string>
     <string name="config_change_password">Cambiar contraseña</string>
     <string name="config_logout">Cerrar sesión</string>
+    <string name="change_password_title">Cambiar contraseña</string>
+    <string name="change_password_description">Enviaremos un código de 6 dígitos al correo de tu cuenta.</string>
+    <string name="change_password_send_code">Enviar código</string>
+    <string name="change_password_sent">Código enviado a %1$s.</string>
+    <string name="change_password_code_label">Código de verificación</string>
+    <string name="change_password_verify">Verificar código</string>
+    <string name="change_password_resend">Reenviar código</string>
+    <string name="change_password_new_password">Nueva contraseña</string>
+    <string name="change_password_confirm_password">Confirmar contraseña</string>
+    <string name="change_password_save">Guardar contraseña</string>
+    <string name="change_password_success_title">Contraseña actualizada</string>
+    <string name="change_password_success_message">Tu contraseña cambió. Por seguridad, inicia sesión nuevamente.</string>
+    <string name="change_password_go_login">Iniciar sesión</string>
+    <string name="change_password_no_email">No se pudo obtener el correo de tu cuenta.</string>
+    <string name="change_password_code_sent">Revisa tu correo e ingresa el código.</string>
+    <string name="change_password_mismatch">Las contraseñas no coinciden.</string>
+    <string name="change_password_invalid">La contraseña debe tener al menos 8 caracteres, una letra y un número.</string>
+    <string name="change_password_unavailable">No se pudo completar la operación. Intenta nuevamente.</string>
+    <string name="change_password_invalid_code">El código es incorrecto o venció.</string>
+    <string name="change_password_expired_code">El código venció. Solicita uno nuevo.</string>
+    <string name="change_password_too_many">Demasiados intentos. Espera un momento.</string>
 
     <!-- MyDataScreen -->
     <string name="my_data_title">Mis datos</string>
@@ -28,15 +49,15 @@
 
     <!-- ChangeEmailScreen -->
     <string name="change_email_title">Cambiar correo</string>
-    <string name="change_email_description">Verificaremos el nuevo correo antes de actualizarlo.</string>
+    <string name="change_email_description">Actualiza el correo de tu cuenta.</string>
     <string name="change_email_label">Nuevo correo</string>
     <string name="change_email_placeholder">lucia.torres@correo.com</string>
-    <string name="change_email_send">Enviar código</string>
-    <string name="change_email_sending">Enviando…</string>
+    <string name="change_email_send">Guardar cambios</string>
+    <string name="change_email_sending">Guardando…</string>
 
     <!-- ChangePhoneScreen -->
     <string name="change_phone_title">Cambiar celular</string>
-    <string name="change_phone_description">Confirmarás el cambio con un código enviado a tu correo registrado. El celular es un dato de contacto.</string>
+    <string name="change_phone_description">Actualiza el celular de tu cuenta.</string>
     <string name="change_phone_label">Nuevo celular</string>
     <string name="change_phone_placeholder">987 654 482</string>
 
@@ -55,6 +76,8 @@
     <string name="verify_identity_description">Completa los datos solicitados para continuar con la validación del vínculo.</string>
     <string name="verify_identity_name">Nombres del menor</string>
     <string name="verify_identity_name_placeholder">Mateo</string>
+    <string name="verify_identity_lastname">Apellidos del menor</string>
+    <string name="verify_identity_lastname_placeholder">Torres</string>
     <string name="verify_identity_birthdate">Fecha de nacimiento</string>
     <string name="verify_identity_birthdate_placeholder">12/04/2018</string>
     <string name="verify_identity_continue">Continuar</string>
@@ -133,6 +156,7 @@
     <!-- Validaciones / errores -->
     <string name="error_invalid_email_or_phone">Ingresa un correo válido o un celular de 9 dígitos, según el campo.</string>
     <string name="error_empty_document">Ingresa el número de documento.</string>
+    <string name="error_invalid_document">Ingresa un DNI de 8 dígitos.</string>
     <string name="error_incomplete_code">Ingresa el código completo.</string>
     <string name="error_wrong_code_title">Código incorrecto</string>
     <string name="error_wrong_code_message">Revisa los 6 dígitos e inténtalo otra vez.</string>

@@ -12,9 +12,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import pe.edu.upc.saludya.features.checkin.presentation.components.AttendedDialog
 import pe.edu.upc.saludya.features.checkin.presentation.components.CheckInScaffold
 import pe.edu.upc.saludya.features.checkin.presentation.components.InfoCard
 import pe.edu.upc.saludya.features.checkin.presentation.components.InfoNote
+import pe.edu.upc.saludya.features.checkin.presentation.components.OutlineActionButton
 import pe.edu.upc.saludya.features.checkin.presentation.components.PrimaryButton
 import pe.edu.upc.saludya.features.checkin.presentation.components.toDoctorLabel
 import pe.edu.upc.saludya.features.checkin.presentation.components.toHourLabel
@@ -33,6 +35,7 @@ fun TicketScreen(
     appointmentId: Int,
     onBackClick: () -> Unit,
     onViewPosition: () -> Unit,
+    onAttended: () -> Unit,
     onBottomNavItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TicketViewModel = hiltViewModel(),
@@ -43,9 +46,14 @@ fun TicketScreen(
         uiState = uiState,
         onBackClick = onBackClick,
         onViewPosition = onViewPosition,
+        onRefresh = viewModel::refresh,
         onBottomNavItemSelected = onBottomNavItemSelected,
         modifier = modifier,
     )
+
+    if (uiState.isAttended) {
+        AttendedDialog(onGoHome = onAttended)
+    }
 }
 
 /** Contenido sin estado de la pantalla. */
@@ -54,6 +62,7 @@ fun TicketContent(
     uiState: TicketUiState,
     onBackClick: () -> Unit,
     onViewPosition: () -> Unit,
+    onRefresh: () -> Unit = {},
     onBottomNavItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -100,6 +109,10 @@ fun TicketContent(
         Spacer(Modifier.height(16.dp))
 
         PrimaryButton(text = "Ver mi posición", onClick = onViewPosition)
+
+        Spacer(Modifier.height(12.dp))
+
+        OutlineActionButton(text = "Actualizar ticket", onClick = onRefresh)
     }
 }
 

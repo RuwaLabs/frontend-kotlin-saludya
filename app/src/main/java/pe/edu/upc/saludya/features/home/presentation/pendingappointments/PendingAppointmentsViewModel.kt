@@ -19,10 +19,6 @@ class PendingAppointmentsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(PendingAppointmentsUiState())
     val uiState: StateFlow<PendingAppointmentsUiState> = _uiState.asStateFlow()
 
-    init {
-        load()
-    }
-
     fun load() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }

@@ -31,6 +31,9 @@ interface CheckInRepository {
     /** Posición en la cola; emite `null` si el paciente no tiene un turno activo. */
     fun observeQueuePosition(appointmentId: Int): Flow<QueuePosition?>
 
+    /** Vuelve a consultar el ticket y la posición en el backend. */
+    fun refresh(appointmentId: Int)
+
     /** El paciente abandona la cola (su `queue_entries.status` pasa a ABSENT). */
     suspend fun leaveQueue(appointmentId: Int)
 

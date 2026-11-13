@@ -9,6 +9,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import pe.edu.upc.saludya.features.iam.domain.model.*
+import pe.edu.upc.saludya.core.session.SessionProvider
 import pe.edu.upc.saludya.features.iam.domain.repository.*
 import pe.edu.upc.saludya.features.iam.presentation.access.*
 import java.time.Clock
@@ -21,7 +22,7 @@ class AccessViewModelsTest {
     private val dispatcher = StandardTestDispatcher()
     private val clock = MutableClock()
     private val repository = FakeAccessRepository()
-    private val sessions = PatientSessionStore(clock)
+    private val sessions = PatientSessionStore(clock, SessionProvider(), InMemoryPatientSessionStorage())
     private lateinit var login: LoginViewModel
     private lateinit var recovery: RecoveryViewModel
     @Before fun setup() {

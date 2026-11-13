@@ -31,7 +31,7 @@ import pe.edu.upc.saludya.core.desingsystem.icon.arrowBack
 @Composable
 fun SaludYaScreen(
     title: String,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -45,14 +45,16 @@ fun SaludYaScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.Top
         ) {
-            Icon(
-                imageVector = arrowBack,
-                contentDescription = stringResource(R.string.reservation_back),
-                tint = SaludYaColors.Primary,
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable(onClick = onBack)
-            )
+            if (onBack != null) {
+                Icon(
+                    imageVector = arrowBack,
+                    contentDescription = stringResource(R.string.reservation_back),
+                    tint = SaludYaColors.Primary,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable(onClick = onBack)
+                )
+            }
             Text(
                 text = title,
                 style = saludYaText(21, FontWeight.SemiBold)

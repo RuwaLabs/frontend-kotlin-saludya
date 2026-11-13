@@ -52,7 +52,7 @@ fun QrCodeScreen(
         onBackClick = onBackClick,
         onReservationSelected = viewModel::onReservationSelected,
         onViewReservationDetail = onViewReservationDetail,
-        onScanEstablishmentQr = viewModel::onScanEstablishmentQrClick,
+        onScanEstablishmentQr = viewModel::onCheckTicketClick,
         onBottomNavItemSelected = onBottomNavItemSelected,
         modifier = modifier,
     )
@@ -71,7 +71,6 @@ fun QrCodeContent(
 ) {
     CheckInScaffold(
         title = "Código QR",
-        onBackClick = onBackClick,
         onBottomNavItemSelected = onBottomNavItemSelected,
         modifier = modifier,
     ) {
@@ -83,19 +82,26 @@ fun QrCodeContent(
 
         Spacer(Modifier.height(16.dp))
 
-        QrDisplayCard(
-            qrCodeInfo = uiState.qrCodeInfo,
-            isLoading = uiState.isLoading,
-        )
+        if (uiState.sameDay) {
+            QrDisplayCard(
+                qrCodeInfo = uiState.qrCodeInfo,
+                isLoading = uiState.isLoading,
+            )
 
-        Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
 
-        InfoNote(
-            text = "Al llegar, escanea el QR del establecimiento. " +
-                "Si admisión lo solicita, presenta este código.",
-        )
+            InfoNote(
+                text = "El código de reserva es real. La imagen del QR es solo ilustrativa y no se puede escanear. " +
+                    "Admisión debe registrar el código para habilitar tu ticket y tu cola.",
+            )
+        } else {
+            InfoNote(
+                text = uiState.errorMessage
+                    ?: "El código y la cola solo están disponibles el día de la cita.",
+            )
+        }
 
-        if (uiState.errorMessage != null) {
+        if (uiState.errorMessage != null && uiState.sameDay) {
             Spacer(Modifier.height(12.dp))
             Text(
                 text = uiState.errorMessage,
@@ -115,7 +121,7 @@ fun QrCodeContent(
         Spacer(Modifier.height(12.dp))
 
         PrimaryButton(
-            text = "Escanear QR del establecimiento",
+            text = "Consultar mi ticket",
             enabled = uiState.actionsEnabled,
             onClick = onScanEstablishmentQr,
         )

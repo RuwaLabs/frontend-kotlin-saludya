@@ -75,10 +75,22 @@ class AppointmentRepositoryImpl @Inject constructor(
 
     private fun Response<*>.toFailure(): Exception {
         val error = parseError()
-        return when (error?.code) {
-            "TIMESLOT_CONFLICT" -> TimeslotConflictException()
-            "APPOINTMENT_CONFLICT" -> AppointmentConflictException()
-            else -> Exception(error?.message ?: "Error ${code()}")
+        val details = error?.details.orEmpty()
+        return when {
+            error?.code == "TIMESLOT_CONFLICT" -> TimeslotConflictException()
+            error?.code == "APPOINTMENT_CONFLICT" -> AppointmentConflictException()
+            details.contains("no available capacity", ignoreCase = true) -> TimeslotConflictException()
+            details.contains("already has an active appointment", ignoreCase = true) ->
+                AppointmentConflictException()
+            details.contains("cancellation deadline", ignoreCase = true) ->
+                Exception("No se pudo cancelar: ya pasó el plazo de 24 horas antes de la cita. Acércate a admisión.")
+            details.contains("not active", ignoreCase = true) ->
+                Exception("Esta cita ya no se puede cancelar.")
+            details.contains("time slot is in the past", ignoreCase = true) ->
+                Exception("No se pudo reservar: el servidor considera que ese horario ya pasó. Elige un horario más tarde.")
+            details.contains("Booking is closed for today", ignoreCase = true) ->
+                Exception("Las reservas para hoy ya cerraron. Elige otra fecha.")
+            else -> Exception("No se pudo completar la operación. Intenta nuevamente.")
         }
     }
 

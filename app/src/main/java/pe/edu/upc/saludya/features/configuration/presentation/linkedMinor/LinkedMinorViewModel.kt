@@ -8,12 +8,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import pe.edu.upc.saludya.R
+import pe.edu.upc.saludya.features.configuration.domain.repository.LinkedMinorRepository
 import pe.edu.upc.saludya.features.configuration.application.usecase.GetLinkedMinorByIdUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class LinkedMinorViewModel @Inject constructor(
     private val getLinkedMinorByIdUseCase: GetLinkedMinorByIdUseCase,
+    private val linkedMinors: LinkedMinorRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LinkedMinorUiState>(LinkedMinorUiState.Loading)
@@ -57,8 +59,15 @@ class LinkedMinorViewModel @Inject constructor(
     fun confirmUnlink() {
         val current = _uiState.value
         if (current is LinkedMinorUiState.ConfirmingUnlink) {
-            // Simulación de "dejar vinculación" en el backend
-            _uiState.value = LinkedMinorUiState.Unlinked(current.minor.id)
+            viewModelScope.launch {
+                _uiState.value = LinkedMinorUiState.Loading
+                try {
+                    linkedMinors.unlink(current.minor.id)
+                    _uiState.value = LinkedMinorUiState.Unlinked(current.minor.id)
+                } catch (_: Exception) {
+                    _uiState.value = LinkedMinorUiState.Error(R.string.error_generic)
+                }
+            }
         }
     }
 

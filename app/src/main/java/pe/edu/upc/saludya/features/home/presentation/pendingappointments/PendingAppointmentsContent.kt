@@ -15,6 +15,7 @@ import pe.edu.upc.saludya.core.desingsystem.component.SaludYaTextStyles
 @Composable
 fun PendingAppointmentsContent(
     model: PendingAppointmentsUiModel = PendingAppointmentsUiModel(),
+    message: String? = null,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onAppointmentClick: (index: Int) -> Unit = {},
@@ -29,7 +30,7 @@ fun PendingAppointmentsContent(
         model.appointments.forEachIndexed { index, appointment ->
             AppointmentCard(model = appointment, onClick = { onAppointmentClick(index) })
         }
-        Text(text = stringResource(R.string.pending_hint), style = SaludYaTextStyles.Hint)
+        Text(text = message ?: stringResource(R.string.pending_hint), style = SaludYaTextStyles.Hint)
     }
 }
 

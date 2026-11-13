@@ -11,6 +11,7 @@ import pe.edu.upc.saludya.features.checkin.presentation.qr.QrCodeScreen
 import pe.edu.upc.saludya.features.checkin.presentation.queue.QueueScreen
 import pe.edu.upc.saludya.features.checkin.presentation.ticket.TicketScreen
 import pe.edu.upc.saludya.navigation.AppointmentDetailDestination
+import pe.edu.upc.saludya.navigation.HomeGraph
 
 @Serializable data object CheckInGraph
 @Serializable data object CheckInQrDestination
@@ -19,6 +20,13 @@ import pe.edu.upc.saludya.navigation.AppointmentDetailDestination
 @Serializable data class CheckInCalledDestination(val appointmentId: Int)
 
 fun NavGraphBuilder.checkInNavGraph(navController: NavController) {
+    val goHome = {
+        navController.navigate(HomeGraph) {
+            launchSingleTop = true
+            popUpTo(navController.graph.id) { inclusive = false }
+        }
+    }
+
     navigation<CheckInGraph>(startDestination = CheckInQrDestination) {
 
         composable<CheckInQrDestination> {
@@ -40,6 +48,7 @@ fun NavGraphBuilder.checkInNavGraph(navController: NavController) {
                 appointmentId = route.appointmentId,
                 onBackClick = { navController.popBackStack() },
                 onViewPosition = { navController.navigate(CheckInQueueDestination(route.appointmentId)) },
+                onAttended = goHome,
                 onBottomNavItemSelected = { },
             )
         }
@@ -58,6 +67,7 @@ fun NavGraphBuilder.checkInNavGraph(navController: NavController) {
                     }
                 },
                 onLeftQueue = { navController.popBackStack() },
+                onAttended = goHome,
                 onBottomNavItemSelected = { },
             )
         }
@@ -70,6 +80,7 @@ fun NavGraphBuilder.checkInNavGraph(navController: NavController) {
                 onViewTicket = {
                     navController.navigate(CheckInTicketDestination(route.appointmentId)) { launchSingleTop = true }
                 },
+                onAttended = goHome,
                 onBottomNavItemSelected = { },
             )
         }

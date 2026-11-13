@@ -18,6 +18,9 @@ private val Hour = DateTimeFormatter.ofPattern("HH:mm")
 /** Algunas versiones de CLDR devuelven "oct." / "mar." con punto; se normaliza. */
 private fun String.withoutDots(): String = replace(".", "")
 
+private fun String.asConsultingRoom(): String =
+    if (startsWith("Consultorio", ignoreCase = true)) this else "Consultorio $this"
+
 /** "09:00" */
 fun LocalTime.toHourLabel(): String = format(Hour)
 
@@ -43,7 +46,7 @@ fun Reservation.toDoctorLabel(): String = "Dr(a). $doctorFullName"
 /** "Consultorio 02 · Sala A", o `null` si el esquema no aporta ubicación. */
 fun Reservation.toLocationLabel(): String? =
     listOfNotNull(
-        consultingRoom?.let { "Consultorio $it" },
+        consultingRoom?.asConsultingRoom(),
         waitingRoom?.let { "Sala $it" },
     ).joinToString(" · ").ifEmpty { null }
 
@@ -51,5 +54,5 @@ fun Reservation.toLocationLabel(): String? =
 fun Reservation.toWaitingLocationLabel(): String? =
     listOfNotNull(
         waitingRoom?.let { "Sala de espera $it" },
-        consultingRoom?.let { "Consultorio $it" },
+        consultingRoom?.asConsultingRoom(),
     ).joinToString(" · ").ifEmpty { null }

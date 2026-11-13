@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.features.checkin.domain.model.AttendanceQueueStatus
 import pe.edu.upc.saludya.features.checkin.domain.model.QueuePosition
+import pe.edu.upc.saludya.features.checkin.presentation.components.AttendedDialog
 import pe.edu.upc.saludya.features.checkin.presentation.components.CheckInScaffold
 import pe.edu.upc.saludya.features.checkin.presentation.components.InfoCard
 import pe.edu.upc.saludya.features.checkin.presentation.components.InfoNote
@@ -41,6 +42,7 @@ fun QueueScreen(
     onViewTicket: () -> Unit,
     onTurnCalled: () -> Unit,
     onLeftQueue: () -> Unit,
+    onAttended: () -> Unit,
     onBottomNavItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: QueueViewModel = hiltViewModel(),
@@ -61,9 +63,14 @@ fun QueueScreen(
         onLeaveQueueClick = viewModel::onLeaveQueueClick,
         onLeaveQueueConfirm = viewModel::onLeaveQueueConfirm,
         onLeaveQueueDismiss = viewModel::onLeaveQueueDismiss,
+        onRefresh = viewModel::refresh,
         onBottomNavItemSelected = onBottomNavItemSelected,
         modifier = modifier,
     )
+
+    if (uiState.isAttended) {
+        AttendedDialog(onGoHome = onAttended)
+    }
 }
 
 /** Contenido sin estado de la pantalla. */
@@ -75,6 +82,7 @@ fun QueueContent(
     onLeaveQueueClick: () -> Unit,
     onLeaveQueueConfirm: () -> Unit,
     onLeaveQueueDismiss: () -> Unit,
+    onRefresh: () -> Unit = {},
     onBottomNavItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -157,8 +165,11 @@ fun QueueContent(
         OutlineActionButton(text = "Ver mi ticket", onClick = onViewTicket)
 
         Spacer(Modifier.height(12.dp))
+        OutlineActionButton(text = "Actualizar posición", onClick = onRefresh)
 
-        OutlineActionButton(text = "Dejar la cola", onClick = onLeaveQueueClick)
+        Spacer(Modifier.height(12.dp))
+
+        InfoNote(text = "Si necesitas abandonar la cola, consulta con el personal de admisión.")
     }
 
     if (uiState.isLeaveDialogVisible) {
@@ -187,6 +198,7 @@ private fun queueNote(position: QueuePosition): String {
         AttendanceQueueStatus.OPEN -> "El orden sigue la llegada presencial."
         AttendanceQueueStatus.PAUSED -> "La cola está en pausa por el momento."
         AttendanceQueueStatus.CLOSED -> "La cola de atención está cerrada."
+        null -> "Posición consultada en el establecimiento."
     }
     return "$status\nActualizado a las ${position.updatedAt.toHourLabel()}."
 }

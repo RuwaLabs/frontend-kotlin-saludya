@@ -1,6 +1,7 @@
 package pe.edu.upc.saludya.features.home.presentation.pendingappointments
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -17,11 +18,13 @@ fun PendingAppointmentsScreen(
     viewModel: PendingAppointmentsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) { viewModel.load() }
 
     PendingAppointmentsContent(
         model = PendingAppointmentsUiModel(
             appointments = state.appointments.map { it.toAppointmentUiModel() },
         ),
+        message = state.errorMessage ?: if (state.isLoading) "Cargando citas…" else if (state.appointments.isEmpty()) "Aún no tienes citas pendientes." else null,
         modifier = modifier,
         onBackClick = onBackClick,
         onAppointmentClick = { index ->

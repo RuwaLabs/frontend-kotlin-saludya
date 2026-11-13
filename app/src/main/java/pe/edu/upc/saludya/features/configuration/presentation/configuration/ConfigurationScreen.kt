@@ -45,7 +45,6 @@ fun ConfigurationScreen(
         topBar = {
             SaludYaTopBar(
                 title = stringResource(R.string.config_title),
-                onBackClick = onBackClick,
             )
         },
         containerColor = Color.White,

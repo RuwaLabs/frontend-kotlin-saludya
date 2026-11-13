@@ -38,7 +38,7 @@ internal object CheckInPreviewData {
     )
 
     val calledTicket = ticket.copy(
-        queueEntry = ticket.queueEntry.copy(
+        queueEntry = ticket.queueEntry!!.copy(
             status = QueueEntryStatus.CALLED,
             calledAt = LocalDateTime.of(2026, 10, 6, 9, 15),
         ),

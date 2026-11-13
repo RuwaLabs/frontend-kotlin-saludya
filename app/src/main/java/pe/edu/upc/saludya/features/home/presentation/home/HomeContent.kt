@@ -19,6 +19,9 @@ import pe.edu.upc.saludya.core.desingsystem.component.SaludYaTextStyles
 @Composable
 fun HomeContent(
     model: HomeUiModel = HomeUiModel(),
+    isLoading: Boolean = false,
+    errorMessage: String? = null,
+    onRetryClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     onNotificationsClick: () -> Unit = {},
     onAppointmentClick: () -> Unit = {},
@@ -31,7 +34,7 @@ fun HomeContent(
         modifier = modifier,
         header = {
             SaludYaHomeHeader(
-                greeting = stringResource(R.string.home_greeting),
+                greeting = model.greeting,
                 onNotificationsClick = onNotificationsClick,
             )
         },
@@ -40,7 +43,15 @@ fun HomeContent(
     ) {
         Text(text = stringResource(R.string.home_subtitle), style = SaludYaTextStyles.Subtitle)
         Text(text = stringResource(R.string.home_pending_title), style = SaludYaTextStyles.SectionTitle)
-        AppointmentCard(model = model.nextAppointment, onClick = onAppointmentClick)
+        when {
+            isLoading -> Text("Cargando tus citas…")
+            errorMessage != null -> {
+                Text("No se pudieron cargar tus citas: $errorMessage")
+                SaludYaOutlinedButton(text = "Reintentar", onClick = onRetryClick)
+            }
+            model.nextAppointment != null -> AppointmentCard(model = model.nextAppointment, onClick = onAppointmentClick)
+            else -> Text("Aún no tienes citas pendientes.")
+        }
         SaludYaOutlinedButton(text = stringResource(R.string.home_view_appointments), onClick = onViewAppointmentsClick)
         SaludYaInfoCard(
             model = InfoCardUiModel(

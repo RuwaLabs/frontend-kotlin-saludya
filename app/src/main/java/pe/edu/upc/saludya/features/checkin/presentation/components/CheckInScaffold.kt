@@ -21,7 +21,7 @@ const val ATTENDANCE_TAB_INDEX = 2
 @Composable
 fun CheckInScaffold(
     title: String,
-    onBackClick: () -> Unit,
+    onBackClick: (() -> Unit)? = null,
     onBottomNavItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,

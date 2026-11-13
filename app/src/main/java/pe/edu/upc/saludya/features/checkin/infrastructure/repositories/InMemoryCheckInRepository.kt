@@ -118,6 +118,8 @@ class InMemoryCheckInRepository(
     override fun observeQueuePosition(appointmentId: Int): Flow<QueuePosition?> =
         tables.map { positionOf(it, appointmentId) }
 
+    override fun refresh(appointmentId: Int) = Unit
+
     override suspend fun leaveQueue(appointmentId: Int) {
         tables.update { current ->
             val mine = entryOf(current, appointmentId) ?: return@update current

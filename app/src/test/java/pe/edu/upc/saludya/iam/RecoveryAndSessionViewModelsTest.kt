@@ -9,6 +9,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import pe.edu.upc.saludya.BuildConfig
+import pe.edu.upc.saludya.core.session.SessionProvider
 import pe.edu.upc.saludya.features.iam.domain.model.*
 import pe.edu.upc.saludya.features.iam.domain.repository.*
 import pe.edu.upc.saludya.features.iam.presentation.access.*
@@ -18,7 +19,7 @@ import java.time.*
 class RecoveryAndSessionViewModelsTest {
     private val dispatcher = StandardTestDispatcher()
     private val clock = MutableClock()
-    private val sessions = PatientSessionStore(clock)
+    private val sessions = PatientSessionStore(clock, SessionProvider(), InMemoryPatientSessionStorage())
     private val recovery = FakeRecovery()
     private val access = FakeAccess()
     private lateinit var reset: PasswordResetViewModel
@@ -149,6 +150,23 @@ class RecoveryAndSessionViewModelsTest {
         login.refreshProfile(); advanceUntilIdle(); assertNull(login.state.value.profile)
         assertEquals(AccessFailure.UNEXPECTED, login.state.value.failure)
     }
+    @Test fun `stored session is restored on a new app start`() = runTest(dispatcher) {
+        val storage = InMemoryPatientSessionStorage()
+        storage.save(session)
+        val provider = SessionProvider()
+        val restored = PatientSessionStore(clock, provider, storage).restore()
+        assertEquals(session, restored)
+        assertEquals("signed-token", provider.accessToken)
+    }
+
+    @Test fun `expired stored session is cleared instead of restored`() = runTest(dispatcher) {
+        val storage = InMemoryPatientSessionStorage()
+        storage.save(session.copy(expiresAt = clock.now.minusSeconds(1)))
+        val restored = PatientSessionStore(clock, SessionProvider(), storage).restore()
+        assertNull(restored)
+        assertNull(storage.session)
+    }
+
     @Test fun `session invalidation from another feature immediately notifies login route`() = runTest(dispatcher) {
         val login = login(); sessions.expire(); advanceUntilIdle()
         assertEquals(LoginNotice.SESSION_EXPIRED, login.state.value.notice)
@@ -171,6 +189,15 @@ class RecoveryAndSessionViewModelsTest {
         override suspend fun requestHelp(dni: String, contactEmail: String): AccessResult<RecoveryHelpReceipt> {
             helps++; this.dni = dni; email = contactEmail; return helpResult
         }
+        override suspend fun requestRecoveryCode(email: String): AccessResult<PasswordRecoveryChallenge> =
+            AccessResult.Success(PasswordRecoveryChallenge("challenge", "l***@example.com", Instant.parse("2026-10-07T12:15:00Z")))
+        override suspend fun verifyRecoveryCode(challengeId: String, code: String): AccessResult<PasswordResetGrant> =
+            AccessResult.Success(PasswordResetGrant("token", Instant.parse("2026-10-07T12:10:00Z")))
+        override suspend fun resetPasswordWithGrant(
+            resetToken: String,
+            password: String,
+            confirmation: String,
+        ): AccessResult<Unit> = AccessResult.Success(Unit)
     }
     private class FakeAccess : AccessRepository {
         var logouts = 0; var profiles = 0; var token = ""

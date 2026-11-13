@@ -10,12 +10,14 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import pe.edu.upc.saludya.features.checkin.application.usecase.ObserveTurnCallUseCase
+import pe.edu.upc.saludya.features.checkin.domain.repositories.CheckInRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class TurnCalledViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     observeTurnCall: ObserveTurnCallUseCase,
+    private val repository: CheckInRepository,
 ) : ViewModel() {
 
     private val appointmentId: Int = checkNotNull(savedStateHandle["appointmentId"])
@@ -25,8 +27,11 @@ class TurnCalledViewModel @Inject constructor(
             TurnCalledUiState(
                 ticket = call.ticket,
                 postCallToleranceMinutes = call.postCallToleranceMinutes,
+                isAttended = call.ticket?.isAttended == true,
             )
         }
         .catch { emit(TurnCalledUiState(errorMessage = it.message ?: "No se pudo cargar tu turno.")) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TurnCalledUiState(isLoading = true))
+
+    fun refresh() = repository.refresh(appointmentId)
 }

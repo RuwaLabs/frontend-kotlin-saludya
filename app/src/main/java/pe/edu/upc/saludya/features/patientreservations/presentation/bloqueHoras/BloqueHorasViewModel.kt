@@ -43,8 +43,13 @@ class BloqueHorasViewModel @Inject constructor(
                     getAvailableTimeSlots(specialityId, date)
                 }
                 val doctor = doctorId?.let { doctorsById[it] }
-                val firstRoom = slots.firstOrNull()?.room.orEmpty()
-                Triple(specialityName, doctor, Triple(doctorsById, slots, firstRoom))
+                val orderedSlots = slots
+                    .distinctBy { it.doctorId to (it.startHour to it.endHour) }
+                    .sortedWith(
+                        compareBy({ it.startHour }, { it.endHour }, { it.doctorId })
+                    )
+                val firstRoom = orderedSlots.firstOrNull()?.room.orEmpty()
+                Triple(specialityName, doctor, Triple(doctorsById, orderedSlots, firstRoom))
             }.onSuccess { (specialityName, doctor, payload) ->
                 val (doctorsById, slots, firstRoom) = payload
                 _uiState.update {

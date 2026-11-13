@@ -39,6 +39,10 @@ class LinkMinorViewModel @Inject constructor() : ViewModel() {
             _uiState.value = LinkMinorUiState.Error(R.string.error_empty_document)
             return
         }
+        if (!number.matches(Regex("[0-9]{8}"))) {
+            _uiState.value = LinkMinorUiState.Error(R.string.error_invalid_document)
+            return
+        }
 
         viewModelScope.launch {
             _uiState.value = current.copy(isVerifying = true)

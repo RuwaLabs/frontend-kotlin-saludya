@@ -26,7 +26,7 @@ import pe.edu.upc.saludya.core.desingsystem.icon.arrowBack
 @Composable
 fun SaludYaTopBar(
     title: String,
-    onBackClick: () -> Unit,
+    onBackClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -36,12 +36,14 @@ fun SaludYaTopBar(
             .padding(horizontal = 8.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = onBackClick) {
-            Icon(
-                imageVector = arrowBack,
-                contentDescription = "Volver",
-                tint = MaterialTheme.colorScheme.primary,
-            )
+        if (onBackClick != null) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = arrowBack,
+                    contentDescription = "Volver",
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
         Text(
             text = title,

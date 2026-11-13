@@ -1,12 +1,15 @@
 package pe.edu.upc.saludya.features.iam.presentation.access
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -35,6 +38,12 @@ fun IamRoot(
     helpViewModel: RecoveryHelpViewModel = hiltViewModel()
 ) {
     val loginState by loginViewModel.state.collectAsState()
+    if (loginState.restoring) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        return
+    }
     var destination by rememberSaveable { mutableStateOf(if (loginState.session != null) IamDestination.LOGIN else IamDestination.WELCOME) }
     var identity by remember { mutableStateOf<VerifiedIdentity?>(null) }
     LaunchedEffect(recoveryLink?.id) {

@@ -16,7 +16,7 @@ import java.time.LocalTime
 data class QueuePosition(
     val current: Int,
     val total: Int,
-    val queueStatus: AttendanceQueueStatus,
+    val queueStatus: AttendanceQueueStatus? = null,
     val updatedAt: LocalTime,
 ) {
     val peopleAhead: Int

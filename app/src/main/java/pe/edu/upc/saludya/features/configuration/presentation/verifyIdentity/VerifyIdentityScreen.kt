@@ -33,9 +33,10 @@ import pe.edu.upc.saludya.features.configuration.presentation.validation.Validat
 
 @Composable
 fun VerifyIdentityScreen(
+    dni: String,
     viewModel: VerifyIdentityViewModel = hiltViewModel(),
     onBackClick: () -> Unit = {},
-    onSuccess: () -> Unit = {},
+    onSuccess: (String) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -47,7 +48,7 @@ fun VerifyIdentityScreen(
             titleRes = R.string.success_link_done_title,
             message = stringResource(R.string.success_link_done_message),
             buttonTextRes = R.string.dialog_understood,
-            onCorrectClick = onSuccess,
+            onCorrectClick = { onSuccess(current.linkId) },
         )
         return
     }
@@ -59,6 +60,17 @@ fun VerifyIdentityScreen(
             message = stringResource(current.messageRes),
             buttonTextRes = R.string.dialog_understood,
             onCorrectClick = viewModel::dismissValidationFailed,
+        )
+        return
+    }
+
+    // Error al vincular (por ejemplo, menor ya vinculado)
+    if (current is VerifyIdentityUiState.Failure) {
+        ValidationDialog(
+            titleRes = R.string.error_validation_failed,
+            message = current.message,
+            buttonTextRes = R.string.dialog_understood,
+            onCorrectClick = viewModel::dismissFailure,
         )
         return
     }
@@ -87,11 +99,13 @@ fun VerifyIdentityScreen(
                 VerifyIdentityContent(
                     modifier = Modifier.padding(innerPadding),
                     minorName = state.minorName,
+                    minorLastname = state.minorLastname,
                     birthDate = state.birthDate,
                     isSubmitting = state.isSubmitting,
                     onMinorNameChange = viewModel::onMinorNameChange,
+                    onMinorLastnameChange = viewModel::onMinorLastnameChange,
                     onBirthDateChange = viewModel::onBirthDateChange,
-                    onSubmit = viewModel::submit,
+                    onSubmit = { viewModel.submit(dni) },
                 )
             }
             else -> {
@@ -105,9 +119,11 @@ fun VerifyIdentityScreen(
 private fun VerifyIdentityContent(
     modifier: Modifier = Modifier,
     minorName: String,
+    minorLastname: String,
     birthDate: String,
     isSubmitting: Boolean,
     onMinorNameChange: (String) -> Unit,
+    onMinorLastnameChange: (String) -> Unit,
     onBirthDateChange: (String) -> Unit,
     onSubmit: () -> Unit,
 ) {
@@ -138,6 +154,25 @@ private fun VerifyIdentityContent(
             value = minorName,
             onValueChange = onMinorNameChange,
             placeholder = stringResource(R.string.verify_identity_name_placeholder),
+            keyboardType = KeyboardType.Text,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = stringResource(R.string.verify_identity_lastname),
+            modifier = Modifier.padding(horizontal = 20.dp),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        RuleValueField(
+            value = minorLastname,
+            onValueChange = onMinorLastnameChange,
+            placeholder = stringResource(R.string.verify_identity_lastname_placeholder),
             keyboardType = KeyboardType.Text,
         )
 
@@ -187,9 +222,11 @@ private fun VerifyIdentityScreenPreview() {
     SaludYaTheme(dynamicColor = false) {
         VerifyIdentityContent(
             minorName = "Mateo",
+            minorLastname = "Torres",
             birthDate = "12/04/2018",
             isSubmitting = false,
             onMinorNameChange = {},
+            onMinorLastnameChange = {},
             onBirthDateChange = {},
             onSubmit = {},
         )

@@ -19,6 +19,8 @@ import pe.edu.upc.saludya.core.desingsystem.component.SaludYaTextStyles
 @Composable
 fun AppointmentDetailContent(
     model: AppointmentDetailUiModel = AppointmentDetailUiModel(),
+    message: String = "No se encontró esta cita.",
+    errorMessage: String? = null,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onRegisterArrivalClick: () -> Unit = {},
@@ -31,15 +33,31 @@ fun AppointmentDetailContent(
         selectedDestination = SaludYaDestination.Inicio,
         onDestinationClick = onDestinationClick,
     ) {
-        AppointmentCard(model = model.appointment)
+        val appointment = model.appointment
+        val reservation = model.reservation
+        if (appointment == null || reservation == null) {
+            Text(message)
+            return@SaludYaScreenLayout
+        }
+        AppointmentCard(model = appointment)
         SaludYaInfoCard(
             model = InfoCardUiModel(
                 title = stringResource(R.string.appointment_detail_reservation_title),
-                lines = model.reservation.lines,
+                lines = reservation.lines,
             )
         )
-        SaludYaPrimaryButton(text = stringResource(R.string.appointment_detail_register_arrival), onClick = onRegisterArrivalClick)
-        SaludYaOutlinedButton(text = stringResource(R.string.appointment_detail_cancel), onClick = onCancelClick)
+        SaludYaPrimaryButton(text = "Ver código de reserva", onClick = onRegisterArrivalClick)
+        if (appointment.status == "RESERVED" || appointment.status == "CONFIRMED" ||
+            appointment.status == "Reservada" || appointment.status == "Confirmada") {
+            SaludYaOutlinedButton(text = stringResource(R.string.appointment_detail_cancel), onClick = onCancelClick)
+        }
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.error,
+                style = SaludYaTextStyles.Caption,
+            )
+        }
         Text(text = stringResource(R.string.appointment_detail_note), style = SaludYaTextStyles.Caption)
     }
 }

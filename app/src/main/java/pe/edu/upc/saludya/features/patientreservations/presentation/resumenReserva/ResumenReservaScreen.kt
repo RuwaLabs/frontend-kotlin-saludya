@@ -78,12 +78,18 @@ fun ResumenReservaScreen(
                 modifier = Modifier.padding(top = 24.dp)
             )
 
-            state.errorMessage != null -> SaludYaStateMessage(
-                title = stringResource(R.string.reservation_error_booking_title),
-                description = state.errorMessage.ifBlank {
-                    stringResource(R.string.reservation_error_summary)
-                }
-            )
+            state.errorMessage != null -> {
+                SaludYaStateMessage(
+                    title = stringResource(R.string.reservation_error_booking_title),
+                    description = state.errorMessage.ifBlank {
+                        stringResource(R.string.reservation_error_summary)
+                    }
+                )
+                SaludYaOutlinedButton(
+                    text = stringResource(R.string.reservation_edit),
+                    onClick = onBack
+                )
+            }
 
             state.summary != null -> {
                 SaludYaReservaSummaryCard(

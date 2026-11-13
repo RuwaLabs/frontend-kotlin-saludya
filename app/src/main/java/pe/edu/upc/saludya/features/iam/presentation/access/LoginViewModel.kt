@@ -21,7 +21,7 @@ data class LoginUiState(
     val busy: Boolean = false, val challenge: LoginChallenge? = null,
     val session: PatientSession? = null, val failure: AccessFailure? = null,
     val notice: LoginNotice? = null, val logoutConfirmation: Boolean = false,
-    val profile: PatientAccountProfile? = null
+    val profile: PatientAccountProfile? = null, val restoring: Boolean = false
 ) {
     override fun toString(): String = "LoginUiState[REDACTED]"
 }
@@ -30,10 +30,16 @@ data class LoginUiState(
 class LoginViewModel @Inject constructor(
     private val repository: AccessRepository, private val sessions: PatientSessionStore, private val clock: Clock
 ) : ViewModel() {
-    private val mutableState = MutableStateFlow(LoginUiState(session = sessions.current()))
+    private val mutableState = MutableStateFlow(
+        LoginUiState(session = sessions.current(), restoring = true)
+    )
     val state = mutableState.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            val restored = sessions.restore()
+            mutableState.value = mutableState.value.copy(session = restored, restoring = false)
+        }
         viewModelScope.launch {
             sessions.expired.collect { expired ->
                 if (expired) mutableState.value = LoginUiState(notice = LoginNotice.SESSION_EXPIRED)
