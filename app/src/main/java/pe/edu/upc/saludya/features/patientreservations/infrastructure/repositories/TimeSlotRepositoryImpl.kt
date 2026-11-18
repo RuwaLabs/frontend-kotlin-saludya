@@ -25,14 +25,18 @@ class TimeSlotRepositoryImpl @Inject constructor(
         specialityId: Int,
         date: String
     ): List<TimeSlot> {
-        try {
-            val response = service.getTimeSlotAvailableBySpecialityId(specialityId, date)
-            if (response.isSuccessful) {
-                return response.body().orEmpty().map { it.toDomain() }
-            }
-        } catch (_: Exception) {
+        val response = service.getTimeSlotAvailableBySpecialityId(
+            specialityId,
+            date
+        )
+
+        if (!response.isSuccessful) {
+            throw java.io.IOException(
+                "No se pudo consultar la disponibilidad. Código HTTP: ${response.code()}"
+            )
         }
-        return emptyList()
+
+        return response.body().orEmpty().map { it.toDomain() }
     }
 
     override suspend fun getTimeSlotByDoctorIdAndDate(
