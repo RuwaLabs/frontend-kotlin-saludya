@@ -16,6 +16,12 @@ import pe.edu.upc.saludya.features.patientreservations.domain.model.Doctor
 import pe.edu.upc.saludya.features.patientreservations.domain.model.TimeSlot
 import pe.edu.upc.saludya.features.patientreservations.presentation.util.toHhMm
 import javax.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.CancellationException
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @HiltViewModel
 class BloqueHorasViewModel @Inject constructor(
@@ -28,30 +34,63 @@ class BloqueHorasViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(BloqueHorasUiState(isLoading = true))
     val uiState: StateFlow<BloqueHorasUiState> = _uiState.asStateFlow()
 
-    private var started = false
+    private var loadJob: Job? = null
 
     fun start(specialityId: Int, beneficiaryId: Int, date: String, doctorId: Int?) {
-        if (started) return
-        started = true
-        viewModelScope.launch {
+        loadJob?.cancel()
+
+        _uiState.update {
+            it.copy(
+                isLoading = true,
+                errorMessage = null,
+                selectedSlotId = null,
+                slots = emptyList(),
+                hasSlots = true
+            )
+        }
+
+        loadJob = viewModelScope.launch {
             runCatching {
                 val specialityName = getSpecialityById(specialityId)?.name.orEmpty()
                 val doctorsById = getDoctorsBySpecialityId(specialityId).associateBy { it.id }
+
                 val slots = if (doctorId != null) {
                     getTimeSlotsByDoctorIdAndDate(doctorId, date)
                 } else {
                     getAvailableTimeSlots(specialityId, date)
                 }
+
+                val peruZone = ZoneId.of("America/Lima")
+                val now = ZonedDateTime.now(peruZone)
+                val selectedDate = LocalDate.parse(date)
+                val today = now.toLocalDate()
+                val currentTime = now.toLocalTime()
+
+                val validSlots = slots.filter { slot ->
+                    val slotTime = LocalTime.parse(slot.startHour)
+
+                    selectedDate.isAfter(today) ||
+                            (selectedDate.isEqual(today) && slotTime.isAfter(currentTime))
+                }
+
                 val doctor = doctorId?.let { doctorsById[it] }
-                val orderedSlots = slots
+
+                val orderedSlots = validSlots
                     .distinctBy { it.doctorId to (it.startHour to it.endHour) }
                     .sortedWith(
                         compareBy({ it.startHour }, { it.endHour }, { it.doctorId })
                     )
+
                 val firstRoom = orderedSlots.firstOrNull()?.room.orEmpty()
-                Triple(specialityName, doctor, Triple(doctorsById, orderedSlots, firstRoom))
+
+                Triple(
+                    specialityName,
+                    doctor,
+                    Triple(doctorsById, orderedSlots, firstRoom)
+                )
             }.onSuccess { (specialityName, doctor, payload) ->
                 val (doctorsById, slots, firstRoom) = payload
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -67,6 +106,8 @@ class BloqueHorasViewModel @Inject constructor(
                     )
                 }
             }.onFailure { error ->
+                if (error is CancellationException) throw error
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
