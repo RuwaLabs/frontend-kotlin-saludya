@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.CircleShape
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pe.edu.upc.saludya.R
@@ -76,6 +77,13 @@ fun ElegirFechaScreen(
             )
         }
 
+        if (state.errorMessage != null) {
+            Text(
+                text = state.errorMessage,
+                style = saludYaText(12, color = SaludYaColors.Muted)
+            )
+        }
+
         SaludYaPrimaryButton(
             text = stringResource(R.string.reservation_view_slots),
             onClick = {
@@ -88,7 +96,7 @@ fun ElegirFechaScreen(
                     }
                 }
             },
-            enabled = state.selectedDay != null
+            enabled = state.selectedDay != null && !state.isLoading
         )
     }
 }
@@ -179,23 +187,49 @@ private fun DayCell(
 
     Box(
         modifier = base
-            .background(if (isSelected) SaludYaColors.Primary else SaludYaColors.White)
-            .clickable { onDayClick(day) },
+            .background(
+                if (isSelected) SaludYaColors.Primary
+                else SaludYaColors.White
+            )
+            .clickable(
+                enabled = isEnabled,
+                onClick = { onDayClick(day) }
+            ),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = day.toString(),
-            textAlign = TextAlign.Center,
-            style = saludYaText(
-                size = 13,
-                weight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                color = when {
-                    isSelected -> SaludYaColors.White
-                    isEnabled -> SaludYaColors.Text
-                    else -> SaludYaColors.Muted
-                }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = day.toString(),
+                textAlign = TextAlign.Center,
+                style = saludYaText(
+                    size = 13,
+                    weight = if (isSelected) FontWeight.SemiBold
+                    else FontWeight.Normal,
+                    color = when {
+                        isSelected -> SaludYaColors.White
+                        isEnabled -> SaludYaColors.Text
+                        else -> SaludYaColors.Muted
+                    }
+                )
             )
-        )
+
+            if (isEnabled) {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 2.dp)
+                        .width(5.dp)
+                        .height(5.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (isSelected) SaludYaColors.White
+                            else SaludYaColors.Primary
+                        )
+                )
+            }
+        }
     }
 }
 

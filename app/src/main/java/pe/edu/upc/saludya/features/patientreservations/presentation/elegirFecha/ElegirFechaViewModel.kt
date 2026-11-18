@@ -16,6 +16,11 @@ import pe.edu.upc.saludya.features.patientreservations.application.usecase.GetBe
 import pe.edu.upc.saludya.features.patientreservations.application.usecase.GetSpecialityByIdUseCase
 import java.util.Calendar
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
+import java.util.Locale
 
 @HiltViewModel
 class ElegirFechaViewModel @Inject constructor(
@@ -32,6 +37,7 @@ class ElegirFechaViewModel @Inject constructor(
         set(Calendar.DAY_OF_MONTH, 1)
     }
     private var started = false
+    private var loadMonthJob: Job? = null
 
     fun start(specialityId: Int, beneficiaryId: Int) {
         if (started) return
@@ -48,6 +54,12 @@ class ElegirFechaViewModel @Inject constructor(
     }
 
     fun onPreviousMonth() {
+        val todayMonth = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        if (!currentMonth.after(todayMonth)) return
+
         currentMonth.add(Calendar.MONTH, -1)
         loadMonth()
     }
@@ -58,6 +70,10 @@ class ElegirFechaViewModel @Inject constructor(
     }
 
     fun onDayClick(day: Int) {
+        val state = _uiState.value
+
+        if (isPastDate(state.year, state.month, day)) return
+
         _uiState.update { it.copy(selectedDay = day) }
     }
 
@@ -67,7 +83,9 @@ class ElegirFechaViewModel @Inject constructor(
         val daysInMonth = currentMonth.getActualMaximum(Calendar.DAY_OF_MONTH)
         val firstDayOffset = (currentMonth.get(Calendar.DAY_OF_WEEK) + 5) % 7
 
-        viewModelScope.launch {
+        loadMonthJob?.cancel()
+
+        loadMonthJob = viewModelScope.launch {
             _uiState.update {
                 it.copy(
                     isLoading = true,
@@ -80,18 +98,27 @@ class ElegirFechaViewModel @Inject constructor(
                     selectedDay = null
                 )
             }
-            runCatching { computeEnabledDays(year, monthValue, daysInMonth) }
-                .onSuccess { days ->
-                    _uiState.update { it.copy(isLoading = false, enabledDays = days) }
+
+            try {
+                val days = computeEnabledDays(year, monthValue, daysInMonth)
+
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        enabledDays = days
+                    )
                 }
-                .onFailure { error ->
-                    _uiState.update {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = error.message ?: ""
-                        )
-                    }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = error.message
+                            ?: "No se pudo consultar la disponibilidad."
+                    )
                 }
+            }
         }
     }
 
@@ -100,14 +127,52 @@ class ElegirFechaViewModel @Inject constructor(
         monthValue: Int,
         daysInMonth: Int
     ): Set<Int> = coroutineScope {
+        val semaphore = Semaphore(4)
+
         (1..daysInMonth).map { day ->
             async {
-                val date = String.format("%04d-%02d-%02d", year, monthValue, day)
-                val slots = runCatching {
-                    getAvailableTimeSlots(specialityId, date)
-                }.getOrDefault(emptyList())
-                if (slots.isNotEmpty()) day else null
+                if (isPastDate(year, monthValue, day)) {
+                    return@async null
+                }
+
+                semaphore.withPermit {
+                    val date = String.format(
+                        Locale.ROOT,
+                        "%04d-%02d-%02d",
+                        year,
+                        monthValue,
+                        day
+                    )
+
+                    val slots = getAvailableTimeSlots(specialityId, date)
+
+                    if (slots.any { it.maxCapacity > it.currentBookings }) {
+                        day
+                    } else {
+                        null
+                    }
+                }
             }
         }.awaitAll().filterNotNull().toSet()
+    }
+
+    private fun isPastDate(
+        year: Int,
+        monthValue: Int,
+        day: Int
+    ): Boolean {
+        val selectedDate = Calendar.getInstance().apply {
+            set(year, monthValue - 1, day, 0, 0, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        val today = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        return selectedDate.before(today)
     }
 }
