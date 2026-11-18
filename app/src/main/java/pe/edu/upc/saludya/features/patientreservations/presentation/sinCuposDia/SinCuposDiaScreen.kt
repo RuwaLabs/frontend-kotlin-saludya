@@ -47,28 +47,42 @@ fun SinCuposDiaScreen(
                 .joinToString(" · "),
             style = saludYaText(15, color = SaludYaColors.Muted)
         )
-        SaludYaStateMessage(
-            title = stringResource(R.string.reservation_no_slots_message_title),
-            description = stringResource(R.string.reservation_no_slots_message_description)
-        )
+        if (state.isLoading) {
+            Text(
+                text = stringResource(R.string.reservation_date_loading),
+                style = saludYaText(12, color = SaludYaColors.Muted)
+            )
+        } else if (state.errorMessage != null) {
+            Text(
+                text = state.errorMessage,
+                style = saludYaText(12, color = SaludYaColors.Muted)
+            )
+        } else {
+            SaludYaStateMessage(
+                title = stringResource(R.string.reservation_no_slots_message_title),
+                description = stringResource(R.string.reservation_no_slots_message_description)
+            )
+        }
         SaludYaPrimaryButton(
             text = stringResource(R.string.reservation_choose_another_date),
             onClick = onChooseAnotherDate
         )
-        state.nextDate?.let { nextDate ->
-            SaludYaInfoCard(
-                title = stringResource(R.string.reservation_next_availability),
-                body = listOf(
-                    stringResource(
-                        R.string.reservation_datetime,
-                        shortDateLabel(nextDate),
-                        state.nextStartHour.toHhMm(),
-                        state.nextEndHour.toHhMm()
-                    )
-                ),
-                status = stringResource(R.string.reservation_view_slots_arrow),
-                onClick = { onViewNextAvailability(nextDate) }
-            )
+        if (!state.isLoading && state.errorMessage == null) {
+            state.nextDate?.let { nextDate ->
+                SaludYaInfoCard(
+                    title = stringResource(R.string.reservation_next_availability),
+                    body = listOf(
+                        stringResource(
+                            R.string.reservation_datetime,
+                            shortDateLabel(nextDate),
+                            state.nextStartHour.toHhMm(),
+                            state.nextEndHour.toHhMm()
+                        )
+                    ),
+                    status = stringResource(R.string.reservation_view_slots_arrow),
+                    onClick = { onViewNextAvailability(nextDate) }
+                )
+            }
         }
     }
 }

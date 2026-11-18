@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 
 @HiltViewModel
 class SinCuposDiaViewModel @Inject constructor(
@@ -29,21 +30,41 @@ class SinCuposDiaViewModel @Inject constructor(
     fun start(specialityId: Int, date: String) {
         if (started) return
         started = true
-        viewModelScope.launch {
-            val specialityName = runCatching { getSpecialityById(specialityId)?.name }
-                .getOrNull().orEmpty()
-            _uiState.update {
-                it.copy(specialityName = specialityName, date = date)
-            }
 
-            val next = findNextAvailability(specialityId, date)
-            _uiState.update {
-                it.copy(
-                    isLoading = false,
-                    nextDate = next?.date,
-                    nextStartHour = next?.startHour.orEmpty(),
-                    nextEndHour = next?.endHour.orEmpty()
-                )
+        viewModelScope.launch {
+            try {
+                val specialityName = runCatching {
+                    getSpecialityById(specialityId)?.name
+                }.getOrNull().orEmpty()
+
+                _uiState.update {
+                    it.copy(
+                        specialityName = specialityName,
+                        date = date
+                    )
+                }
+
+                val next = findNextAvailability(specialityId, date)
+
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = null,
+                        nextDate = next?.date,
+                        nextStartHour = next?.startHour.orEmpty(),
+                        nextEndHour = next?.endHour.orEmpty()
+                    )
+                }
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = error.message
+                            ?: "No se pudo consultar la disponibilidad."
+                    )
+                }
             }
         }
     }
@@ -52,22 +73,33 @@ class SinCuposDiaViewModel @Inject constructor(
         specialityId: Int,
         fromDate: String
     ): NextAvailability? {
-        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-        val base = runCatching { formatter.parse(fromDate) }.getOrNull() ?: return null
-        val calendar = Calendar.getInstance().apply { time = base }
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).apply {
+            isLenient = false
+        }
+
+        val base = formatter.parse(fromDate) ?: return null
+        val calendar = Calendar.getInstance().apply {
+            time = base
+        }
+
         for (offset in 1..14) {
             calendar.add(Calendar.DAY_OF_MONTH, 1)
+
             val date = formatter.format(calendar.time)
-            val slots = runCatching {
-                getAvailableTimeSlots(specialityId, date)
-            }.getOrDefault(emptyList())
-            val first = slots.firstOrNull() ?: continue
+
+            val slots = getAvailableTimeSlots(specialityId, date)
+
+            val first = slots.firstOrNull {
+                it.maxCapacity > it.currentBookings
+            } ?: continue
+
             return NextAvailability(
                 date = date,
                 startHour = first.startHour,
                 endHour = first.endHour
             )
         }
+
         return null
     }
 
