@@ -15,10 +15,19 @@ data class CheckInTicketDto(
 
 data class QueuePositionDto(val position: Int, val totalInQueue: Int)
 
+data class QrTokenDto(
+    val qrToken: String,
+)
+
 interface CheckInApi {
     @GET("check-ins/appointment/{appointmentId}")
     suspend fun getTicket(@Path("appointmentId") appointmentId: Int): Response<CheckInTicketDto>
 
     @GET("check-ins/appointment/{appointmentId}/position")
     suspend fun getPosition(@Path("appointmentId") appointmentId: Int): Response<QueuePositionDto>
+
+    @GET("check-ins/appointment/{appointmentId}/qr-token")
+    suspend fun getQrToken(
+        @Path("appointmentId") appointmentId: Int,
+    ): Response<QrTokenDto>
 }

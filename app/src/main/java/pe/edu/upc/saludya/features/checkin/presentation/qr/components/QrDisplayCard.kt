@@ -1,4 +1,4 @@
-package pe.edu.upc.saludya.features.checkin.presentation.qr.components
+﻿package pe.edu.upc.saludya.features.checkin.presentation.qr.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -26,10 +26,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import pe.edu.upc.saludya.features.checkin.domain.model.QrCodeInfo
-import kotlin.random.Random
-
-/** Número de módulos por lado (equivale a un QR versión 1). */
-private const val QR_MODULES = 21
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
+import com.google.zxing.qrcode.QRCodeWriter
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 
 /**
  * Tarjeta blanca de bordes muy redondeados que muestra el código QR y su leyenda.
@@ -65,7 +65,7 @@ fun QrDisplayCard(
             ) {
                 when {
                     isLoading -> CircularProgressIndicator(color = colors.primary)
-                    qrCodeInfo != null -> SampleQrCode(
+                    qrCodeInfo != null -> QrCodeImage(
                         code = qrCodeInfo.token,
                         color = colors.onSurface,
                         modifier = Modifier.size(200.dp),
@@ -80,11 +80,7 @@ fun QrDisplayCard(
             if (qrCodeInfo != null && !isLoading) {
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = buildString {
-                        append("Código de reserva: ")
-                        append(qrCodeInfo.token)
-                        if (qrCodeInfo.isSample) append(" · Imagen de muestra (no escaneable)")
-                    },
+                    text = "Código QR de tu cita. Listo para escanear.",
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.onSurfaceVariant,
                 )
@@ -94,61 +90,51 @@ fun QrDisplayCard(
 }
 
 /**
- * Dibuja un QR **de muestra** (no escaneable) derivado de forma determinista de [code].
- *
- * Para un QR real, sustituir [buildSampleMatrix] por la matriz generada con una
- * librería como ZXing (`QRCodeWriter().encode(...)`) y reutilizar este mismo Canvas.
+ * Genera y dibuja un código QR real a partir del token firmado por el backend.
  */
 @Composable
-private fun SampleQrCode(
+private fun QrCodeImage(
     code: String,
     color: Color,
     modifier: Modifier = Modifier,
 ) {
-    val matrix = remember(code) { buildSampleMatrix(code) }
+    val matrix = remember(code) {
+        QRCodeWriter().encode(
+            code,
+            BarcodeFormat.QR_CODE,
+            512,
+            512,
+            mapOf(
+                EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.M,
+                EncodeHintType.MARGIN to 2,
+            ),
+        )
+    }
 
     Canvas(
-        modifier = modifier.semantics { contentDescription = "Código QR $code" },
+        modifier = modifier.semantics {
+            contentDescription = "Código QR de la cita"
+        },
     ) {
-        val cell = size.minDimension / QR_MODULES
-        for (row in 0 until QR_MODULES) {
-            for (col in 0 until QR_MODULES) {
-                if (matrix[row][col]) {
+        val cellWidth = size.width / matrix.width
+        val cellHeight = size.height / matrix.height
+
+        for (row in 0 until matrix.height) {
+            for (col in 0 until matrix.width) {
+                if (matrix[col, row]) {
                     drawRect(
                         color = color,
-                        topLeft = Offset(col * cell, row * cell),
-                        // +0.5px evita líneas finas entre módulos por redondeo.
-                        size = Size(cell + 0.5f, cell + 0.5f),
+                        topLeft = Offset(
+                            x = col * cellWidth,
+                            y = row * cellHeight,
+                        ),
+                        size = Size(
+                            width = cellWidth + 0.5f,
+                            height = cellHeight + 0.5f,
+                        ),
                     )
                 }
             }
         }
     }
-}
-
-/** Genera la matriz de módulos: tres patrones de posición + relleno pseudoaleatorio estable. */
-private fun buildSampleMatrix(code: String): Array<BooleanArray> {
-    val random = Random(code.hashCode())
-    val matrix = Array(QR_MODULES) { BooleanArray(QR_MODULES) }
-    val finderOrigins = listOf(0 to 0, 0 to QR_MODULES - 7, QR_MODULES - 7 to 0)
-
-    fun finderOriginFor(row: Int, col: Int): Pair<Int, Int>? =
-        finderOrigins.firstOrNull { (r, c) -> row in (r - 1)..(r + 7) && col in (c - 1)..(c + 7) }
-
-    for (row in 0 until QR_MODULES) {
-        for (col in 0 until QR_MODULES) {
-            val origin = finderOriginFor(row, col)
-            matrix[row][col] = if (origin == null) {
-                random.nextBoolean()
-            } else {
-                val r = row - origin.first
-                val c = col - origin.second
-                val insideFinder = r in 0..6 && c in 0..6
-                val outerRing = r == 0 || r == 6 || c == 0 || c == 6
-                val center = r in 2..4 && c in 2..4
-                insideFinder && (outerRing || center)
-            }
-        }
-    }
-    return matrix
 }

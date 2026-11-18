@@ -83,12 +83,32 @@ class RemoteCheckInRepository @Inject constructor(
     override suspend fun getQrCode(appointmentId: Int): QrCodeInfo {
         val appointment = appointments.getAppointmentById(appointmentId).body()
             ?: error("No se encontró la reserva")
+
         val slot = timeSlots.getTimeSlotById(appointment.timeSlotId).body()
             ?: error("No se encontró el horario")
+
         requireSameDay(LocalDate.parse(slot.date))
-        // El código de reserva es real y admisión puede ingresarlo manualmente.
-        // La imagen sigue siendo una muestra no escaneable.
-        return QrCodeInfo(appointment.bookingCode, appointmentId, isSample = true)
+
+        val response = api.getQrToken(appointmentId)
+
+        if (!response.isSuccessful) {
+            when (response.code()) {
+                401 -> error("Tu sesión ha expirado. Inicia sesión nuevamente.")
+                403 -> error("No tienes permiso para generar el QR de esta cita.")
+                404 -> error("No se encontró la cita para generar el QR.")
+                else -> error("No se pudo generar el QR: ${response.code()}")
+            }
+        }
+
+        val token = response.body()?.qrToken
+            ?.takeIf { it.isNotBlank() }
+            ?: error("El servidor no devolvió un token QR válido.")
+
+        return QrCodeInfo(
+            token = token,
+            appointmentId = appointmentId,
+            isSample = false,
+        )
     }
 
     override suspend fun registerArrival(appointmentId: Int): AttendanceTicket =
