@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
 import pe.edu.upc.saludya.features.patientreservations.application.usecase.BookAppointmentUseCase
 import pe.edu.upc.saludya.features.patientreservations.application.usecase.GetBeneficiaryByIdUseCase
 import pe.edu.upc.saludya.features.patientreservations.application.usecase.GetDoctorByIdUseCase
@@ -36,16 +37,28 @@ class ResumenReservaViewModel @Inject constructor(
 
     fun start(specialityId: Int, beneficiaryId: Int, timeSlotId: Int) {
         if (started) return
+
         started = true
         this.beneficiaryId = beneficiaryId
         this.timeSlotId = timeSlotId
+
         viewModelScope.launch {
-            runCatching {
-                val slot = getTimeSlotById(timeSlotId) ?: error("")
+            try {
+                val slot = getTimeSlotById(timeSlotId)
+                    ?: throw IllegalStateException("No se encontró el horario seleccionado.")
+
                 val doctor = getDoctorById(slot.doctorId)
                 val specialityName = getSpecialityById(specialityId)?.name.orEmpty()
-                val beneficiary = runCatching { getBeneficiaryById(beneficiaryId) }.getOrNull()
-                ReservaSummaryUi(
+
+                val beneficiary = try {
+                    getBeneficiaryById(beneficiaryId)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (_: Exception) {
+                    null
+                }
+
+                val summary = ReservaSummaryUi(
                     specialityName = specialityName,
                     beneficiaryName = beneficiary?.displayName.orEmpty(),
                     beneficiaryTitular = beneficiary?.titular == true,
@@ -55,21 +68,24 @@ class ResumenReservaViewModel @Inject constructor(
                     startHour = slot.startHour,
                     endHour = slot.endHour,
                     room = slot.room
-                ) to beneficiary?.displayName.orEmpty()
-            }.onSuccess { (summary, beneficiaryName) ->
+                )
+
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         errorMessage = null,
                         summary = summary,
-                        beneficiaryName = beneficiaryName
+                        beneficiaryName = beneficiary?.displayName.orEmpty()
                     )
                 }
-            }.onFailure { error ->
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = error.message ?: ""
+                        errorMessage = e.message
+                            ?: "No se pudo cargar el resumen de la reserva."
                     )
                 }
             }
@@ -85,27 +101,46 @@ class ResumenReservaViewModel @Inject constructor(
     }
 
     fun onConfirmBooking() {
+        if (_uiState.value.isBooking || _uiState.value.bookedAppointmentId != null) {
+            return
+        }
+
         viewModelScope.launch {
-            _uiState.update { it.copy(isBooking = true, dialog = ReservaDialog.NONE) }
-            bookAppointment(patientId = beneficiaryId, timeSlotId = timeSlotId)
-                .onSuccess { appointment ->
-                    _uiState.update {
-                        it.copy(isBooking = false, bookedAppointmentId = appointment.id)
-                    }
+            _uiState.update {
+                it.copy(isBooking = true, dialog = ReservaDialog.NONE)
+            }
+
+            bookAppointment(
+                patientId = beneficiaryId,
+                timeSlotId = timeSlotId
+            ).onSuccess { appointment ->
+                _uiState.update {
+                    it.copy(
+                        isBooking = false,
+                        bookedAppointmentId = appointment.id,
+                        errorMessage = null
+                    )
                 }
-                .onFailure { error ->
-                    _uiState.update {
-                        it.copy(
-                            isBooking = false,
-                            errorMessage = error.message ?: "",
-                            dialog = when (error) {
-                                is TimeslotConflictException -> ReservaDialog.CUPO_OCUPADO
-                                is AppointmentConflictException -> ReservaDialog.CRUCE
-                                else -> ReservaDialog.NONE
-                            }
-                        )
-                    }
+            }.onFailure { error ->
+                if (error is CancellationException) throw error
+
+                val isConflict = error is TimeslotConflictException ||
+                        error is AppointmentConflictException
+
+                _uiState.update {
+                    it.copy(
+                        isBooking = false,
+                        errorMessage = if (isConflict) null else {
+                            error.message ?: "No se pudo completar la reserva. Intenta nuevamente."
+                        },
+                        dialog = when (error) {
+                            is TimeslotConflictException -> ReservaDialog.CUPO_OCUPADO
+                            is AppointmentConflictException -> ReservaDialog.CRUCE
+                            else -> ReservaDialog.NONE
+                        }
+                    )
                 }
+            }
         }
     }
 }
