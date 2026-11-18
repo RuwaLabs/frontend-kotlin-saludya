@@ -1,6 +1,7 @@
 package pe.edu.upc.saludya.features.patientreservations.infrastructure.repositories
 
 import com.google.gson.Gson
+import kotlinx.coroutines.CancellationException
 import pe.edu.upc.saludya.features.patientreservations.domain.model.Appointment
 import pe.edu.upc.saludya.features.patientreservations.domain.model.AppointmentConflictException
 import pe.edu.upc.saludya.features.patientreservations.domain.model.TimeslotConflictException
@@ -26,12 +27,16 @@ class AppointmentRepositoryImpl @Inject constructor(
         service.bookAppointment(
             BookAppointmentRequestDto(patientId = patientId, timeSlotId = timeSlotId)
         ).toResult()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         Result.failure(e)
     }
 
     override suspend fun cancelAppointment(id: Int): Result<Appointment> = try {
         service.cancelAppointment(id).toResult()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         Result.failure(e)
     }
@@ -75,22 +80,39 @@ class AppointmentRepositoryImpl @Inject constructor(
 
     private fun Response<*>.toFailure(): Exception {
         val error = parseError()
-        val details = error?.details.orEmpty()
+
+        val errorText = listOfNotNull(
+            error?.details,
+            error?.message
+        ).joinToString(" ")
+
         return when {
-            error?.code == "TIMESLOT_CONFLICT" -> TimeslotConflictException()
-            error?.code == "APPOINTMENT_CONFLICT" -> AppointmentConflictException()
-            details.contains("no available capacity", ignoreCase = true) -> TimeslotConflictException()
-            details.contains("already has an active appointment", ignoreCase = true) ->
+            error?.code == "TIMESLOT_CONFLICT" ||
+                    errorText.contains("no available capacity", ignoreCase = true) ->
+                TimeslotConflictException()
+
+            error?.code == "APPOINTMENT_CONFLICT" ||
+                    errorText.contains("already has an active appointment", ignoreCase = true) ->
                 AppointmentConflictException()
-            details.contains("cancellation deadline", ignoreCase = true) ->
-                Exception("No se pudo cancelar: ya pasó el plazo de 24 horas antes de la cita. Acércate a admisión.")
-            details.contains("not active", ignoreCase = true) ->
+
+            errorText.contains("cancellation deadline", ignoreCase = true) ->
+                Exception(
+                    "No se pudo cancelar: ya pasó el plazo de 24 horas antes de la cita. Acércate a admisión."
+                )
+
+            errorText.contains("not active", ignoreCase = true) ->
                 Exception("Esta cita ya no se puede cancelar.")
-            details.contains("time slot is in the past", ignoreCase = true) ->
-                Exception("No se pudo reservar: el servidor considera que ese horario ya pasó. Elige un horario más tarde.")
-            details.contains("Booking is closed for today", ignoreCase = true) ->
+
+            errorText.contains("time slot is in the past", ignoreCase = true) ->
+                Exception(
+                    "No se pudo reservar: ese horario ya pasó. Elige un horario más tarde."
+                )
+
+            errorText.contains("Booking is closed for today", ignoreCase = true) ->
                 Exception("Las reservas para hoy ya cerraron. Elige otra fecha.")
-            else -> Exception("No se pudo completar la operación. Intenta nuevamente.")
+
+            else ->
+                Exception("No se pudo completar la operación. Intenta nuevamente.")
         }
     }
 
