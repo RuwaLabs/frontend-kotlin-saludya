@@ -61,7 +61,7 @@ fun ChangePasswordScreen(
                     color = MaterialTheme.colorScheme.error,
                 )
                 PrimaryButton(
-                    text = "Reintentar",
+                    text = stringResource(R.string.change_password_retry),
                     onClick = viewModel::loadEmail,
                 )
             }
@@ -104,7 +104,9 @@ fun ChangePasswordScreen(
             }
 
             ChangePasswordStep.VERIFIED -> ChangePasswordColumn(innerPadding) {
-                ScreenDescription(text = "Define tu nueva contraseña.")
+                ScreenDescription(
+                    text = stringResource(R.string.change_password_new_password_description),
+                )
                 RuleValueField(
                     value = state.password,
                     onValueChange = viewModel::editPassword,

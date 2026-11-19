@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.core.session.SessionProvider
 import pe.edu.upc.saludya.features.iam.domain.model.AccessValidation
 import pe.edu.upc.saludya.features.iam.domain.model.PatientSessionStore
@@ -19,6 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val accounts: AccessApi,
     private val recovery: RecoveryActionsRepository,
     private val session: SessionProvider,
@@ -39,7 +43,10 @@ class ChangePasswordViewModel @Inject constructor(
         val token = session.accessToken
         if (token.isNullOrBlank()) {
             _uiState.update {
-                it.copy(step = ChangePasswordStep.ERROR, error = "Inicia sesión nuevamente.")
+                it.copy(
+                    step = ChangePasswordStep.ERROR,
+                    error = context.getString(R.string.change_password_session_expired),
+                )
             }
             return
         }
@@ -51,7 +58,7 @@ class ChangePasswordViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         step = ChangePasswordStep.ERROR,
-                        error = "No se pudo obtener el correo de tu cuenta.",
+                        error = context.getString(R.string.change_password_email_error),
                     )
                 }
             } else {
@@ -87,7 +94,10 @@ class ChangePasswordViewModel @Inject constructor(
                             step = ChangePasswordStep.CODE_SENT,
                             maskedEmail = result.value.maskedEmail,
                             busy = false,
-                            message = "Código enviado a ${result.value.maskedEmail}.",
+                            message = context.getString(
+                                R.string.change_password_code_sent_message,
+                                result.value.maskedEmail,
+                            ),
                         )
                     }
                 }
@@ -103,7 +113,9 @@ class ChangePasswordViewModel @Inject constructor(
         val challenge = challengeId ?: return
         if (current.busy) return
         if (!AccessValidation.code(current.code)) {
-            _uiState.update { it.copy(error = "Ingresa el código de 6 dígitos.") }
+            _uiState.update {
+                it.copy(error = context.getString(R.string.change_password_code_required))
+            }
             return
         }
         viewModelScope.launch {
@@ -127,11 +139,15 @@ class ChangePasswordViewModel @Inject constructor(
         val token = resetToken ?: return
         if (current.busy) return
         if (!AccessValidation.password(current.password)) {
-            _uiState.update { it.copy(error = "La contraseña debe tener al menos 8 caracteres, una letra y un número.") }
+            _uiState.update {
+                it.copy(error = context.getString(R.string.change_password_password_requirements))
+            }
             return
         }
         if (current.password != current.confirmation) {
-            _uiState.update { it.copy(error = "Las contraseñas no coinciden.") }
+            _uiState.update {
+                it.copy(error = context.getString(R.string.change_password_password_mismatch))
+            }
             return
         }
         viewModelScope.launch {
@@ -156,12 +172,25 @@ class ChangePasswordViewModel @Inject constructor(
     }
 
     private fun failureMessage(failure: AccessFailure): String = when (failure) {
-        AccessFailure.INVALID_CODE -> "El código es incorrecto o venció."
-        AccessFailure.EXPIRED_CODE -> "El código venció. Solicita uno nuevo."
-        AccessFailure.TOO_MANY_ATTEMPTS -> "Demasiados intentos. Espera un momento."
-        AccessFailure.PASSWORD_MISMATCH -> "Las contraseñas no coinciden."
-        AccessFailure.RESET_LINK_INVALID -> "El código ya no es válido. Solicita uno nuevo."
-        AccessFailure.UNAVAILABLE -> "No se pudo conectar con el servidor. Intenta nuevamente."
-        else -> "No se pudo completar la operación. Intenta nuevamente."
+        AccessFailure.INVALID_CODE ->
+            context.getString(R.string.change_password_invalid_code)
+
+        AccessFailure.EXPIRED_CODE ->
+            context.getString(R.string.change_password_expired_code)
+
+        AccessFailure.TOO_MANY_ATTEMPTS ->
+            context.getString(R.string.change_password_too_many_attempts)
+
+        AccessFailure.PASSWORD_MISMATCH ->
+            context.getString(R.string.change_password_password_mismatch)
+
+        AccessFailure.RESET_LINK_INVALID ->
+            context.getString(R.string.change_password_reset_link_invalid)
+
+        AccessFailure.UNAVAILABLE ->
+            context.getString(R.string.change_password_server_unavailable)
+
+        else ->
+            context.getString(R.string.change_password_operation_error)
     }
 }
