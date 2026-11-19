@@ -173,4 +173,21 @@
     <string name="success_change_done_message">Verificamos el código y actualizamos tu contacto.</string>
     <string name="success_link_done_title">Vinculación completada</string>
     <string name="success_link_done_message">Ahora puedes reservar y consultar citas para Mateo Torres.</string>
+
+    <string name="change_password_retry">Reintentar</string>
+    <string name="change_password_new_password_description">Define tu nueva contraseña.</string>
+
+    <!-- CAMBIO DE CONTRASEÑA: MENSAJES DEL VIEWMODEL -->
+
+    <string name="change_password_session_expired">Inicia sesión nuevamente.</string>
+    <string name="change_password_email_error">No se pudo obtener el correo de tu cuenta.</string>
+    <string name="change_password_code_sent_message">Código enviado a %1$s.</string>
+    <string name="change_password_code_required">Ingresa el código de 6 dígitos.</string>
+    <string name="change_password_password_requirements">La contraseña debe tener al menos 8 caracteres, una letra y un número.</string>
+    <string name="change_password_password_mismatch">Las contraseñas no coinciden.</string>
+
+    <string name="change_password_too_many_attempts">Demasiados intentos. Espera un momento.</string>
+    <string name="change_password_reset_link_invalid">El código ya no es válido. Solicita uno nuevo.</string>
+    <string name="change_password_server_unavailable">No se pudo conectar con el servidor. Intenta nuevamente.</string>
+    <string name="change_password_operation_error">No se pudo completar la operación. Intenta nuevamente.</string>
 </resources>
