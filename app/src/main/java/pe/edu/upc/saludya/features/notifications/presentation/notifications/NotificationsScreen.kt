@@ -3,6 +3,8 @@ package pe.edu.upc.saludya.features.notifications.presentation.notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import pe.edu.upc.saludya.R
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaDestination
@@ -18,6 +20,7 @@ fun NotificationsScreen(
     viewModel: NotificationViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val reassignmentOfferLabel = stringResource(R.string.notifications_view_offer)
 
     if (state.notifications.isEmpty() && !state.isLoading) {
         EmptyNotificationsContent(
@@ -31,7 +34,9 @@ fun NotificationsScreen(
 
     NotificationsContent(
         model = NotificationsUiModel(
-            notifications = state.notifications.map { it.toInfoCard() },
+            notifications = state.notifications.map {
+                it.toInfoCard(reassignmentOfferLabel)
+            },
         ),
         modifier = modifier,
         onBackClick = onBackClick,

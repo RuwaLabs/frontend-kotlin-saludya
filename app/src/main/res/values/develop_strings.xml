@@ -44,6 +44,7 @@
 
     <!-- Notifications -->
     <string name="notifications_title">Notificaciones</string>
+    <string name="notifications_view_offer">Ver oferta →</string>
     <string name="notifications_empty_heading">Todo al día</string>
     <string name="notifications_empty_description">Aquí aparecerán tus confirmaciones, ofertas y avisos de atención.</string>
     <string name="notifications_empty_button">Volver al inicio</string>
