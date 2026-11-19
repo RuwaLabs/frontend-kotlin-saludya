@@ -74,9 +74,9 @@ class VerifyIdentityViewModel @Inject constructor(
                     birthDate = birthDate.toString(),
                 )
                 _uiState.value = VerifyIdentityUiState.Success(linkId)
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _uiState.value = VerifyIdentityUiState.Failure(
-                    e.message ?: context.getString(R.string.error_generic)
+                    context.getString(R.string.error_generic)
                 )
             }
         }
