@@ -37,7 +37,7 @@ class AppointmentDetailViewModel @Inject constructor(
                 val appointment = getAppointmentById(appointmentId)
                 _uiState.update { it.copy(appointment = appointment, isLoading = false) }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = e.message) }
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: "") }
             }
         }
     }
@@ -50,7 +50,7 @@ class AppointmentDetailViewModel @Inject constructor(
                 .onSuccess { _uiState.update { state -> state.copy(isLoading = false, isCancelled = true) } }
                 .onFailure { error ->
                     _uiState.update {
-                        it.copy(isLoading = false, errorMessage = error.message ?: "No se pudo cancelar la cita")
+                        it.copy(isLoading = false, errorMessage = error.message ?: "")
                     }
                 }
         }

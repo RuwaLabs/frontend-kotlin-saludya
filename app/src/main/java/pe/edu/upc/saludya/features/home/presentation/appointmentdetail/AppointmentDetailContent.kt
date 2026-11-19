@@ -46,7 +46,10 @@ fun AppointmentDetailContent(
                 lines = reservation.lines,
             )
         )
-        SaludYaPrimaryButton(text = "Ver código de reserva", onClick = onRegisterArrivalClick)
+        SaludYaPrimaryButton(
+            text = stringResource(R.string.appointment_detail_register_arrival),
+            onClick = onRegisterArrivalClick
+        )
         if (appointment.status == "RESERVED" || appointment.status == "CONFIRMED" ||
             appointment.status == "Reservada" || appointment.status == "Confirmada") {
             SaludYaOutlinedButton(text = stringResource(R.string.appointment_detail_cancel), onClick = onCancelClick)

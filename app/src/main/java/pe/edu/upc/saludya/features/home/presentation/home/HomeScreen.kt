@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import pe.edu.upc.saludya.R
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pe.edu.upc.saludya.core.desingsystem.component.SaludYaDestination
@@ -26,7 +28,9 @@ fun HomeScreen(
 
     HomeContent(
         model = HomeUiModel(
-            greeting = state.patientName?.let { "Hola, $it" } ?: "Hola",
+            greeting = state.patientName?.let {
+                stringResource(R.string.home_greeting, it)
+            } ?: stringResource(R.string.home_greeting_default),
             nextAppointment = appointment?.toAppointmentUiModel(),
         ),
         isLoading = state.isLoading,

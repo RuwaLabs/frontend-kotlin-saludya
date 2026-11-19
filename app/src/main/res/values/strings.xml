@@ -190,4 +190,23 @@
     <string name="change_password_reset_link_invalid">El código ya no es válido. Solicita uno nuevo.</string>
     <string name="change_password_server_unavailable">No se pudo conectar con el servidor. Intenta nuevamente.</string>
     <string name="change_password_operation_error">No se pudo completar la operación. Intenta nuevamente.</string>
+
+    <!-- Home -->
+    <string name="home_loading_appointments">Cargando tus citas…</string>
+    <string name="home_appointments_load_error">No se pudieron cargar tus citas.</string>
+    <string name="home_no_pending_appointments">Aún no tienes citas pendientes.</string>
+    <string name="home_retry">Reintentar</string>
+
+    <!-- Appointment detail -->
+    <string name="appointment_detail_loading">Cargando cita…</string>
+    <string name="appointment_detail_not_found">No se encontró esta cita.</string>
+    <string name="appointment_detail_beneficiary">Beneficiario: %1$s</string>
+    <string name="appointment_detail_cancel_title">Cancelar cita</string>
+    <string name="appointment_detail_cancel_confirmation">¿Confirmas que deseas cancelar esta reserva?</string>
+    <string name="appointment_detail_confirm">Confirmar</string>
+    <string name="appointment_detail_keep">Conservar cita</string>
+    <string name="appointment_detail_cancel_error">No se pudo cancelar la cita.</string>
+
+    <string name="home_greeting_default">Hola</string>
+    <string name="filtered_history_result_summary">%1$d resultado(s)</string>
 </resources>

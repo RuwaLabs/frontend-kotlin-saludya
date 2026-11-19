@@ -43,14 +43,22 @@ fun AppointmentDetailScreen(
                     title = stringResource(R.string.appointment_detail_reservation_title),
                     lines = listOf(
                         it.bookingCode,
-                        "Beneficiario: ${it.patientName}",
+                        stringResource(R.string.appointment_detail_beneficiary, it.patientName),
                         stringResource(R.string.appointment_detail_reservation_note),
                     ),
                 )
             },
         ),
-        message = state.errorMessage ?: if (state.isLoading) "Cargando cita…" else "No se encontró esta cita.",
-        errorMessage = state.errorMessage,
+        message = if (state.errorMessage != null) {
+            stringResource(R.string.error_generic)
+        } else if (state.isLoading) {
+            stringResource(R.string.appointment_detail_loading)
+        } else {
+            stringResource(R.string.appointment_detail_not_found)
+        },
+        errorMessage = state.errorMessage?.let {
+            stringResource(R.string.appointment_detail_cancel_error)
+        },
         modifier = modifier,
         onBackClick = onBackClick,
         onRegisterArrivalClick = onRegisterArrivalClick,
@@ -61,13 +69,13 @@ fun AppointmentDetailScreen(
     if (confirmCancel) {
         AlertDialog(
             onDismissRequest = { confirmCancel = false },
-            title = { Text("Cancelar cita") },
-            text = { Text("¿Confirmas que deseas cancelar esta reserva?") },
+            title = { Text(stringResource(R.string.appointment_detail_cancel_title)) },
+            text = { Text(stringResource(R.string.appointment_detail_cancel_confirmation)) },
             confirmButton = {
-                TextButton(onClick = { confirmCancel = false; viewModel.cancel() }) { Text("Confirmar") }
+                TextButton(onClick = { confirmCancel = false; viewModel.cancel() }) { Text(stringResource(R.string.appointment_detail_confirm)) }
             },
             dismissButton = {
-                TextButton(onClick = { confirmCancel = false }) { Text("Conservar cita") }
+                TextButton(onClick = { confirmCancel = false }) { Text(stringResource(R.string.appointment_detail_keep)) }
             },
         )
     }

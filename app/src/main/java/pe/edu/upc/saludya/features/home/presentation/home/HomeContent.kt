@@ -44,13 +44,19 @@ fun HomeContent(
         Text(text = stringResource(R.string.home_subtitle), style = SaludYaTextStyles.Subtitle)
         Text(text = stringResource(R.string.home_pending_title), style = SaludYaTextStyles.SectionTitle)
         when {
-            isLoading -> Text("Cargando tus citas…")
+            isLoading -> Text(stringResource(R.string.home_loading_appointments))
             errorMessage != null -> {
-                Text("No se pudieron cargar tus citas: $errorMessage")
-                SaludYaOutlinedButton(text = "Reintentar", onClick = onRetryClick)
+                Text(stringResource(R.string.home_appointments_load_error))
+                SaludYaOutlinedButton(
+                    text = stringResource(R.string.home_retry),
+                    onClick = onRetryClick
+                )
             }
-            model.nextAppointment != null -> AppointmentCard(model = model.nextAppointment, onClick = onAppointmentClick)
-            else -> Text("Aún no tienes citas pendientes.")
+            model.nextAppointment != null -> AppointmentCard(
+                model = model.nextAppointment,
+                onClick = onAppointmentClick
+            )
+            else -> Text(stringResource(R.string.home_no_pending_appointments))
         }
         SaludYaOutlinedButton(text = stringResource(R.string.home_view_appointments), onClick = onViewAppointmentsClick)
         SaludYaInfoCard(
