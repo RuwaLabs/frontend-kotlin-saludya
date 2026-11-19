@@ -14,6 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pe.edu.upc.saludya.R
+import androidx.compose.ui.res.stringResource
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.features.checkin.domain.model.AttendanceQueueStatus
 import pe.edu.upc.saludya.features.checkin.domain.model.QueuePosition
@@ -82,14 +86,15 @@ fun QueueContent(
     onLeaveQueueClick: () -> Unit,
     onLeaveQueueConfirm: () -> Unit,
     onLeaveQueueDismiss: () -> Unit,
-    onRefresh: () -> Unit = {},
     onBottomNavItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    onRefresh: () -> Unit = {},
 ) {
+    val context = LocalContext.current
     val colors = MaterialTheme.colorScheme
 
     CheckInScaffold(
-        title = "Mi turno",
+        title = stringResource(R.string.checkin_queue_title),
         onBackClick = onBackClick,
         onBottomNavItemSelected = onBottomNavItemSelected,
         modifier = modifier,
@@ -98,34 +103,41 @@ fun QueueContent(
         val ticket = uiState.ticket
         val position = uiState.position
         if (ticket == null || position == null) {
-            InfoNote(text = uiState.errorMessage ?: "No tienes un turno activo en la cola de atención.")
+            InfoNote(
+                text = uiState.errorMessage
+                    ?: stringResource(R.string.checkin_queue_no_active),
+            )
             return@CheckInScaffold
         }
         val reservation = ticket.reservation
 
         if (uiState.isQueueVisible) {
             Text(
-                text = "Tu posición actual",
+                text = stringResource(R.string.checkin_queue_current_position),
                 style = MaterialTheme.typography.bodyLarge,
                 color = colors.onSurfaceVariant,
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "${position.current} de ${position.total}",
+                text = stringResource(
+                    R.string.checkin_queue_position,
+                    position.current,
+                    position.total,
+                ),
                 style = MaterialTheme.typography.displayMedium,
                 fontWeight = FontWeight.Bold,
                 color = colors.primary,
             )
             Spacer(Modifier.height(12.dp))
             Text(
-                text = peopleAheadLabel(position.peopleAhead),
+                text = peopleAheadLabel(context, position.peopleAhead),
                 style = MaterialTheme.typography.bodyLarge,
                 color = colors.onSurface,
             )
         } else {
             // hospital_configurations.attendance_queue_visible = FALSE
             Text(
-                text = "Estás en la cola de atención. Te avisaremos cuando sea tu turno.",
+                text = stringResource(R.string.checkin_queue_waiting_info),
                 style = MaterialTheme.typography.bodyLarge,
                 color = colors.onSurface,
             )
@@ -136,17 +148,24 @@ fun QueueContent(
         InfoCard(
             title = reservation.specialty,
             lines = listOfNotNull(
-                "Turno ${ticket.code} · ${reservation.patientFullName}",
-                reservation.toWaitingLocationLabel(),
-                reservation.toDoctorLabel(),
+                stringResource(
+                    R.string.checkin_queue_ticket_patient,
+                    ticket.code,
+                    reservation.patientFullName,
+                ),
+                reservation.toWaitingLocationLabel(context),
+                reservation.toDoctorLabel(context),
             ),
-            highlight = "Llegada registrada · ${ticket.checkIn.checkedInAt.toHourLabel()}",
+            highlight = stringResource(
+                R.string.checkin_arrival_registered,
+                ticket.checkIn.checkedInAt.toHourLabel(),
+            ),
         )
 
         Spacer(Modifier.height(12.dp))
 
         Text(
-            text = queueNote(position),
+            text = queueNote(context, position),
             style = MaterialTheme.typography.bodySmall,
             color = colors.onSurfaceVariant,
         )
@@ -162,45 +181,89 @@ fun QueueContent(
 
         Spacer(Modifier.height(16.dp))
 
-        OutlineActionButton(text = "Ver mi ticket", onClick = onViewTicket)
+        OutlineActionButton(
+            text = stringResource(R.string.checkin_view_ticket),
+            onClick = onViewTicket,
+        )
 
         Spacer(Modifier.height(12.dp))
-        OutlineActionButton(text = "Actualizar posición", onClick = onRefresh)
+        OutlineActionButton(
+            text = stringResource(R.string.checkin_queue_refresh_position),
+            onClick = onRefresh,
+        )
 
         Spacer(Modifier.height(12.dp))
 
-        InfoNote(text = "Si necesitas abandonar la cola, consulta con el personal de admisión.")
+        OutlineActionButton(
+            text = stringResource(R.string.checkin_queue_leave_confirm),
+            onClick = onLeaveQueueClick,
+        )
+
+        Spacer(Modifier.height(12.dp))
+
+        InfoNote(
+            text = stringResource(R.string.checkin_queue_leave_note),
+        )
     }
 
     if (uiState.isLeaveDialogVisible) {
         AlertDialog(
             onDismissRequest = onLeaveQueueDismiss,
-            title = { Text("¿Dejar la cola?") },
-            text = { Text("Perderás tu lugar en la cola de atención. Esta acción no se puede deshacer.") },
+            title = {
+                Text(stringResource(R.string.checkin_queue_leave_title))
+            },
+            text = {
+                Text(stringResource(R.string.checkin_queue_leave_message))
+            },
             confirmButton = {
-                TextButton(onClick = onLeaveQueueConfirm) { Text("Dejar la cola") }
+                TextButton(onClick = onLeaveQueueConfirm) {
+                    Text(stringResource(R.string.checkin_queue_leave_confirm))
+                }
             },
             dismissButton = {
-                TextButton(onClick = onLeaveQueueDismiss) { Text("Cancelar") }
+                TextButton(onClick = onLeaveQueueDismiss) {
+                    Text(stringResource(R.string.checkin_queue_leave_cancel))
+                }
             },
         )
     }
 }
 
-private fun peopleAheadLabel(peopleAhead: Int): String = when (peopleAhead) {
-    0 -> "Eres la siguiente persona en la cola."
-    1 -> "Hay 1 persona delante de ti."
-    else -> "Hay $peopleAhead personas delante de ti."
+private fun peopleAheadLabel(
+    context: Context,
+    peopleAhead: Int,
+): String = when (peopleAhead) {
+    0 -> context.getString(R.string.checkin_queue_next_person)
+    1 -> context.getString(R.string.checkin_queue_one_person_ahead)
+    else -> context.getString(
+        R.string.checkin_queue_people_ahead,
+        peopleAhead,
+    )
 }
 
-private fun queueNote(position: QueuePosition): String {
+private fun queueNote(
+    context: Context,
+    position: QueuePosition,
+): String {
     val status = when (position.queueStatus) {
-        AttendanceQueueStatus.OPEN -> "El orden sigue la llegada presencial."
-        AttendanceQueueStatus.PAUSED -> "La cola está en pausa por el momento."
-        AttendanceQueueStatus.CLOSED -> "La cola de atención está cerrada."
-        null -> "Posición consultada en el establecimiento."
+        AttendanceQueueStatus.OPEN ->
+            context.getString(R.string.checkin_queue_status_open)
+
+        AttendanceQueueStatus.PAUSED ->
+            context.getString(R.string.checkin_queue_status_paused)
+
+        AttendanceQueueStatus.CLOSED ->
+            context.getString(R.string.checkin_queue_status_closed)
+
+        null ->
+            context.getString(R.string.checkin_queue_status_unknown)
     }
-    return "$status\nActualizado a las ${position.updatedAt.toHourLabel()}."
+
+    return context.getString(
+        R.string.checkin_queue_updated_at,
+        status,
+        position.updatedAt.toHourLabel(),
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)

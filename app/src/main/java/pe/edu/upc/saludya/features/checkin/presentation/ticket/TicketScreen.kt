@@ -11,6 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import pe.edu.upc.saludya.R
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.features.checkin.presentation.components.AttendedDialog
 import pe.edu.upc.saludya.features.checkin.presentation.components.CheckInScaffold
@@ -66,8 +69,10 @@ fun TicketContent(
     onBottomNavItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     CheckInScaffold(
-        title = "Ticket de atención",
+        title = stringResource(R.string.checkin_ticket_title),
         onBackClick = onBackClick,
         onBottomNavItemSelected = onBottomNavItemSelected,
         modifier = modifier,
@@ -75,7 +80,10 @@ fun TicketContent(
     ) {
         val ticket = uiState.ticket
         if (ticket == null) {
-            InfoNote(text = uiState.errorMessage ?: "Esta reserva aún no tiene una llegada registrada.")
+            InfoNote(
+                text = uiState.errorMessage
+                    ?: stringResource(R.string.checkin_ticket_no_arrival),
+            )
             return@CheckInScaffold
         }
         val reservation = ticket.reservation
@@ -95,24 +103,33 @@ fun TicketContent(
             title = reservation.patientFullName,
             lines = listOfNotNull(
                 reservation.specialty,
-                reservation.toDoctorLabel(),
-                reservation.toScheduleLabel(),
-                reservation.toLocationLabel(),
+                reservation.toDoctorLabel(context),
+                reservation.toScheduleLabel(context),
+                reservation.toLocationLabel(context),
             ),
-            highlight = "Llegada registrada · ${ticket.checkIn.checkedInAt.toHourLabel()}",
+            highlight = stringResource(
+                R.string.checkin_arrival_registered,
+                ticket.checkIn.checkedInAt.toHourLabel(),
+            ),
         )
 
         Spacer(Modifier.height(16.dp))
 
-        InfoNote(text = "Conserva este ticket hasta terminar tu atención.")
+        InfoNote(text = stringResource(R.string.checkin_ticket_keep_note))
 
         Spacer(Modifier.height(16.dp))
 
-        PrimaryButton(text = "Ver mi posición", onClick = onViewPosition)
+        PrimaryButton(
+            text = stringResource(R.string.checkin_ticket_view_position),
+            onClick = onViewPosition,
+        )
 
         Spacer(Modifier.height(12.dp))
 
-        OutlineActionButton(text = "Actualizar ticket", onClick = onRefresh)
+        OutlineActionButton(
+            text = stringResource(R.string.checkin_ticket_refresh),
+            onClick = onRefresh,
+        )
     }
 }
 

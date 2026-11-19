@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ============================================== -->
+    <!-- TURNO LLAMADO                                  -->
+    <!-- ============================================== -->
+
+    <string name="checkin_turn_called_title">¡Es tu turno!</string>
+    <string name="checkin_turn_not_found">No se encontró tu turno.</string>
+    <string name="checkin_go_to_room">Dirígete al consultorio %1$s</string>
+    <string name="checkin_go_to_your_room">Dirígete a tu consultorio</string>
+    <string name="checkin_turn_code">Turno %1$s</string>
+    <string name="checkin_turn_patient_specialty">%1$s · %2$s</string>
+    <string name="checkin_turn_called_at">Llamada registrada: %1$s</string>
+    <string name="checkin_turn_arrival_deadline">Acércate dentro del plazo indicado por el establecimiento: %1$s.</string>
+    <string name="checkin_one_minute">1 minuto</string>
+    <string name="checkin_minutes">%1$d minutos</string>
+    <string name="checkin_refresh">Actualizar</string>
+
+    <!-- ============================================== -->
+    <!-- ATENCIÓN FINALIZADA                            -->
+    <!-- ============================================== -->
+
+    <string name="checkin_attended_title">Ya has sido atendido</string>
+    <string name="checkin_attended_message">Tu atención en el consultorio terminó. Puedes volver al inicio.</string>
+    <string name="checkin_go_home">Volver al inicio</string>
+
+    <!-- ============================================== -->
+    <!-- COMPONENTES COMPARTIDOS                       -->
+    <!-- ============================================== -->
+
+    <string name="checkin_consulting_room">Consultorio %1$s</string>
+    <string name="checkin_reservation_label">%1$s · %2$s · %3$s</string>
+    <string name="checkin_reservation_schedule">%1$s %2$s · %3$s–%4$s</string>
+    <string name="checkin_doctor_name">Dr(a). %1$s</string>
+    <string name="checkin_room">Sala %1$s</string>
+    <string name="checkin_waiting_room">Sala de espera %1$s</string>
+    <string name="checkin_select_reservation">Selecciona una reserva</string>
+    <string name="checkin_no_reservations">Sin reservas disponibles</string>
+
+    <!-- ============================================== -->
+    <!-- CÓDIGO QR                                      -->
+    <!-- ============================================== -->
+
+    <string name="checkin_qr_title">Código QR</string>
+    <string name="checkin_qr_info">El código de reserva es real. La imagen del QR es solo ilustrativa y no se puede escanear. Admisión debe registrar el código para habilitar tu ticket y tu cola.</string>
+    <string name="checkin_qr_unavailable_day">El código y la cola solo están disponibles el día de la cita.</string>
+    <string name="checkin_qr_unavailable_date">El código y la cola solo están disponibles el día de la cita (%1$s).</string>
+    <string name="checkin_qr_no_code">No hay un código disponible</string>
+    <string name="checkin_qr_description">Código QR de tu cita. Listo para escanear.</string>
+    <string name="checkin_qr_content_description">Código QR de la cita</string>
+    <string name="checkin_view_reservation_detail">Ver detalle de reserva</string>
+    <string name="checkin_consult_ticket">Consultar mi ticket</string>
+
+    <!-- ============================================== -->
+    <!-- COLA DE ATENCIÓN                               -->
+    <!-- ============================================== -->
+
+    <string name="checkin_queue_title">Mi turno</string>
+    <string name="checkin_queue_no_active">No tienes un turno activo en la cola de atención.</string>
+    <string name="checkin_queue_current_position">Tu posición actual</string>
+    <string name="checkin_queue_position">%1$d de %2$d</string>
+    <string name="checkin_queue_waiting_info">Estás en la cola de atención. Te avisaremos cuando sea tu turno.</string>
+    <string name="checkin_queue_ticket_patient">Turno %1$s · %2$s</string>
+    <string name="checkin_arrival_registered">Llegada registrada · %1$s</string>
+    <string name="checkin_view_ticket">Ver mi ticket</string>
+    <string name="checkin_queue_refresh_position">Actualizar posición</string>
+    <string name="checkin_queue_leave_note">Si necesitas abandonar la cola, consulta con el personal de admisión.</string>
+    <string name="checkin_queue_leave_title">¿Dejar la cola?</string>
+    <string name="checkin_queue_leave_message">Perderás tu lugar en la cola de atención. Esta acción no se puede deshacer.</string>
+    <string name="checkin_queue_leave_confirm">Dejar la cola</string>
+    <string name="checkin_queue_leave_cancel">Cancelar</string>
+    <string name="checkin_queue_next_person">Eres la siguiente persona en la cola.</string>
+    <string name="checkin_queue_one_person_ahead">Hay 1 persona delante de ti.</string>
+    <string name="checkin_queue_people_ahead">Hay %1$d personas delante de ti.</string>
+    <string name="checkin_queue_status_open">El orden sigue la llegada presencial.</string>
+    <string name="checkin_queue_status_paused">La cola está en pausa por el momento.</string>
+    <string name="checkin_queue_status_closed">La cola de atención está cerrada.</string>
+    <string name="checkin_queue_status_unknown">Posición consultada en el establecimiento.</string>
+    <string name="checkin_queue_updated_at">%1$s\nActualizado a las %2$s.</string>
+
+    <!-- ============================================== -->
+    <!-- TICKET DE ATENCIÓN                             -->
+    <!-- ============================================== -->
+
+    <string name="checkin_ticket_title">Ticket de atención</string>
+    <string name="checkin_ticket_no_arrival">Esta reserva aún no tiene una llegada registrada.</string>
+    <string name="checkin_ticket_keep_note">Conserva este ticket hasta terminar tu atención.</string>
+    <string name="checkin_ticket_view_position">Ver mi posición</string>
+    <string name="checkin_ticket_refresh">Actualizar ticket</string>
+
+    <string name="checkin_back">Volver</string>
+
+    <string name="checkin_qr_arrival_not_registered">Aún no hay llegada registrada por admisión.</string>
+    <string name="checkin_qr_ticket_lookup_error">No se pudo consultar tu ticket.</string>
+    <string name="checkin_qr_reservations_load_error">No se pudieron cargar tus reservas.</string>
+    <string name="checkin_qr_load_error">No se pudo cargar el código QR.</string>
+    <string name="checkin_turn_load_error">No se pudo cargar tu turno.</string>
+    <string name="checkin_queue_load_error">No se pudo cargar tu turno.</string>
+    <string name="checkin_queue_leave_error">No se pudo dejar la cola.</string>
+    <string name="checkin_ticket_load_error">No se pudo cargar el ticket.</string>
+
+</resources>

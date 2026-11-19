@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.checkin.application.usecase.GetCheckInReservationsUseCase
 import pe.edu.upc.saludya.features.checkin.application.usecase.GetQrCodeUseCase
 import pe.edu.upc.saludya.features.checkin.application.usecase.ObserveAttendanceTicketUseCase
@@ -20,6 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class QrCodeViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val getReservations: GetCheckInReservationsUseCase,
     private val getQrCode: GetQrCodeUseCase,
     private val observeTicket: ObserveAttendanceTicketUseCase,
@@ -49,14 +53,20 @@ class QrCodeViewModel @Inject constructor(
                     it.copy(
                         isCheckingTicket = false,
                         registeredAppointmentId = if (ticket != null) reservation.id else null,
-                        errorMessage = if (ticket == null) "Aún no hay llegada registrada por admisión." else null,
+                        errorMessage = if (ticket == null) {
+                            context.getString(R.string.checkin_qr_arrival_not_registered)
+                        } else null,
                     )
                 }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 _uiState.update {
-                    it.copy(isCheckingTicket = false, errorMessage = e.message ?: "No se pudo consultar tu ticket.")
+                    it.copy(
+                        isCheckingTicket = false,
+                        errorMessage = e.message
+                            ?: context.getString(R.string.checkin_qr_ticket_lookup_error),
+                    )
                 }
             }
         }
@@ -78,7 +88,11 @@ class QrCodeViewModel @Inject constructor(
                 throw e
             } catch (e: Exception) {
                 _uiState.update {
-                    it.copy(isLoading = false, errorMessage = e.message ?: "No se pudieron cargar tus reservas.")
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.message
+                            ?: context.getString(R.string.checkin_qr_reservations_load_error),
+                    )
                 }
             }
         }
@@ -94,7 +108,10 @@ class QrCodeViewModel @Inject constructor(
                 sameDay = sameDay,
                 isLoading = sameDay,
                 errorMessage = if (sameDay) null else
-                    "El código y la cola solo están disponibles el día de la cita (${reservation.date}).",
+                    context.getString(
+                        R.string.checkin_qr_unavailable_date,
+                        reservation.date,
+                    ),
             )
         }
         if (!sameDay) return
@@ -105,7 +122,11 @@ class QrCodeViewModel @Inject constructor(
             throw e
         } catch (e: Exception) {
             _uiState.update {
-                it.copy(isLoading = false, errorMessage = e.message ?: "No se pudo cargar el código QR.")
+                it.copy(
+                    isLoading = false,
+                    errorMessage = e.message
+                        ?: context.getString(R.string.checkin_qr_load_error),
+                )
             }
         }
     }

@@ -25,6 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.checkin.domain.model.Reservation
 
 /**
@@ -42,14 +45,15 @@ fun ReservationSelector(
     selected: Reservation?,
     onReservationSelected: (Reservation) -> Unit,
     modifier: Modifier = Modifier,
-    label: String = "Selecciona una reserva",
+    label: String? = null,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     val colors = MaterialTheme.colorScheme
+    val context = LocalContext.current
 
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = label,
+            text = label ?: stringResource(R.string.checkin_select_reservation),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.SemiBold,
             color = colors.onSurfaceVariant,
@@ -74,7 +78,8 @@ fun ReservationSelector(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = selected?.toDisplayLabel() ?: "Sin reservas disponibles",
+                        text = selected?.toDisplayLabel(context)
+                            ?: stringResource(R.string.checkin_no_reservations),
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodyLarge,
                         color = colors.onSurface,
@@ -97,7 +102,7 @@ fun ReservationSelector(
                     DropdownMenuItem(
                         text = {
                             Text(
-                                text = reservation.toDisplayLabel(),
+                                text = reservation.toDisplayLabel(context),
                                 color = if (isSelected) colors.primary else colors.onSurface,
                                 fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                             )

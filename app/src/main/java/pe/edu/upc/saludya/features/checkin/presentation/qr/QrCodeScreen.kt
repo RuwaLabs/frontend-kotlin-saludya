@@ -11,6 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import pe.edu.upc.saludya.R
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.features.checkin.domain.model.Reservation
 import pe.edu.upc.saludya.features.checkin.presentation.components.CheckInScaffold
@@ -70,7 +72,7 @@ fun QrCodeContent(
     modifier: Modifier = Modifier,
 ) {
     CheckInScaffold(
-        title = "Código QR",
+        title = stringResource(R.string.checkin_qr_title),
         onBottomNavItemSelected = onBottomNavItemSelected,
         modifier = modifier,
     ) {
@@ -91,13 +93,12 @@ fun QrCodeContent(
             Spacer(Modifier.height(20.dp))
 
             InfoNote(
-                text = "El código de reserva es real. La imagen del QR es solo ilustrativa y no se puede escanear. " +
-                    "Admisión debe registrar el código para habilitar tu ticket y tu cola.",
+                text = stringResource(R.string.checkin_qr_info),
             )
         } else {
             InfoNote(
                 text = uiState.errorMessage
-                    ?: "El código y la cola solo están disponibles el día de la cita.",
+                    ?: stringResource(R.string.checkin_qr_unavailable_day),
             )
         }
 
@@ -113,7 +114,7 @@ fun QrCodeContent(
         Spacer(Modifier.height(20.dp))
 
         OutlineActionButton(
-            text = "Ver detalle de reserva",
+            text = stringResource(R.string.checkin_view_reservation_detail),
             enabled = uiState.actionsEnabled,
             onClick = { uiState.selectedReservation?.let { onViewReservationDetail(it.id) } },
         )
@@ -121,7 +122,7 @@ fun QrCodeContent(
         Spacer(Modifier.height(12.dp))
 
         PrimaryButton(
-            text = "Consultar mi ticket",
+            text = stringResource(R.string.checkin_consult_ticket),
             enabled = uiState.actionsEnabled,
             onClick = onScanEstablishmentQr,
         )

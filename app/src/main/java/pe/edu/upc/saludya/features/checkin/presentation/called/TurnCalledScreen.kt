@@ -8,9 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import pe.edu.upc.saludya.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import pe.edu.upc.saludya.features.checkin.presentation.components.AttendedDialog
 import pe.edu.upc.saludya.features.checkin.presentation.components.CheckInScaffold
@@ -63,8 +66,10 @@ fun TurnCalledContent(
     onBottomNavItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+
     CheckInScaffold(
-        title = "¡Es tu turno!",
+        title = stringResource(R.string.checkin_turn_called_title),
         onBackClick = onBackClick,
         onBottomNavItemSelected = onBottomNavItemSelected,
         modifier = modifier,
@@ -72,7 +77,10 @@ fun TurnCalledContent(
     ) {
         val ticket = uiState.ticket
         if (ticket == null) {
-            InfoNote(text = uiState.errorMessage ?: "No se encontró tu turno.")
+            InfoNote(
+                text = uiState.errorMessage
+                    ?: stringResource(R.string.checkin_turn_not_found),
+            )
             return@CheckInScaffold
         }
         val reservation = ticket.reservation
@@ -81,8 +89,8 @@ fun TurnCalledContent(
 
         Text(
             text = reservation.consultingRoom
-                ?.let { "Dirígete al consultorio $it" }
-                ?: "Dirígete a tu consultorio",
+                ?.let { stringResource(R.string.checkin_go_to_room, it) }
+                ?: stringResource(R.string.checkin_go_to_your_room),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.primary,
@@ -91,33 +99,52 @@ fun TurnCalledContent(
         Spacer(Modifier.height(16.dp))
 
         InfoCard(
-            title = "Turno ${ticket.code}",
+            title = stringResource(R.string.checkin_turn_code, ticket.code),
             lines = listOfNotNull(
-                "${reservation.patientFullName} · ${reservation.specialty}",
-                reservation.toDoctorLabel(),
-                ticket.queueEntry?.calledAt?.let { "Llamada registrada: ${it.toHourLabel()}" },
+                stringResource(
+                    R.string.checkin_turn_patient_specialty,
+                    reservation.patientFullName,
+                    reservation.specialty,
+                ),
+                reservation.toDoctorLabel(context),
+                ticket.queueEntry?.calledAt?.let {
+                    stringResource(R.string.checkin_turn_called_at, it.toHourLabel())
+                },
             ),
         )
 
         Spacer(Modifier.height(16.dp))
 
         InfoNote(
-            text = "Acércate dentro del plazo indicado por el establecimiento: " +
-                toleranceLabel(uiState.postCallToleranceMinutes) + ".",
+            text = stringResource(
+                R.string.checkin_turn_arrival_deadline,
+                toleranceLabel(uiState.postCallToleranceMinutes),
+            ),
         )
 
         Spacer(Modifier.height(16.dp))
 
-        OutlineActionButton(text = "Ver mi ticket", onClick = onViewTicket)
+        OutlineActionButton(
+            text = stringResource(R.string.checkin_view_ticket),
+            onClick = onViewTicket,
+        )
 
         Spacer(Modifier.height(12.dp))
 
-        OutlineActionButton(text = "Actualizar", onClick = onRefresh)
+        OutlineActionButton(
+            text = stringResource(R.string.checkin_refresh),
+            onClick = onRefresh,
+        )
     }
 }
 
+@Composable
 private fun toleranceLabel(minutes: Int): String =
-    if (minutes == 1) "1 minuto" else "$minutes minutos"
+    if (minutes == 1) {
+        stringResource(R.string.checkin_one_minute)
+    } else {
+        stringResource(R.string.checkin_minutes, minutes)
+    }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable

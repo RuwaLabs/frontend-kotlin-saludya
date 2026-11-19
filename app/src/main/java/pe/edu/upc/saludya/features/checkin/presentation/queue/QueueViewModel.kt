@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.checkin.application.usecase.LeaveQueueUseCase
 import pe.edu.upc.saludya.features.checkin.application.usecase.ObserveQueueStatusUseCase
 import pe.edu.upc.saludya.features.checkin.domain.repositories.CheckInRepository
@@ -20,6 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class QueueViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle,
     observeQueueStatus: ObserveQueueStatusUseCase,
     private val leaveQueue: LeaveQueueUseCase,
@@ -49,7 +53,14 @@ class QueueViewModel @Inject constructor(
             errorMessage = localState.errorMessage,
         )
     }
-        .catch { emit(QueueUiState(errorMessage = it.message ?: "No se pudo cargar tu turno.")) }
+        .catch {
+            emit(
+                QueueUiState(
+                    errorMessage = it.message
+                        ?: context.getString(R.string.checkin_queue_load_error),
+                ),
+            )
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), QueueUiState(isLoading = true))
 
     fun onLeaveQueueClick() = local.update { it.copy(isLeaveDialogVisible = true) }
@@ -67,7 +78,12 @@ class QueueViewModel @Inject constructor(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                local.update { it.copy(errorMessage = e.message ?: "No se pudo dejar la cola.") }
+                local.update {
+                    it.copy(
+                        errorMessage = e.message
+                            ?: context.getString(R.string.checkin_queue_leave_error),
+                    )
+                }
             }
         }
     }

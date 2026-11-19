@@ -9,12 +9,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.checkin.application.usecase.ObserveAttendanceTicketUseCase
 import pe.edu.upc.saludya.features.checkin.domain.repositories.CheckInRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class TicketViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle,
     observeTicket: ObserveAttendanceTicketUseCase,
     private val repository: CheckInRepository,
@@ -24,7 +28,14 @@ class TicketViewModel @Inject constructor(
 
     val uiState: StateFlow<TicketUiState> = observeTicket(appointmentId)
         .map { ticket -> TicketUiState(ticket = ticket, isAttended = ticket?.isAttended == true) }
-        .catch { emit(TicketUiState(errorMessage = it.message ?: "No se pudo cargar el ticket.")) }
+        .catch {
+            emit(
+                TicketUiState(
+                    errorMessage = it.message
+                        ?: context.getString(R.string.checkin_ticket_load_error),
+                ),
+            )
+        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TicketUiState(isLoading = true))
 
     fun refresh() = repository.refresh(appointmentId)

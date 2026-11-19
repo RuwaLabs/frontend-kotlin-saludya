@@ -25,6 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import pe.edu.upc.saludya.R
 import pe.edu.upc.saludya.features.checkin.domain.model.QrCodeInfo
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
@@ -71,7 +73,7 @@ fun QrDisplayCard(
                         modifier = Modifier.size(200.dp),
                     )
                     else -> Text(
-                        text = "No hay un código disponible",
+                        text = stringResource(R.string.checkin_qr_no_code),
                         style = MaterialTheme.typography.bodyMedium,
                         color = colors.onSurfaceVariant,
                     )
@@ -80,7 +82,7 @@ fun QrDisplayCard(
             if (qrCodeInfo != null && !isLoading) {
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    text = "Código QR de tu cita. Listo para escanear.",
+                    text = stringResource(R.string.checkin_qr_description),
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.onSurfaceVariant,
                 )
@@ -98,6 +100,8 @@ private fun QrCodeImage(
     color: Color,
     modifier: Modifier = Modifier,
 ) {
+    val qrDescription = stringResource(R.string.checkin_qr_content_description)
+
     val matrix = remember(code) {
         QRCodeWriter().encode(
             code,
@@ -113,7 +117,7 @@ private fun QrCodeImage(
 
     Canvas(
         modifier = modifier.semantics {
-            contentDescription = "Código QR de la cita"
+            contentDescription = qrDescription
         },
     ) {
         val cellWidth = size.width / matrix.width
