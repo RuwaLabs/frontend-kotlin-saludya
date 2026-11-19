@@ -61,8 +61,7 @@ class SinCuposDiaViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = error.message
-                            ?: "No se pudo consultar la disponibilidad."
+                        errorMessage = error.message.orEmpty()
                     )
                 }
             }

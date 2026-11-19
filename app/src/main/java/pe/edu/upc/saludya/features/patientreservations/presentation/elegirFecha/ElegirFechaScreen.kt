@@ -79,7 +79,9 @@ fun ElegirFechaScreen(
 
         if (state.errorMessage != null) {
             Text(
-                text = state.errorMessage,
+                text = state.errorMessage.ifBlank {
+                    stringResource(R.string.reservation_error_availability)
+                },
                 style = saludYaText(12, color = SaludYaColors.Muted)
             )
         }

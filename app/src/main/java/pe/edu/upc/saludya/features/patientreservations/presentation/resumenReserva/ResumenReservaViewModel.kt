@@ -19,6 +19,7 @@ import pe.edu.upc.saludya.features.patientreservations.domain.model.TimeslotConf
 import pe.edu.upc.saludya.features.patientreservations.presentation.components.ReservaSummaryUi
 import javax.inject.Inject
 
+private class HorarioSeleccionadoNoEncontradoException : Exception()
 @HiltViewModel
 class ResumenReservaViewModel @Inject constructor(
     private val getTimeSlotById: GetTimeSlotByIdUseCase,
@@ -45,7 +46,7 @@ class ResumenReservaViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val slot = getTimeSlotById(timeSlotId)
-                    ?: throw IllegalStateException("No se encontró el horario seleccionado.")
+                    ?: throw HorarioSeleccionadoNoEncontradoException()
 
                 val doctor = getDoctorById(slot.doctorId)
                 val specialityName = getSpecialityById(specialityId)?.name.orEmpty()
@@ -80,12 +81,20 @@ class ResumenReservaViewModel @Inject constructor(
                 }
             } catch (e: CancellationException) {
                 throw e
+            } catch (e: HorarioSeleccionadoNoEncontradoException) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "",
+                        errorType = ResumenReservaError.SLOT_NOT_FOUND
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = e.message
-                            ?: "No se pudo cargar el resumen de la reserva."
+                        errorMessage = e.message.orEmpty(),
+                        errorType = ResumenReservaError.SUMMARY
                     )
                 }
             }
@@ -118,7 +127,8 @@ class ResumenReservaViewModel @Inject constructor(
                     it.copy(
                         isBooking = false,
                         bookedAppointmentId = appointment.id,
-                        errorMessage = null
+                        errorMessage = null,
+                        errorType = null
                     )
                 }
             }.onFailure { error ->
@@ -130,9 +140,8 @@ class ResumenReservaViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isBooking = false,
-                        errorMessage = if (isConflict) null else {
-                            error.message ?: "No se pudo completar la reserva. Intenta nuevamente."
-                        },
+                        errorMessage = if (isConflict) null else error.message.orEmpty(),
+                        errorType = if (isConflict) null else ResumenReservaError.BOOKING,
                         dialog = when (error) {
                             is TimeslotConflictException -> ReservaDialog.CUPO_OCUPADO
                             is AppointmentConflictException -> ReservaDialog.CRUCE

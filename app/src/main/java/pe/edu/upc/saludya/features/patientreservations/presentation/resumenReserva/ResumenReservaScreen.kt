@@ -81,9 +81,17 @@ fun ResumenReservaScreen(
             state.errorMessage != null -> {
                 SaludYaStateMessage(
                     title = stringResource(R.string.reservation_error_booking_title),
-                    description = state.errorMessage.ifBlank {
-                        stringResource(R.string.reservation_error_summary)
-                    }
+                    description = state.errorMessage.takeIf { it.isNotBlank() }
+                        ?: when (state.errorType) {
+                            ResumenReservaError.SLOT_NOT_FOUND ->
+                                stringResource(R.string.reservation_error_slot_not_found)
+
+                            ResumenReservaError.BOOKING ->
+                                stringResource(R.string.reservation_error_booking)
+
+                            ResumenReservaError.SUMMARY, null ->
+                                stringResource(R.string.reservation_error_summary)
+                        }
                 )
                 SaludYaOutlinedButton(
                     text = stringResource(R.string.reservation_edit),

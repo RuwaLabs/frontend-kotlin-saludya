@@ -61,6 +61,9 @@
     <string name="reservation_confirm_booking">Confirmar reserva</string>
     <string name="reservation_edit">Volver y corregir</string>
     <string name="reservation_error_summary">No se pudo cargar el resumen</string>
+    <string name="reservation_error_slot_not_found">No se encontró el horario seleccionado.</string>
+    <string name="reservation_error_booking">No se pudo completar la reserva. Intenta nuevamente.</string>
+    <string name="reservation_error_availability">No se pudo consultar la disponibilidad.</string>
     <string name="reservation_datetime">%1$s · %2$s–%3$s</string>
     <string name="reservation_place">Centro de Salud · Consultorio %1$s</string>
     <string name="reservation_beneficiary_line">%1$s · %2$s</string>

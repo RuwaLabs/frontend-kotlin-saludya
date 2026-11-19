@@ -4,9 +4,16 @@ import pe.edu.upc.saludya.features.patientreservations.presentation.components.R
 
 enum class ReservaDialog { NONE, CONFIRMAR, CUPO_OCUPADO, CRUCE }
 
+enum class ResumenReservaError {
+    SLOT_NOT_FOUND,
+    SUMMARY,
+    BOOKING
+}
+
 data class ResumenReservaUiState(
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
+    val errorType: ResumenReservaError? = null,
     val summary: ReservaSummaryUi? = null,
     val beneficiaryName: String = "",
     val dialog: ReservaDialog = ReservaDialog.NONE,
