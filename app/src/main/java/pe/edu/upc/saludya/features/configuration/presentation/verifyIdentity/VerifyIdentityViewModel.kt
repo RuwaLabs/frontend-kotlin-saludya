@@ -12,11 +12,14 @@ import pe.edu.upc.saludya.features.configuration.domain.repository.LinkedMinorRe
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.ResolverStyle
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 @HiltViewModel
 class VerifyIdentityViewModel @Inject constructor(
     private val linkedMinors: LinkedMinorRepository,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<VerifyIdentityUiState>(VerifyIdentityUiState.Editing())
@@ -73,7 +76,7 @@ class VerifyIdentityViewModel @Inject constructor(
                 _uiState.value = VerifyIdentityUiState.Success(linkId)
             } catch (e: Exception) {
                 _uiState.value = VerifyIdentityUiState.Failure(
-                    e.message ?: "No se pudo vincular al menor."
+                    e.message ?: context.getString(R.string.error_generic)
                 )
             }
         }
